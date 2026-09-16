@@ -14,6 +14,8 @@ const edge = process.env.EDGE_PATH || 'C:/Program Files (x86)/Microsoft/Edge/App
 const user = { id: 'tenant-fixture', authId: 'tenant-fixture', role: 'tenant', name: 'Test Tenant', email: 'tenant@example.test', isVerified: true, status: 'active' };
 const apartment = { id: 'apartment-fixture', title: 'La Paz Test Apartment', address: 'La Paz', city: 'Iloilo City', state: 'Iloilo', zip: '5000', description: 'A local fixture apartment.', landlordId: 'landlord-fixture', landlordVerified: true, isPublished: true, status: 'available', price: 3500, bedrooms: 2, bathrooms: 1, sqft: 30, lat: 10.7162, lng: 122.5675, images: [], image: '', amenities: ['WiFi'], utilities: [], features: {}, petFriendly: true, parking: true, furnished: true, availableDate: '2026-01-01', createdAt: '2026-01-01', updatedAt: '2026-01-02', rooms: [{ id: 'room-fixture', roomName: 'Room One', name: 'Room One', roomNumber: '1', roomType: 'Single', capacity: 1, price: 3500, status: 'available', isOccupied: false, images: [], amenities: ['WiFi'], description: 'Fixture room' }] };
 apartment.approvalStatus = 'approved';
+Object.assign(apartment.rooms[0], { maxOccupants: 1, sqft: 122, hasAC: true, hasPrivateBath: false, images: ['#b8c6d6', '#99b4c4', '#d1c1ab', '#a7bdb4'].map(fill => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="600" height="360"><rect width="600" height="360" fill="${fill}"/></svg>`)) });
+apartment.propertyType = 'Studio';
 const adminMode = process.env.APTFINDR_TEST_ROLE === 'admin';
 if (adminMode) Object.assign(user, { role: 'admin', name: 'Test Admin' });
 const serviceSource = fs.readFileSync('src/services/dashboardSupabaseService.js', 'utf8');
@@ -114,9 +116,21 @@ try {
     // Room details, Leaflet marker, preferences portal, notification details, FAQ.
     await navigate('/apartment/apartment-fixture', '.apartment-detail-title');
     await evaluate("document.querySelector('.apartment-detail-button-9').click()");
-    await waitFor("!!document.querySelector('.apartment-detail-overlay-2')", 'room details');
-    assert.equal(await evaluate("document.querySelector('.apartment-detail-overlay-2').getBoundingClientRect().width <= innerWidth+1"), true);
-    await evaluate("document.querySelector('.apartment-detail-button-12').click()");
+    await waitFor("!!document.querySelector('.tenant-room-details')", 'room details');
+    assert.equal(await evaluate("document.querySelector('.tenant-room-details').getBoundingClientRect().width <= innerWidth+1"), true);
+    assert.equal(await evaluate("document.querySelector('.tenant-room-details').scrollWidth <= document.querySelector('.tenant-room-details').clientWidth+1"), true);
+    assert.ok(await evaluate("document.querySelector('.tenant-room-details').textContent.includes('122 sq ft') && document.querySelector('.tenant-room-details').textContent.includes('Studio')"));
+    await evaluate("document.querySelector('[aria-label=\"Next room image\"]').click()");
+    assert.equal(await evaluate("document.querySelector('[aria-label=\"Show room photo 2\"]').getAttribute('aria-pressed')"), 'true');
+    await evaluate("document.querySelector('[aria-label=\"Show room photo 3\"]').click()");
+    assert.equal(await evaluate("document.querySelector('.room-image-gallery-style-10').alt"), 'Room One photo 3');
+    if (process.env.APTFINDR_ROOM_SCREENSHOT && width === 1440) { const shot = await send('Page.captureScreenshot', {format:'png'}); fs.writeFileSync(process.env.APTFINDR_ROOM_SCREENSHOT, Buffer.from(shot.data,'base64')); }
+    await evaluate("document.querySelector('[aria-label=\"View room photos full screen\"]').click()");
+    await waitFor("!!document.querySelector('.tenant-room-fullscreen')", 'full-screen room photos');
+    await send('Input.dispatchKeyEvent', {type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});
+    await send('Input.dispatchKeyEvent', {type:'keyUp',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});
+    await waitFor("!document.querySelector('.tenant-room-fullscreen') && !!document.querySelector('.tenant-room-details')", 'return from full-screen room photos');
+    await evaluate("document.querySelector('.tenant-room-details .ui-dialog-close').click()");
     assert.ok(await evaluate("!!document.querySelector('.leaflet-container .leaflet-marker-icon')"), 'Leaflet detail marker');
     await navigate('/browse?preferences=open', '[role="dialog"]');
     assert.ok(await evaluate("document.querySelector('[role=dialog]').getBoundingClientRect().width <= innerWidth+1"), 'Preferences fit viewport');

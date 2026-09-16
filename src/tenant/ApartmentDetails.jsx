@@ -26,6 +26,7 @@ import { useTenantNotifications } from "@/tenant/useTenantNotifications";
 import { EvidenceUploader } from "@/components/EvidenceUploader";
 import { LandlordSidebar } from "@/landlord/LandlordSidebar";
 import { RoomImageGallery } from "@/components/RoomImageGallery";
+import { RoomDetails } from "./RoomDetails";
 import { uploadReportEvidence } from "@/services/reportEvidenceService";
 const STATUS_LABEL = { available: "Available", occupied: "Occupied", maintenance: "Under Maintenance" };
 const STATUS_STYLE = { available: "apartment-detail-badge-2", occupied: "apartment-detail-badge-3", maintenance: "apartment-detail-badge-4" };
@@ -383,7 +384,8 @@ export function ApartmentDetails() {
       </div>
       </div>
 
-      {selectedRoom && <div className="apartment-detail-overlay-2" onClick={() => setSelectedRoom(null)}>
+      {selectedRoom && tenantAccount && <RoomDetails room={selectedRoom} apartment={apartment} onClose={() => setSelectedRoom(null)} />}
+      {selectedRoom && !tenantAccount && <div className="apartment-detail-overlay-2" onClick={() => setSelectedRoom(null)}>
         <div className="apartment-detail-panel-24" onClick={(event) => event.stopPropagation()}>
           <div className="apartment-detail-row-12"><div><h2 className="apartment-detail-heading-2">{selectedRoom.name || "Room details"}</h2><p className="apartment-detail-text-14">{selectedRoom.type || "Room type not provided"}</p></div><button onClick={() => setSelectedRoom(null)} className="apartment-detail-button-12"><X className="apartment-detail-x-icon"/></button></div>
           <div className="apartment-detail-grid-10">
