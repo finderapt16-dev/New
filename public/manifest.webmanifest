@@ -1,0 +1,23 @@
+{
+  "id": "/",
+  "name": "AptFindr — Apartment Finder",
+  "short_name": "AptFindr",
+  "description": "Find and manage verified apartment rentals in La Paz, Iloilo City.",
+  "lang": "en-PH",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "background_color": "#faf8f5",
+  "theme_color": "#8b735b",
+  "orientation": "any",
+  "categories": ["lifestyle", "productivity"],
+  "icons": [
+    {
+      "src": "/aptfindr-logo-exact.svg?v=6",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

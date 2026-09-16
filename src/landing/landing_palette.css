@@ -1,0 +1,133 @@
+/* Landing page palette: white, light blue-gray, and AptFindr blue accent. */
+
+.landing-palette {
+  --landing-primary: #ffffff;
+  --landing-secondary: #f2f6fa;
+  --landing-border: #d9d9d9;
+
+  --landing-accent: #16a5e1;
+  --landing-accent-hover: #0e93ca;
+
+  --landing-text: #111111;
+  --landing-subtext: #666666;
+  --landing-muted: #8a8a8a;
+
+  --landing-success-bg: #bdf4cf;
+  --landing-success-text: #26834a;
+
+  color: var(--landing-text);
+  background: var(--landing-primary);
+}
+
+.landing-palette .text-slate-950,
+.landing-palette .text-slate-900,
+.landing-palette .text-slate-800 {
+  color: var(--landing-text) !important;
+}
+
+.landing-palette .text-slate-700,
+.landing-palette .text-slate-600,
+.landing-palette .text-slate-500 {
+  color: var(--landing-subtext) !important;
+}
+
+.landing-palette .text-slate-400 {
+  color: var(--landing-muted) !important;
+}
+
+.landing-palette .border-slate-100 {
+  border-color: #eeeeee !important;
+}
+
+.landing-palette .border-slate-200,
+.landing-palette .border-slate-300,
+.landing-palette .border-slate-400,
+.landing-palette .border-amber-100,
+.landing-palette .border-amber-200,
+.landing-palette .border-orange-100,
+.landing-palette .border-orange-200,
+.landing-palette .border-rose-100,
+.landing-palette .border-rose-200,
+.landing-palette .border-pink-200 {
+  border-color: var(--landing-border) !important;
+}
+
+.landing-palette .border-slate-900 {
+  border-color: var(--landing-accent) !important;
+}
+
+.landing-palette .bg-slate-50,
+.landing-palette .bg-slate-50\/60,
+.landing-palette .bg-amber-50,
+.landing-palette .bg-orange-50,
+.landing-palette .bg-rose-50,
+.landing-palette .bg-pink-50 {
+  background-color: var(--landing-secondary) !important;
+}
+
+.landing-palette .bg-slate-100,
+.landing-palette .bg-amber-100,
+.landing-palette .bg-orange-100,
+.landing-palette .bg-rose-100 {
+  background-color: #e8eef3 !important;
+}
+
+.landing-palette .text-amber-400,
+.landing-palette .text-amber-500,
+.landing-palette .text-amber-600,
+.landing-palette .text-amber-700,
+.landing-palette .text-orange-600,
+.landing-palette .text-orange-700,
+.landing-palette .text-rose-600,
+.landing-palette .text-rose-700 {
+  color: var(--landing-accent) !important;
+}
+
+.landing-palette .fill-amber-400 {
+  fill: var(--landing-accent) !important;
+}
+
+.landing-palette .bg-amber-500,
+.landing-palette .bg-slate-950 {
+  background-color: var(--landing-accent) !important;
+}
+
+.landing-palette .bg-slate-800 {
+  background-color: var(--landing-accent) !important;
+}
+
+.landing-palette .hover\:bg-slate-100:hover,
+.landing-palette .hover\:bg-slate-50:hover {
+  background-color: var(--landing-secondary) !important;
+}
+
+.landing-palette .hover\:bg-slate-800:hover {
+  background-color: var(--landing-accent-hover) !important;
+}
+
+.landing-palette .hover\:text-slate-950:hover,
+.landing-palette .hover\:text-amber-400:hover {
+  color: var(--landing-accent) !important;
+}
+
+.landing-palette .hover\:border-slate-400:hover {
+  border-color: var(--landing-accent) !important;
+}
+
+.landing-palette .focus\:border-slate-300:focus {
+  border-color: var(--landing-accent) !important;
+}
+
+.landing-palette .focus\:ring-slate-200:focus,
+.landing-palette .focus\:ring-amber-400:focus {
+  --tw-ring-color: rgba(22, 165, 225, 0.22) !important;
+}
+
+.landing-palette .landing-final-cta {
+  background-color: var(--landing-secondary) !important;
+}
+
+.landing-palette .landing-feature-row svg,
+.landing-palette .landing-category-section svg {
+  color: var(--landing-accent) !important;
+}

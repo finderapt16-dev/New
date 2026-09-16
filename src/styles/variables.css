@@ -1,0 +1,76 @@
+
+
+:root {
+  --font-size: 16px;
+
+  --background: #ffffff;
+  --foreground: #111111;
+
+  --card: #ffffff;
+  --card-foreground: #111111;
+
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+
+  /* AptFindr primary */
+  --primary: #16a5e1;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f2f6fa;
+  --secondary-foreground: #111111;
+
+  --muted: #f2f6fa;
+  --muted-foreground: #666666;
+
+  --accent: #0ea5e9;
+  --accent-foreground: #ffffff;
+
+  /* Semantic destructive state */
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  --border: #d9d9d9;
+
+  --input: transparent;
+  --input-background: #f2f6fa;
+  --switch-background: #d9d9d9;
+
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+
+  --ring: #16a5e1;
+
+  /* Charts */
+  --chart-1: #16a5e1;
+  --chart-2: #0ea5e9;
+  --chart-3: #8a8a8a;
+  --chart-4: #f59e0b;
+  --chart-5: #10b981;
+
+  --radius: 0.75rem;
+
+  /* Sidebar */
+  --sidebar: #ffffff;
+  --sidebar-foreground: #111111;
+  --sidebar-primary: #16a5e1;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f2f6fa;
+  --sidebar-accent-foreground: #111111;
+  --sidebar-border: #d9d9d9;
+  --sidebar-ring: #16a5e1;
+
+  /* AptFindr gradient */
+  --gradient-from: #16a5e1;
+  --gradient-via: #0ea5e9;
+  --gradient-to: #0e93ca;
+
+  /* Semantic states */
+  --success: #10b981;
+  --success-foreground: #ffffff;
+
+  --warning: #f59e0b;
+  --warning-foreground: #ffffff;
+
+  --info: #0ea5e9;
+  --info-foreground: #ffffff;
+}

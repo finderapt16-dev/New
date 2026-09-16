@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+build
+.next
+out
+build_output.txt
+*.out.log
+*.err.log
+
+# Development
+.vscode
+.env
+.env.local
+.env.*.local
+
+# IDE
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+
+# Cache
+.cache
+.eslintcache
+.parcel-cache
+
+# Local Supabase migration export
+supabase-master-migration.sql

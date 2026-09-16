@@ -1,0 +1,185 @@
+/* Styles for LandlordSettings */
+.settings-section-card {
+  border-radius: var(--radius-lg, .5rem);
+  background-color: var(--color-white, #fff);
+  padding-inline: calc(var(--spacing, .25rem) * 5);
+  padding-block: calc(var(--spacing, .25rem) * 6);
+  border: 1px solid #d9d9d9;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+@media (min-width: 40rem) {
+  .settings-section-card {
+    padding-inline: calc(var(--spacing, .25rem) * 7);
+  }
+}
+
+.settings-section-row {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 4);
+  display: flex;
+}
+
+.settings-section-grid {
+  height: calc(var(--spacing, .25rem) * 12);
+  width: calc(var(--spacing, .25rem) * 12);
+  border-radius: var(--radius-lg, .5rem);
+  color: #16a5e1;
+  background-color: #f2f6fa;
+  border: 1px solid #d9d9d9;
+  place-items: center;
+  display: grid;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+.settings-section-settings-icon {
+  height: calc(var(--spacing, .25rem) * 6);
+  width: calc(var(--spacing, .25rem) * 6);
+}
+
+.settings-section-settings {
+  font-size: var(--text-2xl, 1.5rem);
+  line-height: var(--text-2xl--line-height, calc(2 / 1.5));
+  font-weight: var(--font-weight-black, 900);
+  color: var(--color-slate-950, #020618);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .settings-section-settings {
+    color: var(--color-slate-950, lab(1.76974% 1.32743 -9.28855));
+  }
+}
+
+@media (min-width: 40rem) {
+  .settings-section-settings {
+    font-size: var(--text-3xl, 1.875rem);
+    line-height: var(--tw-leading, var(--text-3xl--line-height, calc(2.25 / 1.875)));
+  }
+}
+
+.settings-section-text {
+  margin-top: var(--spacing, .25rem);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-slate-500, #62748e);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .settings-section-text {
+    color: var(--color-slate-500, lab(48.0876% -2.03595 -16.5814));
+  }
+}
+
+:where(.settings-section-tabs > :not(:last-child)) {
+  margin-block-start: calc(calc(var(--spacing, .25rem) * 5) * 0);
+  margin-block-end: calc(calc(var(--spacing, .25rem) * 5) * calc(1 - 0));
+}
+
+.settings-section-grid-2 {
+  gap: var(--spacing, .25rem);
+  border-radius: var(--radius-lg, .5rem);
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--color-slate-200, #e2e8f0);
+  background-color: var(--color-white, #fff);
+  width: 100%;
+  height: auto;
+  padding: calc(var(--spacing, .25rem) * 1.5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: grid;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .settings-section-grid-2 {
+    border-color: var(--color-slate-200, lab(91.7353% -.998765 -4.76968));
+  }
+}
+
+@media (min-width: 40rem) {
+  .settings-section-grid-2 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.settings-section-profile {
+  min-height: calc(var(--spacing, .25rem) * 11);
+  border-radius: var(--radius-md, .375rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.settings-section-profile[data-state="active"] {
+  color: #16a5e1;
+  background-color: #f2f6fa;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+.settings-section-user-icon {
+  margin-right: calc(var(--spacing, .25rem) * 1.5);
+  height: calc(var(--spacing, .25rem) * 3.5);
+  width: calc(var(--spacing, .25rem) * 3.5);
+}
+
+.settings-section-alerts {
+  min-height: calc(var(--spacing, .25rem) * 11);
+  border-radius: var(--radius-md, .375rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.settings-section-alerts[data-state="active"] {
+  color: #16a5e1;
+  background-color: #f2f6fa;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+.settings-section-bell-icon {
+  margin-right: calc(var(--spacing, .25rem) * 1.5);
+  height: calc(var(--spacing, .25rem) * 3.5);
+  width: calc(var(--spacing, .25rem) * 3.5);
+}
+
+.settings-section-business {
+  min-height: calc(var(--spacing, .25rem) * 11);
+  border-radius: var(--radius-md, .375rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.settings-section-business[data-state="active"] {
+  color: #16a5e1;
+  background-color: #f2f6fa;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+.settings-section-building2-icon {
+  margin-right: calc(var(--spacing, .25rem) * 1.5);
+  height: calc(var(--spacing, .25rem) * 3.5);
+  width: calc(var(--spacing, .25rem) * 3.5);
+}
+
+.settings-section-security {
+  min-height: calc(var(--spacing, .25rem) * 11);
+  border-radius: var(--radius-md, .375rem);
+  font-weight: var(--font-weight-bold, 700);
+}
+
+.settings-section-security[data-state="active"] {
+  color: #16a5e1;
+  background-color: #f2f6fa;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+.settings-section-shield-icon {
+  margin-right: calc(var(--spacing, .25rem) * 1.5);
+  height: calc(var(--spacing, .25rem) * 3.5);
+  width: calc(var(--spacing, .25rem) * 3.5);
+}
+
+.settings-section-tabs-content {
+  margin-top: 0;
+}@media (max-width: 767px) {
+  .landlord-settings [role="tabpanel"] .grid-cols-2,
+  .landlord-settings [role="tabpanel"] .grid-cols-3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

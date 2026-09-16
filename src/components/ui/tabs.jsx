@@ -1,0 +1,13 @@
+"use client";
+import * as TabsPrimitive from "@radix-ui/react-tabs";
+import * as React from "react";
+import { cn } from "./utils";
+const Tabs = React.forwardRef(({ className, ...props }, ref) => (<TabsPrimitive.Root ref={ref} data-slot="tabs" className={cn("ui-tabs", className)} {...props}/>));
+Tabs.displayName = "Tabs";
+const TabsList = React.forwardRef(({ className, ...props }, ref) => (<TabsPrimitive.List ref={ref} data-slot="tabs-list" className={cn("ui-tabs-list", className)} {...props}/>));
+TabsList.displayName = "TabsList";
+const TabsTrigger = React.forwardRef(({ className, ...props }, ref) => (<TabsPrimitive.Trigger ref={ref} data-slot="tabs-trigger" className={cn("ui-tabs-trigger", className)} {...props}/>));
+TabsTrigger.displayName = "TabsTrigger";
+const TabsContent = React.forwardRef(({ className, ...props }, ref) => (<TabsPrimitive.Content ref={ref} data-slot="tabs-content" className={cn("ui-tabs-content", className)} {...props}/>));
+TabsContent.displayName = "TabsContent";
+export { Tabs, TabsContent, TabsList, TabsTrigger };

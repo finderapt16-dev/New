@@ -1,0 +1,217 @@
+/* Styles for SettingsFormFields */
+:where(.settings-fields-panel > :not(:last-child)) {
+  margin-block-start: calc(calc(var(--spacing, .25rem) * 1.5) * 0);
+  margin-block-end: calc(calc(var(--spacing, .25rem) * 1.5) * calc(1 - 0));
+}
+
+.settings-fields-label {
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-black, 900);
+  letter-spacing: var(--tracking-widest, .1em);
+  color: var(--color-slate-500, #62748e);
+  text-transform: uppercase;
+  display: block;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .settings-fields-label {
+    color: var(--color-slate-500, lab(48.0876% -2.03595 -16.5814));
+  }
+}
+
+.settings-fields-text {
+  font-size: 11px;
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-slate-400, #90a1b9);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .settings-fields-text {
+    color: var(--color-slate-400, lab(65.5349% -2.25151 -14.5072));
+  }
+}
+
+.settings-fields-input {
+  border-radius: var(--radius-xl, .75rem);
+  background-color: var(--color-white, #fff);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 4);
+  padding-block: calc(var(--spacing, .25rem) * 2.5);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+  border: 2px solid #d9d9d9;
+}
+
+.settings-fields-input::placeholder {
+  color: #8a8a8a;
+}
+
+.settings-fields-input {
+  transition-property: all;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+}
+
+.settings-fields-input:focus {
+  box-shadow: initial 0 0 0 calc(2px + 0px) currentcolor;
+  border-color: #16a5e1;
+  outline-style: none;
+}
+
+.settings-fields-select {
+  border-radius: var(--radius-xl, .75rem);
+  background-color: var(--color-white, #fff);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 4);
+  padding-block: calc(var(--spacing, .25rem) * 2.5);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+  transition-property: all;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  border: 2px solid #d9d9d9;
+}
+
+.settings-fields-select:focus {
+  box-shadow: initial 0 0 0 calc(2px + 0px) currentcolor;
+  border-color: #16a5e1;
+  outline-style: none;
+}
+
+.settings-fields-textarea {
+  resize: none;
+  border-radius: var(--radius-xl, .75rem);
+  background-color: var(--color-white, #fff);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 4);
+  padding-block: calc(var(--spacing, .25rem) * 2.5);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+  border: 2px solid #d9d9d9;
+}
+
+.settings-fields-textarea::placeholder {
+  color: #8a8a8a;
+}
+
+.settings-fields-textarea {
+  transition-property: all;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+}
+
+.settings-fields-textarea:focus {
+  box-shadow: initial 0 0 0 calc(2px + 0px) currentcolor;
+  border-color: #16a5e1;
+  outline-style: none;
+}
+
+.settings-fields-button {
+  height: calc(var(--spacing, .25rem) * 6);
+  width: calc(var(--spacing, .25rem) * 11);
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  border-radius: 3.40282e38px;
+  align-items: center;
+  display: inline-flex;
+  position: relative;
+}
+
+.settings-fields-button:focus {
+  outline-style: none;
+}
+
+.settings-fields-button-2 {
+  background-color: #16a5e1;
+}
+
+.settings-fields-button-3 {
+  background-color: #d9d9d9;
+}
+
+.settings-fields-button-4 {
+  cursor: not-allowed;
+  opacity: .4;
+}
+
+.settings-fields-button-5 {
+  cursor: pointer;
+}
+
+.settings-fields-span {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+  transform: initial initial initial initial initial;
+  background-color: var(--color-white, #fff);
+  transition-property: transform, translate, scale, rotate;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  border-radius: 3.40282e38px;
+  display: inline-block;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+.settings-fields-span-2 {
+  translate: calc(var(--spacing, .25rem) * 6) 0;
+}
+
+.settings-fields-span-3 {
+  translate: var(--spacing, .25rem) 0;
+}
+
+.settings-fields-row {
+  margin-bottom: calc(var(--spacing, .25rem) * 4);
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  display: flex;
+}
+
+.settings-fields-card {
+  height: calc(var(--spacing, .25rem) * 9);
+  width: calc(var(--spacing, .25rem) * 9);
+  border-radius: var(--radius-xl, .75rem);
+  font-size: var(--text-base, 1rem);
+  line-height: var(--text-base--line-height, calc(1.5 / 1));
+  color: #16a5e1;
+  background-color: #f2f6fa;
+  border: 1px solid #d9d9d9;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+.settings-fields-heading {
+  font-size: var(--text-base, 1rem);
+  line-height: var(--text-base--line-height, calc(1.5 / 1));
+  font-weight: var(--font-weight-black, 900);
+  color: var(--color-slate-900, #0f172b);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .settings-fields-heading {
+    color: var(--color-slate-900, lab(7.78673% 1.82346 -15.0537));
+  }
+}
+
+.settings-fields-text-2 {
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-slate-500, #62748e);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .settings-fields-text-2 {
+    color: var(--color-slate-500, lab(48.0876% -2.03595 -16.5814));
+  }
+}

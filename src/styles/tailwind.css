@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@import "tw-animate-css";
+
+/* Monetary fields are typed directly; browser steppers add clutter and invite accidental changes. */
+.hide-number-spinners {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.hide-number-spinners::-webkit-inner-spin-button,
+.hide-number-spinners::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+

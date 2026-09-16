@@ -1,0 +1,357 @@
+/* HelpSupport page styles. Loaded once by src/styles/index.css to keep navigation order stable. */
+.tenant-help-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.tenant-help-header {
+  margin-bottom: 24px;
+}
+
+.tenant-help-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: #111111;
+}
+
+.tenant-help-subtitle {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #666666;
+}
+
+.tenant-help-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.tenant-help-shortcut {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+
+  width: 100%;
+  min-width: 0;
+  padding: 18px;
+
+  border: 1px solid #e8eef3;
+  border-radius: 12px;
+  background: #ffffff;
+
+  text-align: left;
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.tenant-help-shortcut:hover {
+  border-color: #16a5e1;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.tenant-help-shortcut-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+
+  border-radius: 10px;
+  background: #f2f6fa;
+  color: #16a5e1;
+}
+
+.tenant-help-shortcut-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.tenant-help-shortcut-title {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111111;
+}
+
+.tenant-help-shortcut-description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #666666;
+}
+
+.tenant-help-faq-card {
+  margin-bottom: 24px;
+  border: 1px solid #e8eef3;
+  box-shadow: none;
+}
+
+.tenant-help-card-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #111111;
+}
+
+.tenant-help-card-title svg {
+  width: 20px;
+  height: 20px;
+  color: #16a5e1;
+}
+
+.tenant-help-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tenant-help-faq-item {
+  overflow: hidden;
+  border: 1px solid #e8eef3;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.tenant-help-faq-item-open {
+  border-color: #d9eaf2;
+}
+
+.tenant-help-faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  width: 100%;
+  padding: 16px;
+
+  border: 0;
+  background: transparent;
+
+  color: #111111;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.tenant-help-faq-chevron {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+
+  color: #666666;
+  transition: transform 0.2s ease;
+}
+
+.tenant-help-faq-chevron-open {
+  transform: rotate(180deg);
+}
+
+.tenant-help-faq-answer {
+  padding: 0 16px 16px;
+}
+
+.tenant-help-faq-answer p {
+  margin: 0;
+  color: #666666;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.tenant-help-support-card {
+  margin-bottom: 24px;
+  border: 1px solid #e8eef3;
+  box-shadow: none;
+}
+
+.tenant-help-support-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.tenant-help-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.tenant-help-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.tenant-help-select {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #111111;
+  font: inherit;
+
+  outline: none;
+}
+
+.tenant-help-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #111111;
+  font: inherit;
+
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.tenant-help-select:focus,
+.tenant-help-textarea:focus {
+  border-color: #16a5e1;
+  box-shadow: 0 0 0 3px rgba(22, 165, 225, 0.1);
+}
+
+.tenant-help-message-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tenant-help-message-header span {
+  font-size: 12px;
+  color: #8a8a8a;
+}
+
+.tenant-help-submit {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  min-height: 40px;
+
+  background: #16a5e1;
+  color: #ffffff;
+}
+
+.tenant-help-submit:hover {
+  background: #0e93ca;
+}
+
+.tenant-help-submit svg {
+  width: 16px;
+  height: 16px;
+}
+
+.tenant-help-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 30px 20px;
+  text-align: center;
+}
+
+.tenant-help-success-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 12px;
+  color: #16a5e1;
+}
+
+.tenant-help-success-title {
+  margin: 0 0 6px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #111111;
+}
+
+.tenant-help-success-text {
+  max-width: 520px;
+  margin: 0 0 18px;
+
+  color: #666666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 800px) {
+  .tenant-help-page {
+    padding: 16px;
+  }
+
+  .tenant-help-shortcuts {
+    grid-template-columns: 1fr;
+  }
+
+  .tenant-help-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tenant-help-submit {
+    width: 100%;
+    justify-content: center;
+  }
+}
+.tenant-browse main .help-page .help-hero {
+  min-height: 170px;
+  margin-top: 0 !important;
+  border-color: #d9d9d9 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 18px rgba(17,17,17,.05) !important;
+}
+.help-page .help-shortcut,
+.help-page .help-guide-card,
+.help-page .help-support-card {
+  border-color: #d9d9d9 !important;
+}
+.help-page [data-slot="card-description"] {
+  color: #666666 !important;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.help-page input,
+.help-page textarea,
+.help-page select {
+  border-color: #d9d9d9 !important;
+  color: #111111 !important;
+}
+.help-page input:focus,
+.help-page textarea:focus,
+.help-page select:focus {
+  border-color: #16a5e1 !important;
+  box-shadow: 0 0 0 3px rgba(22,165,225,.10) !important;
+}
+
+.help-page .help-shortcut {
+  width: 100%;
+  min-width: 0;
+}
+
+.help-page .help-guide-card {
+  min-width: 0;
+}

@@ -1,0 +1,55 @@
+/* EmptyState page styles. Loaded once by src/styles/index.css to keep navigation order stable. */
+.empty-state-card {
+  min-height: calc(var(--spacing, .25rem) * 72);
+  border-radius: var(--radius-lg, .5rem);
+  border-style: dashed;
+  border-width: 1px;
+  border-color: var(--color-slate-200, #d9d9d9);
+  background-color: var(--color-white, #fff);
+  padding: calc(var(--spacing, .25rem) * 8);
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+.empty-state-row {
+  margin-bottom: calc(var(--spacing, .25rem) * 4);
+  height: calc(var(--spacing, .25rem) * 14);
+  width: calc(var(--spacing, .25rem) * 14);
+  border-radius: var(--radius-lg, .5rem);
+  color: #16a5e1;
+  background-color: #f2f6fa;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.empty-state-icon-icon {
+  height: calc(var(--spacing, .25rem) * 7);
+  width: calc(var(--spacing, .25rem) * 7);
+}
+
+.empty-state-text {
+  max-width: var(--container-md, 28rem);
+  font-size: var(--text-base, 1rem);
+  line-height: var(--text-base--line-height, calc(1.5 / 1));
+  font-weight: var(--font-weight-bold, 700);
+  color: #111111;
+}
+
+.empty-state-button {
+  margin-top: calc(var(--spacing, .25rem) * 5);
+  border-radius: var(--radius-lg, .5rem);
+  font-weight: var(--font-weight-black, 900);
+  color: var(--color-white, #fff);
+  background-color: #16a5e1;
+}
+
+@media (hover: hover) {
+  .empty-state-button:hover {
+    background-color: #0e93ca;
+  }
+}

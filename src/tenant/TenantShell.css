@@ -1,0 +1,278 @@
+/* Tenant shell and navigation overrides. Page styles live in their matching stylesheet. */
+.tenant-browse {
+  z-index: 50;
+  background-color: var(--color-white, #fff);
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+.tenant-browse {
+  --tenant-ink: #111111;
+  --tenant-muted: #666666;
+  --tenant-accent: #16a5e1;
+  --tenant-surface: #f2f6fa;
+  --tenant-surface-strong: #f2f6fa;
+  --tenant-border: #d9d9d9;
+  color: var(--tenant-ink);
+}
+
+.tenant-browse .app-sidebar {
+  background: #fff !important;
+  border: 0 !important;
+  border-left: 0 !important;
+  border-right: 1px solid var(--tenant-border) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  scrollbar-color: rgba(139,115,91,.28) transparent;
+}
+.tenant-browse .app-sidebar::before { display: none; }
+.tenant-browse .app-sidebar::-webkit-scrollbar-thumb { background: rgba(139,115,91,.24); }
+.tenant-browse .app-sidebar-brand svg { color: var(--tenant-accent) !important; }
+.tenant-browse .app-sidebar-brand span { color: var(--tenant-ink) !important; }
+.tenant-browse .app-sidebar-brand p { color: var(--tenant-muted) !important; }
+.tenant-browse .app-sidebar-profile {
+  border-color: var(--tenant-border) !important;
+  background: var(--tenant-surface) !important;
+  box-shadow: none !important;
+}
+.tenant-browse .app-sidebar-profile:hover {
+  border-color: var(--tenant-border) !important;
+  box-shadow: none !important;
+}
+.tenant-browse .app-sidebar-profile p:first-of-type { color: var(--tenant-ink) !important; }
+.tenant-browse .app-sidebar-profile p:last-of-type,
+.tenant-browse .app-sidebar-profile > svg { color: var(--tenant-muted) !important; }
+.tenant-browse .app-sidebar nav { border-color: var(--tenant-border) !important; }
+.tenant-browse .app-sidebar nav > p { color: var(--tenant-muted) !important; font-size: 12px !important; }
+.tenant-browse .app-sidebar nav > p::after { background: var(--tenant-accent) !important; opacity: .45; }
+.tenant-browse .app-sidebar nav a {
+  color: var(--tenant-ink) !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.tenant-browse .app-sidebar nav button {
+  color: var(--tenant-ink) !important;
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.tenant-browse .app-sidebar nav a:hover {
+  color: var(--tenant-accent) !important;
+  border-color: transparent !important;
+  background: var(--tenant-surface) !important;
+  box-shadow: none !important;
+}
+.tenant-browse .app-sidebar nav button:hover {
+  color: var(--tenant-accent) !important;
+  border-color: transparent !important;
+  background: var(--tenant-surface) !important;
+  box-shadow: none !important;
+}
+.tenant-browse .app-sidebar nav a[aria-current="page"] {
+  color: var(--tenant-accent) !important;
+  background: var(--tenant-surface-strong) !important;
+}
+.tenant-browse .app-sidebar nav button[aria-current="page"] {
+  color: var(--tenant-accent) !important;
+  background: var(--tenant-surface-strong) !important;
+}
+.tenant-browse .app-sidebar nav a[aria-current="page"]::before,
+.tenant-browse .app-sidebar nav button[aria-current="page"]::before { background: var(--tenant-accent) !important; box-shadow: none !important; }
+.tenant-browse .app-sidebar nav a > svg:first-child {
+  color: var(--tenant-muted) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.tenant-browse .app-sidebar nav button > svg:first-child {
+  color: var(--tenant-muted) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.tenant-browse .app-sidebar nav a:hover > svg:first-child { color: var(--tenant-accent) !important; background: transparent !important; }
+.tenant-browse .app-sidebar nav button:hover > svg:first-child,
+.tenant-browse .app-sidebar nav button[aria-current="page"] > svg:first-child { color: var(--tenant-accent) !important; background: transparent !important; }
+.tenant-browse .app-sidebar nav a[aria-current="page"] > svg:first-child { color: var(--tenant-accent) !important; }
+.tenant-browse .app-sidebar-badge { background: var(--tenant-accent) !important; box-shadow: none !important; animation: none !important; }
+.tenant-browse .app-sidebar-logout {
+  color: var(--tenant-muted) !important;
+  border: 1px solid var(--tenant-border) !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+.tenant-browse .app-sidebar-logout svg { color: var(--tenant-muted) !important; }
+.tenant-browse .app-sidebar-logout:hover {
+  color: #9f3f46 !important;
+  border-color: #f2d7d9 !important;
+  background: #fff7f7 !important;
+  box-shadow: none !important;
+}
+.tenant-browse .app-sidebar-logout:hover svg { color: #9f3f46 !important; }
+.tenant-browse .app-sidebar nav a:focus-visible,
+.tenant-browse .app-sidebar-nav-item:focus-visible,
+.tenant-browse .app-sidebar-logout:focus-visible,
+.tenant-browse .app-sidebar-close:focus-visible,
+.tenant-browse .app-sidebar-trigger:focus-visible {
+  outline-color: var(--tenant-accent) !important;
+}
+.tenant-browse .app-sidebar-trigger {
+  color: #fff !important;
+  border-color: var(--tenant-accent) !important;
+  background: var(--tenant-accent) !important;
+  box-shadow: 0 8px 20px rgba(48,40,32,.16) !important;
+}
+.tenant-browse .app-sidebar-trigger:hover { background: #0e93ca !important; box-shadow: 0 10px 22px rgba(48,40,32,.2) !important; }
+.tenant-browse .app-sidebar-close {
+  color: var(--tenant-muted) !important;
+  border-color: var(--tenant-border) !important;
+  background: #fff !important;
+}
+.tenant-browse .app-sidebar-close:hover { color: var(--tenant-accent) !important; background: var(--tenant-surface) !important; }
+
+.tenant-browse .app-shell-main { background: #fff; }
+.tenant-browse form:first-of-type { box-shadow: none !important; }
+.tenant-browse form:first-of-type input { border-color: var(--tenant-border) !important; color: var(--tenant-ink) !important; font-size: 16px; }
+.tenant-browse form:first-of-type input:focus { border-color: var(--tenant-accent) !important; box-shadow: 0 0 0 3px rgba(139,115,91,.12) !important; }
+.tenant-browse form:first-of-type button { border-color: var(--tenant-border) !important; color: var(--tenant-ink) !important; background: #fff !important; box-shadow: none !important; }
+.tenant-browse form:first-of-type button svg { color: var(--tenant-accent); }
+
+.tenant-browse main section:nth-of-type(1) {
+  min-height: 220px;
+  margin-top: 24px !important;
+  border: 1px solid #f2f6fa;
+  border-radius: 12px !important;
+  background: linear-gradient(105deg, #f2f6fa, #ffffff) !important;
+}
+.tenant-browse main section:nth-of-type(1) > div:first-child { max-width: 58%; }
+.tenant-browse main section:nth-of-type(1) > div:first-child > div:first-child {
+  border-color: var(--tenant-border) !important;
+  border-radius: 999px !important;
+  color: var(--tenant-accent) !important;
+}
+.tenant-browse main section:nth-of-type(1) p { color: var(--tenant-muted) !important; font-size: 16px !important; }
+.tenant-browse main .tenant-favorites-hero { min-height: 160px; margin-top: 0 !important; }
+
+.tenant-browse {
+  z-index: 50;
+  background-color: var(--color-white, #fff);
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+.tenant-tone-brand { background:#f2f6fa; color:#16a5e1; }
+.tenant-tone-brand-muted { background:#f2f6fa; color:#666666; }
+.tenant-tone-rose { background:#fff1f2; color:#e11d48; }
+.tenant-tone-purple { background:#f2f6fa; color:#16a5e1; }
+.tenant-tone-sky { background:#f2f6fa; color:#16a5e1; }
+.tenant-summary-brand { background:#16a5e1; color:#fff; }
+.tenant-summary-available { background:#059669; color:#fff; }
+
+@media (max-width: 767px) {
+  .tenant-browse main section:nth-of-type(1) { min-height: 0; }
+  .tenant-browse main section:nth-of-type(1) > div:first-child { max-width: 100%; }
+}
+
+.tenant-sidebar-apt-findr,
+.tenant-mobile-navigation-apt-findr {
+  color: var(--apt-text) !important;
+}
+
+.tenant-sidebar-la-paz-iloilo-city,
+.tenant-mobile-navigation-la-paz-iloilo-city {
+  color: var(--apt-primary) !important;
+}
+
+.tenant-sidebar-row-2,
+.tenant-mobile-navigation-row-2 {
+  background-color: var(--apt-primary) !important;
+  color: #ffffff !important;
+}
+
+.tenant-sidebar-text,
+.tenant-mobile-navigation-text {
+  color: var(--apt-text) !important;
+}
+
+.tenant-sidebar-text-2,
+.tenant-mobile-navigation-text-2,
+.tenant-sidebar-chevron-right-icon,
+.tenant-mobile-navigation-chevron-right-icon {
+  color: var(--apt-muted) !important;
+}
+.tenant-sidebar-main,
+.tenant-sidebar-account,
+.tenant-mobile-navigation-main,
+.tenant-mobile-navigation-account {
+  color: var(--apt-primary) !important;
+}
+.tenant-sidebar-nav,
+.tenant-sidebar-nav-2,
+.tenant-mobile-navigation-nav,
+.tenant-mobile-navigation-nav-2 {
+  width: 100%;
+}
+
+.tenant-sidebar-nav .app-sidebar-nav-item,
+.tenant-sidebar-nav-2 .app-sidebar-nav-item,
+.tenant-mobile-navigation-nav .app-sidebar-nav-item,
+.tenant-mobile-navigation-nav-2 .app-sidebar-nav-item {
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  color: var(--apt-text) !important;
+  background: transparent;
+  box-sizing: border-box;
+}
+.tenant-sidebar-icon-icon,
+.tenant-mobile-navigation-icon-icon {
+  color: inherit !important;
+  stroke: currentColor !important;
+  fill: none;
+  flex: 0 0 auto;
+}
+.tenant-sidebar-link,
+.tenant-mobile-nav-active {
+  color: var(--apt-primary) !important;
+  background-color: var(--apt-surface) !important;
+}
+.tenant-sidebar-link-2,
+.tenant-mobile-nav-idle {
+  color: var(--apt-text) !important;
+  background-color: transparent !important;
+}
+
+@media (hover: hover) {
+  .tenant-sidebar-link-2:hover,
+  .tenant-mobile-nav-idle:hover,
+  .tenant-sidebar-nav button.app-sidebar-nav-item:hover,
+  .tenant-sidebar-nav-2 button.app-sidebar-nav-item:hover {
+    color: var(--apt-primary) !important;
+    background-color: var(--apt-surface) !important;
+  }
+}
+.tenant-sidebar-nav-2,
+.tenant-mobile-navigation-nav-2,
+.tenant-sidebar-panel-3,
+.tenant-mobile-navigation-panel-3 {
+  border-color: var(--apt-border) !important;
+}
+.tenant-sidebar-nav a,
+.tenant-sidebar-nav button,
+.tenant-sidebar-nav-2 a,
+.tenant-sidebar-nav-2 button,
+.tenant-mobile-navigation-nav a,
+.tenant-mobile-navigation-nav-2 a {
+  text-decoration: none;
+}
+
+.tenant-sidebar-nav a:visited,
+.tenant-sidebar-nav-2 a:visited,
+.tenant-mobile-navigation-nav a:visited,
+.tenant-mobile-navigation-nav-2 a:visited {
+  color: inherit !important;
+}

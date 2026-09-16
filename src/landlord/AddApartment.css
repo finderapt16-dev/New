@@ -1,0 +1,2329 @@
+/* Styles for AddApartment */
+.add-apartment-text {
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-red-600, #e40014);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-text {
+    color: var(--color-red-600, lab(48.4493% 77.4328 61.5452));
+  }
+}
+
+.app-shell {
+  z-index: 50;
+  background-color: #f2f6fa;
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+.app-shell-frame {
+  height: 100%;
+  display: flex;
+}
+
+.app-shell-sidebar {
+  height: 100%;
+  width: calc(var(--spacing, .25rem) * 60);
+  background-color: var(--color-white, #fff);
+  border-color: #d9d9d9;
+  border-right-style: solid;
+  border-right-width: 1px;
+  flex-direction: column;
+  flex-shrink: 0;
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .app-shell-sidebar {
+    display: flex;
+  }
+}
+
+.app-sidebar {
+  flex-direction: column;
+  height: 100%;
+  display: flex;
+  overflow-y: auto;
+}
+
+.app-sidebar-brand {
+  padding-inline: calc(var(--spacing, .25rem) * 5);
+  padding-top: calc(var(--spacing, .25rem) * 6);
+  padding-bottom: calc(var(--spacing, .25rem) * 5);
+}
+
+.add-apartment-row {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 2.5);
+  display: flex;
+}
+
+.add-apartment-card {
+  height: calc(var(--spacing, .25rem) * 11);
+  width: calc(var(--spacing, .25rem) * 11);
+  border-radius: var(--radius-xl, .75rem);
+  color: #16a5e1;
+  background-color: #f2f6fa;
+  border: 1px solid #d9d9d9;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.add-apartment-home-icon {
+  height: calc(var(--spacing, .25rem) * 6);
+  width: calc(var(--spacing, .25rem) * 6);
+}
+
+.add-apartment-apt-findr {
+  font-size: var(--text-xl, 1.25rem);
+  line-height: var(--text-xl--line-height, calc(1.75 / 1.25));
+  font-weight: var(--font-weight-bold, 700);
+  letter-spacing: var(--tracking-tight, -.025em);
+  color: #111111;
+  display: block;
+}
+
+.add-apartment-landlord-portal {
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-medium, 500);
+  color: #666666;
+}
+
+.add-apartment-panel {
+  padding-inline: calc(var(--spacing, .25rem) * 4);
+  padding-bottom: calc(var(--spacing, .25rem) * 5);
+}
+
+.app-sidebar-profile {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-radius: var(--radius-lg, .5rem);
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+  background-color: #f2f6fa;
+  border: 1px solid #d9d9d9;
+  display: flex;
+}
+
+.add-apartment-row-2 {
+  height: calc(var(--spacing, .25rem) * 11);
+  width: calc(var(--spacing, .25rem) * 11);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-white, #fff);
+  background-color: #16a5e1;
+  border-radius: 3.40282e38px;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  overflow: hidden;
+}
+
+.add-apartment-image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.add-apartment-panel-2 {
+  flex: 1;
+  min-width: 0;
+}
+
+.add-apartment-text-2 {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-bold, 700);
+  color: #111111;
+  overflow: hidden;
+}
+
+.add-apartment-text-3 {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  color: #666666;
+  overflow: hidden;
+}
+
+:where(.add-apartment-nav > :not(:last-child)) {
+  margin-block-start: calc(var(--spacing, .25rem) * 0);
+  margin-block-end: calc(var(--spacing, .25rem) * calc(1 - 0));
+}
+
+.add-apartment-nav {
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+}
+
+.add-apartment-main {
+  margin-bottom: calc(var(--spacing, .25rem) * 2);
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-semibold, 600);
+  letter-spacing: .14em;
+  color: #666666;
+  text-transform: uppercase;
+  display: flex;
+}
+
+.add-apartment-main-2 {
+  height: 1px;
+  width: calc(var(--spacing, .25rem) * 5);
+  background-color: #16a5e173;
+  background-color: rgba(22, 165, 225, .45);
+}
+
+.add-apartment-button {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-radius: var(--radius-lg, .5rem);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+  transition-property: all;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  display: flex;
+}
+
+@media (hover: hover) {
+  .add-apartment-button:hover {
+    background-color: #f2f6fa;
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-button:hover {
+    color: #16a5e1;
+  }
+}
+
+.add-apartment-icon-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+}
+
+:where(.add-apartment-nav-2 > :not(:last-child)) {
+  margin-block-start: calc(var(--spacing, .25rem) * 0);
+  margin-block-end: calc(var(--spacing, .25rem) * calc(1 - 0));
+}
+
+.add-apartment-nav-2 {
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 4);
+  border-color: #d9d9d9;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+.add-apartment-market {
+  margin-bottom: calc(var(--spacing, .25rem) * 2);
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-semibold, 600);
+  letter-spacing: .14em;
+  color: #666666;
+  text-transform: uppercase;
+  display: flex;
+}
+
+.add-apartment-market-2 {
+  height: 1px;
+  width: calc(var(--spacing, .25rem) * 5);
+  background-color: #16a5e173;
+  background-color: rgba(22, 165, 225, .45);
+}
+
+.add-apartment-market-overview {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-radius: var(--radius-lg, .5rem);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+  transition-property: all;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  display: flex;
+}
+
+@media (hover: hover) {
+  .add-apartment-market-overview:hover {
+    background-color: #f2f6fa;
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-market-overview:hover {
+    color: #16a5e1;
+  }
+}
+
+.add-apartment-trending-up-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+}
+
+.add-apartment-manage {
+  margin-bottom: calc(var(--spacing, .25rem) * 2);
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-semibold, 600);
+  letter-spacing: .14em;
+  color: #666666;
+  text-transform: uppercase;
+  display: flex;
+}
+
+.add-apartment-manage-2 {
+  height: 1px;
+  width: calc(var(--spacing, .25rem) * 5);
+  background-color: #16a5e173;
+  background-color: rgba(22, 165, 225, .45);
+}
+
+.app-sidebar-nav-item {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-radius: var(--radius-lg, .5rem);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #16a5e1;
+  transition-property: all;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  background-color: #f2f6fa;
+  display: flex;
+  position: relative;
+}
+
+.add-apartment-plus-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+}
+
+.add-apartment-account {
+  margin-bottom: calc(var(--spacing, .25rem) * 2);
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-semibold, 600);
+  letter-spacing: .14em;
+  color: #666666;
+  text-transform: uppercase;
+  display: flex;
+}
+
+.add-apartment-account-2 {
+  height: 1px;
+  width: calc(var(--spacing, .25rem) * 5);
+  background-color: #16a5e173;
+  background-color: rgba(22, 165, 225, .45);
+}
+
+.add-apartment-settings {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-radius: var(--radius-lg, .5rem);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+  transition-property: all;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  display: flex;
+}
+
+@media (hover: hover) {
+  .add-apartment-settings:hover {
+    background-color: #f2f6fa;
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-settings:hover {
+    color: #16a5e1;
+  }
+}
+
+.add-apartment-settings-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+}
+
+.add-apartment-help-amp-support {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-radius: var(--radius-lg, .5rem);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+  transition-property: all;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  display: flex;
+}
+
+@media (hover: hover) {
+  .add-apartment-help-amp-support:hover {
+    background-color: #f2f6fa;
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-help-amp-support:hover {
+    color: #16a5e1;
+  }
+}
+
+.add-apartment-help-circle-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+}
+
+.add-apartment-panel-3 {
+  padding-inline: calc(var(--spacing, .25rem) * 4);
+  padding-block: calc(var(--spacing, .25rem) * 4);
+  border-color: #d9d9d9;
+  border-top-style: solid;
+  border-top-width: 1px;
+  margin-top: auto;
+}
+
+.app-sidebar-logout {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-radius: var(--radius-lg, .5rem);
+  background-color: var(--color-white, #fff);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #666666;
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  border: 1px solid #d9d9d9;
+  display: flex;
+}
+
+@media (hover: hover) {
+  .app-sidebar-logout:hover {
+    border-color: var(--color-red-100, #ffe2e2);
+  }
+}
+
+@media (hover: hover) {
+  .app-sidebar-logout:hover {
+    background-color: var(--color-red-50, #fef2f2);
+  }
+}
+
+@media (hover: hover) {
+  .app-sidebar-logout:hover {
+    color: var(--color-red-700, #bf000f);
+  }
+}
+
+.add-apartment-log-out-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+}
+
+.app-sidebar-overlay {
+  z-index: 40;
+  background-color: #00000080;
+  position: fixed;
+  inset: 0;
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  .app-sidebar-overlay {
+    background-color: color-mix(in oklab, var(--color-black, #000) 50%, transparent);
+  }
+}
+
+.app-sidebar-overlay {
+  -webkit-backdrop-filter: blur(var(--blur-sm, 8px)) initial initial initial initial initial initial initial initial;
+  backdrop-filter: blur(var(--blur-sm, 8px)) initial initial initial initial initial initial initial initial;
+}
+
+@media (min-width: 64rem) {
+  .app-sidebar-overlay {
+    display: none;
+  }
+}
+
+.app-sidebar-drawer {
+  z-index: 50;
+  height: 100%;
+  width: calc(var(--spacing, .25rem) * 64);
+  background-color: var(--color-white, #fff);
+  transition-property: transform, translate, scale, rotate;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  border-color: #d9d9d9;
+  border-right-style: solid;
+  border-right-width: 1px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: 0 25px 50px -12px #00000040;
+}
+
+@media (min-width: 64rem) {
+  .app-sidebar-drawer {
+    display: none;
+  }
+}
+
+.add-apartment-aside {
+  translate: 0;
+}
+
+.add-apartment-aside-2 {
+  translate: -100%;
+}
+
+.app-sidebar-2 {
+  height: 100%;
+  padding: calc(var(--spacing, .25rem) * 3);
+  flex-direction: column;
+  display: flex;
+  overflow-y: auto;
+}
+
+.add-apartment-close-navigation {
+  height: calc(var(--spacing, .25rem) * 9);
+  width: calc(var(--spacing, .25rem) * 9);
+  border-radius: var(--radius-lg, .5rem);
+  color: #666666;
+  background-color: #f2f6fa;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  display: flex;
+}
+
+.add-apartment-x-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+}
+
+.app-sidebar-brand-2 {
+  padding-inline: calc(var(--spacing, .25rem) * 2);
+  padding-top: calc(var(--spacing, .25rem) * 2);
+  padding-bottom: calc(var(--spacing, .25rem) * 5);
+}
+
+.add-apartment-card-2 {
+  height: calc(var(--spacing, .25rem) * 11);
+  width: calc(var(--spacing, .25rem) * 11);
+  border-radius: var(--radius-xl, .75rem);
+  color: #16a5e1;
+  background-color: #f2f6fa;
+  border: 1px solid #d9d9d9;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.add-apartment-apt-findr-2 {
+  font-size: var(--text-xl, 1.25rem);
+  line-height: var(--text-xl--line-height, calc(1.75 / 1.25));
+  font-weight: var(--font-weight-bold, 700);
+  color: #111111;
+  display: block;
+}
+
+.add-apartment-landlord-portal-2 {
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  color: #666666;
+}
+
+:where(.add-apartment-nav-3 > :not(:last-child)) {
+  margin-block-start: calc(var(--spacing, .25rem) * 0);
+  margin-block-end: calc(var(--spacing, .25rem) * calc(1 - 0));
+}
+
+.add-apartment-button-2 {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-radius: var(--radius-lg, .5rem);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+  display: flex;
+}
+
+@media (hover: hover) {
+  .add-apartment-button-2:hover {
+    background-color: #f2f6fa;
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-button-2:hover {
+    color: #16a5e1;
+  }
+}
+
+.app-sidebar-nav-item-2 {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-radius: var(--radius-lg, .5rem);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #16a5e1;
+  background-color: #f2f6fa;
+  display: flex;
+  position: relative;
+}
+
+.add-apartment-settings-2 {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-radius: var(--radius-lg, .5rem);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+  display: flex;
+}
+
+@media (hover: hover) {
+  .add-apartment-settings-2:hover {
+    background-color: #f2f6fa;
+  }
+}
+
+.add-apartment-help-amp-support-2 {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-radius: var(--radius-lg, .5rem);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+  display: flex;
+}
+
+@media (hover: hover) {
+  .add-apartment-help-amp-support-2:hover {
+    background-color: #f2f6fa;
+  }
+}
+
+.app-sidebar-trigger {
+  top: calc(var(--spacing, .25rem) * 4);
+  left: calc(var(--spacing, .25rem) * 4);
+  z-index: 30;
+  height: calc(var(--spacing, .25rem) * 10);
+  width: calc(var(--spacing, .25rem) * 10);
+  border-radius: var(--radius-lg, .5rem);
+  color: var(--color-white, #fff);
+  background-color: #16a5e1;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  position: fixed;
+  box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+}
+
+@media (hover: hover) {
+  .app-sidebar-trigger:hover {
+    background-color: #0e93ca;
+  }
+}
+
+@media (min-width: 64rem) {
+  .app-sidebar-trigger {
+    display: none;
+  }
+}
+
+.add-apartment-menu-icon {
+  height: calc(var(--spacing, .25rem) * 5);
+  width: calc(var(--spacing, .25rem) * 5);
+}
+
+.app-shell-main {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+}
+
+.app-shell-content {
+  max-width: 1200px;
+  padding-inline: calc(var(--spacing, .25rem) * 4);
+  padding-block: calc(var(--spacing, .25rem) * 6);
+  padding-top: calc(var(--spacing, .25rem) * 16);
+  margin-inline: auto;
+}
+
+@media (min-width: 48rem) {
+  .app-shell-content {
+    padding-inline: calc(var(--spacing, .25rem) * 8);
+  }
+}
+
+@media (min-width: 64rem) {
+  .app-shell-content {
+    padding-top: calc(var(--spacing, .25rem) * 6);
+  }
+}
+
+.add-apartment-panel-4 {
+  margin-bottom: calc(var(--spacing, .25rem) * 8);
+}
+
+.add-apartment-add-property {
+  font-size: var(--text-3xl, 1.875rem);
+  line-height: var(--text-3xl--line-height, calc(2.25 / 1.875));
+  font-weight: var(--font-weight-black, 900);
+  color: #111111;
+}
+
+.add-apartment-text-4 {
+  margin-top: var(--spacing, .25rem);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-medium, 500);
+  color: #666666;
+}
+
+.add-apartment-step {
+  margin-top: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #16a5e1;
+}
+
+.add-apartment-row-3 {
+  margin-top: calc(var(--spacing, .25rem) * 3);
+  min-height: calc(var(--spacing, .25rem) * 8);
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 2);
+  flex-wrap: wrap;
+  display: flex;
+}
+
+.add-apartment-card-3 {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 1.5);
+  background-color: var(--color-white, #fff);
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: var(--spacing, .25rem);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-bold, 700);
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 3.40282e38px;
+  display: inline-flex;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+.add-apartment-span {
+  border-color: var(--color-red-200, #ffcaca);
+  color: var(--color-red-600, #e40014);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-span {
+    border-color: var(--color-red-200, lab(86.017% 19.8815 7.75869));
+    color: var(--color-red-600, lab(48.4493% 77.4328 61.5452));
+  }
+}
+
+.add-apartment-span-2 {
+  color: #666666;
+  border-color: #d9d9d9;
+}
+
+.add-apartment-cloud-icon {
+  height: calc(var(--spacing, .25rem) * 3.5);
+  width: calc(var(--spacing, .25rem) * 3.5);
+  animation: var(--animate-pulse, pulse 2s cubic-bezier(.4, 0, .6, 1) infinite);
+}
+
+.add-apartment-cloud-upload-icon {
+  height: calc(var(--spacing, .25rem) * 3.5);
+  width: calc(var(--spacing, .25rem) * 3.5);
+}
+
+.add-apartment-discard-draft {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 1.5);
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: var(--spacing, .25rem);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-500, #62748e);
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  border-radius: 3.40282e38px;
+  display: inline-flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-discard-draft {
+    color: var(--color-slate-500, lab(48.0876% -2.03595 -16.5814));
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-discard-draft:hover {
+    background-color: var(--color-white, #fff);
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-discard-draft:hover {
+    color: var(--color-red-600, #e40014);
+  }
+}
+
+.add-apartment-rotate-ccw-icon {
+  height: calc(var(--spacing, .25rem) * 3.5);
+  width: calc(var(--spacing, .25rem) * 3.5);
+}
+
+.add-apartment-card-4 {
+  margin-inline: auto;
+  margin-bottom: calc(var(--spacing, .25rem) * 8);
+  max-width: var(--container-4xl, 56rem);
+  border-radius: var(--radius-2xl, 1rem);
+  background-color: #fffc;
+  border-color: #d9d9d9;
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  .add-apartment-card-4 {
+    background-color: color-mix(in oklab, var(--color-white, #fff) 80%, transparent);
+  }
+}
+
+.add-apartment-alert-circle-icon {
+  height: calc(var(--spacing, .25rem) * 5);
+  width: calc(var(--spacing, .25rem) * 5);
+  color: #666666;
+}
+
+.add-apartment-verification-pending {
+  color: #111111;
+}
+
+.add-apartment-alert-description {
+  color: var(--color-slate-600, #45556c);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-alert-description {
+    color: var(--color-slate-600, lab(35.5623% -1.74978 -15.4316));
+  }
+}
+
+.add-apartment-container {
+  margin-inline: auto;
+  margin-bottom: calc(var(--spacing, .25rem) * 10);
+  max-width: var(--container-4xl, 56rem);
+}
+
+.add-apartment-row-4 {
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
+}
+
+.add-apartment-row-5 {
+  flex: 1;
+  align-items: center;
+  display: flex;
+}
+
+.add-apartment-button-3 {
+  height: calc(var(--spacing, .25rem) * 10);
+  width: calc(var(--spacing, .25rem) * 10);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-bold, 700);
+  transition-property: all;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  border-radius: 3.40282e38px;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+@media (hover: hover) {
+  .add-apartment-button-3:hover {
+    scale: var(--tw-scale-x) var(--tw-scale-y);
+  }
+}
+
+.add-apartment-button-3:focus-visible {
+  box-shadow: initial 0 0 0 calc(4px + 0px) currentcolor;
+  outline-style: none;
+}
+
+.add-apartment-button-3:disabled {
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+.add-apartment-button-4 {
+  background-image: #16a5e1;
+  color: var(--color-white, #fff);
+}
+
+.add-apartment-button-5 {
+  background-color: var(--color-slate-200, #e2e8f0);
+  color: var(--color-slate-600, #45556c);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-button-5 {
+    background-color: var(--color-slate-200, lab(91.7353% -.998765 -4.76968));
+    color: var(--color-slate-600, lab(35.5623% -1.74978 -15.4316));
+  }
+}
+
+.add-apartment-check-icon {
+  height: calc(var(--spacing, .25rem) * 5);
+  width: calc(var(--spacing, .25rem) * 5);
+}
+
+.add-apartment-panel-5 {
+  margin-inline: calc(var(--spacing, .25rem) * 2);
+  height: var(--spacing, .25rem);
+  transition-property: all;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  border-radius: 3.40282e38px;
+  flex: 1;
+}
+
+.add-apartment-panel-6 {
+  background-image: #16a5e1;
+}
+
+.add-apartment-panel-7 {
+  background-color: var(--color-slate-200, #e2e8f0);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-panel-7 {
+    background-color: var(--color-slate-200, lab(91.7353% -.998765 -4.76968));
+  }
+}
+
+.add-apartment-grid {
+  margin-top: calc(var(--spacing, .25rem) * 4);
+  gap: calc(var(--spacing, .25rem) * 2);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: grid;
+}
+
+@media (min-width: 40rem) {
+  .add-apartment-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.add-apartment-button-6 {
+  border-radius: var(--radius-md, .375rem);
+  padding-inline: var(--spacing, .25rem);
+  padding-block: var(--spacing, .25rem);
+  text-align: center;
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-bold, 700);
+  text-transform: uppercase;
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+}
+
+@media (hover: hover) {
+  .add-apartment-button-6:hover {
+    background-color: #ffffffb3;
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .add-apartment-button-6:hover {
+      background-color: color-mix(in oklab, var(--color-white, #fff) 70%, transparent);
+    }
+  }
+  }
+}
+
+.add-apartment-button-6:focus-visible {
+  box-shadow: initial 0 0 0 calc(2px + 0px) currentcolor;
+  outline-style: none;
+}
+
+.add-apartment-button-6:disabled {
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+.add-apartment-button-7 {
+  color: #666666;
+}
+
+.add-apartment-button-8 {
+  color: var(--color-slate-500, #62748e);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-button-8 {
+    color: var(--color-slate-500, lab(48.0876% -2.03595 -16.5814));
+  }
+}
+
+.add-apartment-button-9 {
+  color: var(--color-slate-400, #90a1b9);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-button-9 {
+    color: var(--color-slate-400, lab(65.5349% -2.25151 -14.5072));
+  }
+}
+
+.add-apartment-card-5 {
+  max-width: var(--container-4xl, 56rem);
+  border-radius: var(--radius-3xl, 1.5rem);
+  background-color: #ffffffe6;
+  border-color: #f2f6fa80;
+  border-color: rgba(242, 246, 250, .5);
+  margin-inline: auto;
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  .add-apartment-card-5 {
+    background-color: color-mix(in oklab, var(--color-white, #fff) 90%, transparent);
+  }
+}
+
+.add-apartment-card-5 {
+  box-shadow: 0 25px 50px -12px #00000040;
+}
+
+.add-apartment-card-header {
+  background-image: #f2f6fa;
+  padding-bottom: calc(var(--spacing, .25rem) * 6);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+}
+
+.add-apartment-card-title {
+  font-size: var(--text-2xl, 1.5rem);
+  line-height: var(--text-2xl--line-height, calc(2 / 1.5));
+}
+
+.add-apartment-card-content {
+  padding-top: calc(var(--spacing, .25rem) * 10);
+}
+
+:where(.add-apartment-form > :not(:last-child)) {
+  margin-block-start: calc(calc(var(--spacing, .25rem) * 8) * 0);
+  margin-block-end: calc(calc(var(--spacing, .25rem) * 8) * calc(1 - 0));
+}
+
+:where(.add-apartment-panel-8 > :not(:last-child)) {
+  margin-block-start: calc(calc(var(--spacing, .25rem) * 6) * 0);
+  margin-block-end: calc(calc(var(--spacing, .25rem) * 6) * calc(1 - 0));
+}
+
+.add-apartment-row-6 {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 2);
+  padding-bottom: calc(var(--spacing, .25rem) * 3);
+  border-color: #f2f6fa;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  display: flex;
+}
+
+.add-apartment-upload-icon {
+  height: calc(var(--spacing, .25rem) * 5);
+  width: calc(var(--spacing, .25rem) * 5);
+  color: #666666;
+}
+
+.add-apartment-property-photos {
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-bold, 700);
+  color: #666666;
+  text-transform: uppercase;
+}
+
+.add-apartment-text-5 {
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-slate-500, #62748e);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-text-5 {
+    color: var(--color-slate-500, lab(48.0876% -2.03595 -16.5814));
+  }
+}
+
+.add-apartment-card-6 {
+  border-radius: var(--radius-lg, .5rem);
+  background-color: #f2f6fa;
+  border-color: #d9d9d9;
+}
+
+.add-apartment-upload-icon-2 {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+  color: #666666;
+}
+
+.add-apartment-alert-description-2 {
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+}
+
+.add-apartment-building2-icon {
+  height: calc(var(--spacing, .25rem) * 5);
+  width: calc(var(--spacing, .25rem) * 5);
+  color: #666666;
+}
+
+.add-apartment-basic-information {
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-bold, 700);
+  color: #666666;
+  text-transform: uppercase;
+}
+
+:where(.add-apartment-panel-9 > :not(:last-child)) {
+  margin-block-start: calc(calc(var(--spacing, .25rem) * 3) * 0);
+  margin-block-end: calc(calc(var(--spacing, .25rem) * 3) * calc(1 - 0));
+}
+
+.add-apartment-property-name {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-property-name {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-grid-2 {
+  gap: calc(var(--spacing, .25rem) * 6);
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  display: grid;
+}
+
+.add-apartment-total-property-area-sq-ft {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-total-property-area-sq-ft {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-description {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-description {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-textarea {
+  resize: none;
+}
+
+.add-apartment-map-pin-icon {
+  height: calc(var(--spacing, .25rem) * 5);
+  width: calc(var(--spacing, .25rem) * 5);
+  color: #666666;
+}
+
+.add-apartment-location-details {
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-bold, 700);
+  color: #666666;
+  text-transform: uppercase;
+}
+
+.add-apartment-detailed-address-street-address {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-detailed-address-street-address {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-grid-3 {
+  gap: calc(var(--spacing, .25rem) * 4);
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  display: grid;
+}
+
+@media (min-width: 40rem) {
+  .add-apartment-grid-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .add-apartment-grid-3 {
+    gap: calc(var(--spacing, .25rem) * 6);
+  }
+}
+
+.add-apartment-district-area {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-district-area {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-input {
+  border-radius: var(--radius-xl, .75rem);
+  background-color: var(--color-slate-50, #f8fafc);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-input {
+    background-color: var(--color-slate-50, lab(98.1434% -.369549 -1.05968));
+  }
+}
+
+.add-apartment-city {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-city {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-zip-code {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-zip-code {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-map-location {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-map-location {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-text-6 {
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  color: var(--color-slate-500, #62748e);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-text-6 {
+    color: var(--color-slate-500, lab(48.0876% -2.03595 -16.5814));
+  }
+}
+
+.add-apartment-card-7 {
+  border-radius: var(--radius-2xl, 1rem);
+  background-color: var(--color-white, #fff);
+  border: 2px solid #d9d9d9;
+  width: 100%;
+  overflow: hidden;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+.add-apartment-amenities {
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-bold, 700);
+  color: #666666;
+  text-transform: uppercase;
+}
+
+.add-apartment-amenities-comma-separated {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-amenities-comma-separated {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-row-7 {
+  gap: calc(var(--spacing, .25rem) * 2);
+  flex-wrap: wrap;
+  display: flex;
+}
+
+.add-apartment-button-10 {
+  align-items: center;
+  gap: var(--spacing, .25rem);
+  background-color: var(--color-white, #fff);
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 1.5);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-slate-600, #45556c);
+  border: 1px solid #d9d9d9;
+  border-radius: 3.40282e38px;
+  display: inline-flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-button-10 {
+    color: var(--color-slate-600, lab(35.5623% -1.74978 -15.4316));
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-button-10:hover {
+    background-color: #f2f6fa;
+  }
+}
+
+.add-apartment-plus-icon-2 {
+  height: calc(var(--spacing, .25rem) * 3);
+  width: calc(var(--spacing, .25rem) * 3);
+}
+
+.add-apartment-home-icon-2 {
+  height: calc(var(--spacing, .25rem) * 5);
+  width: calc(var(--spacing, .25rem) * 5);
+  color: #666666;
+}
+
+.add-apartment-utilities-included {
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-bold, 700);
+  color: #666666;
+  text-transform: uppercase;
+}
+
+.add-apartment-included-utilities-comma-separated {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-included-utilities-comma-separated {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-textarea-2 {
+  resize: none;
+  border-radius: var(--radius-xl, .75rem);
+  border-color: #f2f6fa;
+}
+
+.add-apartment-list-checks-icon {
+  height: calc(var(--spacing, .25rem) * 5);
+  width: calc(var(--spacing, .25rem) * 5);
+  color: #666666;
+}
+
+.add-apartment-additional-features {
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-bold, 700);
+  color: #666666;
+  text-transform: uppercase;
+}
+
+.add-apartment-row-8 {
+  gap: calc(var(--spacing, .25rem) * 2);
+  display: flex;
+}
+
+.add-apartment-input-2 {
+  flex: 1;
+}
+
+.add-apartment-button-11 {
+  border-radius: var(--radius-xl, .75rem);
+  padding-inline: calc(var(--spacing, .25rem) * 4);
+  background-color: #16a5e1;
+}
+
+.add-apartment-card-8 {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 1.5);
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 1.5);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+  background-color: #f2f6fa;
+  border: 1px solid #d9d9d9;
+  border-radius: 3.40282e38px;
+  display: inline-flex;
+}
+
+@media (hover: hover) {
+  .add-apartment-button-12:hover {
+    color: var(--color-red-600, #e40014);
+  }
+}
+
+.add-apartment-x-icon-2 {
+  height: calc(var(--spacing, .25rem) * 3.5);
+}
+
+:where(.add-apartment-panel-10 > :not(:last-child)) {
+  margin-block-start: calc(calc(var(--spacing, .25rem) * 2) * 0);
+  margin-block-end: calc(calc(var(--spacing, .25rem) * 2) * calc(1 - 0));
+}
+
+.add-apartment-quick-add {
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-500, #62748e);
+  text-transform: uppercase;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-quick-add {
+    color: var(--color-slate-500, lab(48.0876% -2.03595 -16.5814));
+  }
+}
+
+.add-apartment-button-13 {
+  align-items: center;
+  gap: var(--spacing, .25rem);
+  background-color: var(--color-white, #fff);
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 1.5);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-slate-600, #45556c);
+  border: 1px solid #d9d9d9;
+  border-radius: 3.40282e38px;
+  display: inline-flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-button-13 {
+    color: var(--color-slate-600, lab(35.5623% -1.74978 -15.4316));
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-button-13:hover {
+    background-color: #f2f6fa;
+  }
+}
+
+.add-apartment-plus-icon-3 {
+  height: calc(var(--spacing, .25rem) * 3);
+}
+
+.add-apartment-shield-check-icon {
+  height: calc(var(--spacing, .25rem) * 5);
+  width: calc(var(--spacing, .25rem) * 5);
+  color: #666666;
+}
+
+.add-apartment-property-verification {
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-bold, 700);
+  color: #666666;
+  text-transform: uppercase;
+}
+
+.add-apartment-property-name-2 {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 1.5);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+  display: flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-property-name-2 {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-building2-icon-2 {
+  height: calc(var(--spacing, .25rem) * 3.5);
+}
+
+.add-apartment-input-3 {
+  border-radius: var(--radius-xl, .75rem);
+  border-color: var(--color-slate-200, #e2e8f0);
+  background-color: var(--color-slate-50, #f8fafc);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-input-3 {
+    border-color: var(--color-slate-200, lab(91.7353% -.998765 -4.76968));
+    background-color: var(--color-slate-50, lab(98.1434% -.369549 -1.05968));
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-property-address {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 1.5);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+  display: flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-property-address {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-map-pin-icon-2 {
+  height: calc(var(--spacing, .25rem) * 3.5);
+}
+
+.add-apartment-grid-4 {
+  gap: calc(var(--spacing, .25rem) * 6);
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  display: grid;
+}
+
+@media (min-width: 40rem) {
+  .add-apartment-grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.add-apartment-business-permit-number {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 1.5);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+  display: flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-business-permit-number {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-file-text-icon {
+  height: calc(var(--spacing, .25rem) * 3.5);
+}
+
+.add-apartment-permit-expiry-date-optional {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-permit-expiry-date-optional {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-tin-optional {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-tin-optional {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-valid-id-type-optional {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-valid-id-type-optional {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-select {
+  height: calc(var(--spacing, .25rem) * 11);
+  border-radius: var(--radius-xl, .75rem);
+  background-color: var(--color-white, #fff);
+  width: 100%;
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+  border-style: solid;
+  border-width: 1px;
+  outline-style: none;
+}
+
+.add-apartment-select:focus {
+  box-shadow: initial 0 0 0 calc(3px + 0px) currentcolor;
+}
+
+.add-apartment-select-2 {
+  border-color: var(--color-red-400, #ff6568);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-select-2 {
+    border-color: var(--color-red-400, lab(63.7053% 60.7449 31.3109));
+  }
+}
+
+.add-apartment-select-2:focus {
+  border-color: var(--color-red-500, #fb2c36);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-select-2:focus {
+    border-color: var(--color-red-500, lab(55.4814% 75.0732 48.8528));
+  }
+}
+
+.add-apartment-select-3 {
+  border-color: var(--color-slate-200, #e2e8f0);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-select-3 {
+    border-color: var(--color-slate-200, lab(91.7353% -.998765 -4.76968));
+  }
+}
+
+.add-apartment-select-3:focus {
+  border-color: #16a5e1;
+}
+
+.add-apartment-id-number-optional {
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-id-number-optional {
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+:where(.add-apartment-panel-11 > :not(:last-child)) {
+  margin-block-start: calc(calc(var(--spacing, .25rem) * 4) * 0);
+  margin-block-end: calc(calc(var(--spacing, .25rem) * 4) * calc(1 - 0));
+}
+
+.add-apartment-panel-11 {
+  padding-top: calc(var(--spacing, .25rem) * 6);
+  border-color: #f2f6fa;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+.add-apartment-verification-documents {
+  font-weight: var(--font-weight-black, 900);
+  color: var(--color-slate-900, #0f172b);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-verification-documents {
+    color: var(--color-slate-900, lab(7.78673% 1.82346 -15.0537));
+  }
+}
+
+.add-apartment-text-7 {
+  margin-top: var(--spacing, .25rem);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-slate-500, #62748e);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-text-7 {
+    color: var(--color-slate-500, lab(48.0876% -2.03595 -16.5814));
+  }
+}
+
+.add-apartment-text-8 {
+  margin-top: var(--spacing, .25rem);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-bold, 700);
+  color: #666666;
+}
+
+.add-apartment-grid-5 {
+  gap: calc(var(--spacing, .25rem) * 4);
+  display: grid;
+}
+
+@media (min-width: 48rem) {
+  .add-apartment-grid-5 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.add-apartment-card-9 {
+  border-radius: var(--radius-2xl, 1rem);
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--color-slate-200, #e2e8f0);
+  background-color: var(--color-white, #fff);
+  overflow: hidden;
+  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-card-9 {
+    border-color: var(--color-slate-200, lab(91.7353% -.998765 -4.76968));
+  }
+}
+
+.add-apartment-row-9 {
+  min-height: calc(var(--spacing, .25rem) * 16);
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-color: var(--color-slate-100, #f1f5f9);
+  padding: calc(var(--spacing, .25rem) * 4);
+  display: flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-row-9 {
+    border-color: var(--color-slate-100, lab(96.286% -.852466 -2.46847));
+  }
+}
+
+.add-apartment-grid-6 {
+  height: calc(var(--spacing, .25rem) * 10);
+  width: calc(var(--spacing, .25rem) * 10);
+  border-radius: var(--radius-xl, .75rem);
+  color: #666666;
+  background-color: #f2f6fa;
+  flex-shrink: 0;
+  place-items: center;
+  display: grid;
+}
+
+.add-apartment-file-text-icon-2 {
+  height: calc(var(--spacing, .25rem) * 5);
+  width: calc(var(--spacing, .25rem) * 5);
+}
+
+.add-apartment-panel-12 {
+  min-width: 0;
+}
+
+.add-apartment-text-9 {
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-black, 900);
+  color: var(--color-slate-900, #0f172b);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-text-9 {
+    color: var(--color-slate-900, lab(7.78673% 1.82346 -15.0537));
+  }
+}
+
+.add-apartment-text-10 {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-slate-400, #90a1b9);
+  overflow: hidden;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-text-10 {
+    color: var(--color-slate-400, lab(65.5349% -2.25151 -14.5072));
+  }
+}
+
+.add-apartment-panel-13 {
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-color: var(--color-slate-100, #f1f5f9);
+  background-color: var(--color-slate-50, #f8fafc);
+  padding: calc(var(--spacing, .25rem) * 3);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-panel-13 {
+    border-color: var(--color-slate-100, lab(96.286% -.852466 -2.46847));
+    background-color: var(--color-slate-50, lab(98.1434% -.369549 -1.05968));
+  }
+}
+
+.add-apartment-preview-pdf {
+  height: calc(var(--spacing, .25rem) * 28);
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 2);
+  border-radius: var(--radius-xl, .75rem);
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--color-slate-200, #e2e8f0);
+  background-color: var(--color-white, #fff);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+  display: flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-preview-pdf {
+    border-color: var(--color-slate-200, lab(91.7353% -.998765 -4.76968));
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+.add-apartment-file-text-icon-3 {
+  height: calc(var(--spacing, .25rem) * 6);
+  width: calc(var(--spacing, .25rem) * 6);
+  color: #16a5e1;
+}
+
+.add-apartment-image-2 {
+  height: calc(var(--spacing, .25rem) * 28);
+  border-radius: var(--radius-xl, .75rem);
+  object-fit: cover;
+  width: 100%;
+}
+
+.add-apartment-grid-7 {
+  gap: calc(var(--spacing, .25rem) * 2);
+  padding: calc(var(--spacing, .25rem) * 3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  display: grid;
+}
+
+.add-apartment-input-4 {
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border-width: 0;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  position: absolute;
+  overflow: hidden;
+}
+
+.add-apartment-label {
+  height: calc(var(--spacing, .25rem) * 9);
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 1.5);
+  border-radius: var(--radius-lg, .5rem);
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--color-slate-200, #e2e8f0);
+  padding-inline: calc(var(--spacing, .25rem) * 2);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-black, 900);
+  color: var(--color-slate-700, #314158);
+  display: flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-label {
+    border-color: var(--color-slate-200, lab(91.7353% -.998765 -4.76968));
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-label:hover {
+    background-color: var(--color-slate-50, #f8fafc);
+  }
+}
+
+.add-apartment-upload-icon-3 {
+  height: calc(var(--spacing, .25rem) * 3.5);
+  width: calc(var(--spacing, .25rem) * 3.5);
+}
+
+.add-apartment-take-photo {
+  height: calc(var(--spacing, .25rem) * 9);
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 1.5);
+  border-radius: var(--radius-lg, .5rem);
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--color-slate-200, #e2e8f0);
+  padding-inline: calc(var(--spacing, .25rem) * 2);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-black, 900);
+  color: var(--color-slate-700, #314158);
+  display: flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-take-photo {
+    border-color: var(--color-slate-200, lab(91.7353% -.998765 -4.76968));
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-take-photo:hover {
+    background-color: var(--color-slate-50, #f8fafc);
+  }
+}
+
+.add-apartment-camera-icon {
+  height: calc(var(--spacing, .25rem) * 3.5);
+  width: calc(var(--spacing, .25rem) * 3.5);
+}
+
+.add-apartment-remove-file {
+  height: calc(var(--spacing, .25rem) * 9);
+  justify-content: center;
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 1.5);
+  border-radius: var(--radius-lg, .5rem);
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--color-rose-200, #ffccd3);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-black, 900);
+  color: var(--color-rose-600, #e70044);
+  grid-column: span 2 / span 2;
+  display: flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-remove-file {
+    border-color: var(--color-rose-200, lab(86.806% 19.1909 4.07754));
+    color: var(--color-rose-600, lab(49.1882% 81.577 36.0311));
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-remove-file:hover {
+    background-color: var(--color-rose-50, #fff1f2);
+  }
+}
+
+.add-apartment-trash2-icon {
+  height: calc(var(--spacing, .25rem) * 3.5);
+  width: calc(var(--spacing, .25rem) * 3.5);
+}
+
+.add-apartment-row-10 {
+  gap: calc(var(--spacing, .25rem) * 4);
+  padding-top: calc(var(--spacing, .25rem) * 10);
+  border-color: #f2f6fa;
+  border-top-style: solid;
+  border-top-width: 1px;
+  display: flex;
+}
+
+.add-apartment-previous {
+  height: calc(var(--spacing, .25rem) * 12);
+  border-radius: var(--radius-2xl, 1rem);
+  font-weight: var(--font-weight-bold, 700);
+  flex: 1;
+}
+
+.add-apartment-arrow-left-icon {
+  margin-right: calc(var(--spacing, .25rem) * 2);
+  height: calc(var(--spacing, .25rem) * 5);
+}
+
+.add-apartment-cancel {
+  height: calc(var(--spacing, .25rem) * 12);
+  border-radius: var(--radius-2xl, 1rem);
+  font-weight: var(--font-weight-bold, 700);
+  flex: 1;
+}
+
+.add-apartment-next {
+  height: calc(var(--spacing, .25rem) * 12);
+  border-radius: var(--radius-2xl, 1rem);
+  background-image: #16a5e1;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-white, #fff);
+  flex: 1;
+}
+
+.add-apartment-arrow-right-icon {
+  height: calc(var(--spacing, .25rem) * 5);
+  width: calc(var(--spacing, .25rem) * 5);
+}
+
+.add-apartment-button-14 {
+  height: calc(var(--spacing, .25rem) * 12);
+  border-radius: var(--radius-2xl, 1rem);
+  background-image: #00a544;
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-white, #fff);
+  flex: 1;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-button-14 {
+    background-image: #00a544;
+  }
+}
+
+.add-apartment-button-14:disabled {
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+.add-apartment-overlay {
+  z-index: 120;
+  background-color: #020618a6;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  position: fixed;
+  inset: 0;
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  .add-apartment-overlay {
+    background-color: color-mix(in oklab, var(--color-slate-950, lab(1.76974% 1.32743 -9.28855)) 65%, transparent);
+  }
+}
+
+.add-apartment-overlay {
+  padding: calc(var(--spacing, .25rem) * 4);
+  -webkit-backdrop-filter: blur(var(--blur-sm, 8px)) initial initial initial initial initial initial initial initial;
+  backdrop-filter: blur(var(--blur-sm, 8px)) initial initial initial initial initial initial initial initial;
+}
+
+.add-apartment-card-10 {
+  width: 100%;
+  max-width: var(--container-md, 28rem);
+  border-radius: var(--radius-2xl, 1rem);
+  border: 1px solid #ffffffb3;
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  .add-apartment-card-10 {
+    border-color: color-mix(in oklab, var(--color-white, #fff) 70%, transparent);
+  }
+}
+
+.add-apartment-card-10 {
+  background-color: var(--color-white, #fff);
+  padding: calc(var(--spacing, .25rem) * 6);
+  box-shadow: 0 25px 50px -12px #00000040;
+}
+
+.add-apartment-row-11 {
+  align-items: flex-start;
+  gap: calc(var(--spacing, .25rem) * 4);
+  display: flex;
+}
+
+.add-apartment-row-12 {
+  height: calc(var(--spacing, .25rem) * 12);
+  width: calc(var(--spacing, .25rem) * 12);
+  border-radius: var(--radius-xl, .75rem);
+  color: #666666;
+  background-color: #f2f6fa;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.add-apartment-cloud-upload-icon-2 {
+  height: calc(var(--spacing, .25rem) * 6);
+  width: calc(var(--spacing, .25rem) * 6);
+}
+
+.add-apartment-draft-dialog-title {
+  font-size: var(--text-xl, 1.25rem);
+  line-height: var(--text-xl--line-height, calc(1.75 / 1.25));
+  font-weight: var(--font-weight-black, 900);
+  color: var(--color-slate-900, #0f172b);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-draft-dialog-title {
+    color: var(--color-slate-900, lab(7.78673% 1.82346 -15.0537));
+  }
+}
+
+.add-apartment-saved {
+  margin-top: var(--spacing, .25rem);
+  font-size: var(--text-sm, .875rem);
+  line-height: calc(var(--spacing, .25rem) * 5);
+  line-height: calc(var(--spacing, .25rem) * 5);
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-slate-500, #62748e);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-saved {
+    color: var(--color-slate-500, lab(48.0876% -2.03595 -16.5814));
+  }
+}
+
+.add-apartment-card-11 {
+  margin-top: calc(var(--spacing, .25rem) * 5);
+  gap: calc(var(--spacing, .25rem) * 3);
+  border-radius: var(--radius-lg, .5rem);
+  padding: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: #111111;
+  background-color: #f2f6fa;
+  border: 1px solid #d9d9d9;
+  display: flex;
+}
+
+.add-apartment-upload-icon-4 {
+  margin-top: calc(var(--spacing, .25rem) * .5);
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+  flex-shrink: 0;
+}
+
+.add-apartment-grid-8 {
+  margin-top: calc(var(--spacing, .25rem) * 6);
+  gap: calc(var(--spacing, .25rem) * 3);
+  display: grid;
+}
+
+@media (min-width: 40rem) {
+  .add-apartment-grid-8 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.add-apartment-continue-draft {
+  height: calc(var(--spacing, .25rem) * 11);
+  border-radius: var(--radius-lg, .5rem);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-white, #fff);
+  background-color: #16a5e1;
+}
+
+@media (hover: hover) {
+  .add-apartment-continue-draft:hover {
+    background-color: #0e93ca;
+  }
+}
+
+.add-apartment-discard-draft-2 {
+  height: calc(var(--spacing, .25rem) * 11);
+  border-radius: var(--radius-lg, .5rem);
+  border-color: var(--color-slate-300, #cad5e2);
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-slate-700, #314158);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .add-apartment-discard-draft-2 {
+    border-color: var(--color-slate-300, lab(84.7652% -1.94535 -7.93337));
+    color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
+  }
+}
+
+@media (hover: hover) {
+  .add-apartment-discard-draft-2:hover {
+    background-color: var(--color-slate-50, #f8fafc);
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: .5;
+  }
+}/* Add Property wizard uses the same landlord shell palette without changing its workflow. */
+.landlord-add-property .text-amber-600,
+.landlord-add-property .text-amber-700,
+.landlord-add-property .text-orange-600 { color: #16a5e1 !important; }
+.landlord-add-property .text-amber-800,
+.landlord-add-property .text-amber-900 { color: #666666 !important; }
+.landlord-add-property .bg-amber-50,
+.landlord-add-property .bg-orange-50 { background-color: #f2f6fa !important; }
+.landlord-add-property .border-amber-100,
+.landlord-add-property .border-amber-200,
+.landlord-add-property .border-orange-100 { border-color: #d9d9d9 !important; }
+.landlord-add-property .from-amber-500 { --tw-gradient-from: #16a5e1 !important; --tw-gradient-to: rgba(22, 165, 225, 0) !important; }
+.landlord-add-property .to-orange-500,
+.landlord-add-property .to-orange-600 { --tw-gradient-to: #666666 !important; }
+.landlord-add-property .focus-visible\:ring-orange-200:focus-visible,
+.landlord-add-property .focus-visible\:ring-orange-300:focus-visible { --tw-ring-color: rgba(22, 165, 225, 0.22) !important; }
+.tenant-browse main .suggested-hero { min-height: 180px; margin-top: 0 !important; }
+.tenant-browse main .popular-hero { min-height: 175px; margin-top: 0 !important; }
+
+.suggested-card > a > div,
+.popular-card > a > div {
+  border-color: #d9d9d9 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 12px rgba(17, 17, 17,.06) !important;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease !important;
+}
+.suggested-card > a:hover > div,
+.popular-card > a:hover > div {
+  transform: translateY(-2px) !important;
+  border-color: #d9d9d9 !important;
+  box-shadow: 0 8px 24px rgba(17, 17, 17,.10) !important;
+}
+.suggested-card [class*="from-green-500"],
+.popular-card [class*="from-green-500"] {
+  color: #666666 !important;
+  border: 1px solid #d9d9d9 !important;
+  background: #f2f6fa !important;
+  box-shadow: none !important;
+}
+.suggested-card [class*="from-white"], .popular-card [class*="from-white"] { background: #fff !important; }
+.suggested-card h3, .popular-card h3 { color: #111111 !important; }
+.suggested-card .text-orange-600,
+.suggested-card .text-amber-500,
+.suggested-card .text-purple-500,
+.suggested-card .text-pink-500,
+.popular-card .text-orange-600,
+.popular-card .text-amber-500,
+.popular-card .text-purple-500,
+.popular-card .text-pink-500 { color: #16a5e1 !important; }
+.suggested-card [class*="border-amber"], .popular-card [class*="border-amber"] { border-color: #d9d9d9 !important; }
+.tenant-browse main section:nth-of-type(2) { border-color: var(--tenant-border) !important; border-radius: 12px !important; box-shadow: 0 2px 12px rgba(17, 17, 17,.04) !important; }
+.tenant-browse main section:nth-of-type(2) button { transition: background-color 180ms ease, color 180ms ease; }
+.tenant-browse main section:nth-of-type(2) button.bg-orange-500 { background: var(--tenant-accent) !important; color: #fff !important; }
+.tenant-browse main section:nth-of-type(2) button.bg-orange-50 { background: var(--tenant-surface-strong) !important; color: var(--tenant-accent) !important; }
+.tenant-browse main section:nth-of-type(3) article { border-color: var(--tenant-border) !important; border-radius: 12px !important; box-shadow: 0 2px 12px rgba(17, 17, 17,.06) !important; }
+.tenant-browse main section:nth-of-type(3) article:hover { box-shadow: 0 8px 24px rgba(17, 17, 17,.10) !important; }
+.tenant-browse main section:nth-of-type(3) article h2 { color: var(--tenant-ink) !important; }
+.tenant-browse main section:nth-of-type(3) article .text-orange-500,
+.tenant-browse main section:nth-of-type(3) article .text-orange-600 { color: var(--tenant-accent) !important; }
+.tenant-browse main section:nth-of-type(3) article a { border-color: var(--tenant-border) !important; color: var(--tenant-accent) !important; }
+.tenant-browse main section:nth-of-type(3) article a:hover { background: var(--tenant-surface) !important; }

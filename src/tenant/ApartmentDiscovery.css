@@ -1,0 +1,771 @@
+/* ApartmentDiscovery page styles. Loaded once by src/styles/index.css to keep navigation order stable. */
+.apartment-card-panel {
+  aspect-ratio: 4 / 3;
+  position: relative;
+  overflow: hidden;
+}
+
+.apartment-card-image-with-fallback {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  transition-property: transform, translate, scale, rotate;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: .5s;
+}
+
+@media (hover: hover) {
+  .apartment-card-image-with-fallback:is(:where(.group):hover *) {
+    scale: var(--tw-scale-x) var(--tw-scale-y);
+  }
+}
+
+.apartment-card-image-unavailable {
+  background-color: var(--color-slate-100, #f2f6fa);
+  height: 100%;
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-slate-500, #666666);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .apartment-card-image-unavailable {
+    background-color: var(--color-slate-100, lab(96.286% -.852466 -2.46847));
+    color: var(--color-slate-500, lab(48.0876% -2.03595 -16.5814));
+  }
+}
+
+.apartment-card-overlay {
+  background-image: linear-gradient(to top in oklab, color-mix(in oklab, var(--color-black, #000) 40%, transparent) 0%, transparent 100%);
+  opacity: 0;
+  transition-property: opacity;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: .3s;
+  position: absolute;
+  inset: 0;
+}
+
+@media (hover: hover) {
+  .apartment-card-overlay:is(:where(.group):hover *) {
+    opacity: 1;
+  }
+}
+
+.apartment-card-button {
+  top: calc(var(--spacing, .25rem) * 2);
+  right: calc(var(--spacing, .25rem) * 2);
+  transform: initial initial initial initial initial;
+  background-color: #ffffffe6;
+  border-radius: 3.40282e38px;
+  position: absolute;
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  .apartment-card-button {
+    background-color: color-mix(in oklab, var(--color-white, #fff) 90%, transparent);
+  }
+}
+
+.apartment-card-button {
+  -webkit-backdrop-filter: blur(var(--blur-md, 12px)) initial initial initial initial initial initial initial initial;
+  backdrop-filter: blur(var(--blur-md, 12px)) initial initial initial initial initial initial initial initial;
+  transition-property: all;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: .3s;
+  box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+}
+
+@media (hover: hover) {
+  .apartment-card-button:hover {
+    scale: var(--tw-scale-x) var(--tw-scale-y);
+  }
+}
+
+@media (hover: hover) {
+  .apartment-card-button:hover {
+    background-color: var(--color-white, #fff);
+  }
+}
+
+@media (hover: hover) {
+  .apartment-card-button:hover {
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+}
+
+.apartment-card-button-2 {
+  color: var(--color-rose-500, #ff2357);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .apartment-card-button-2 {
+    color: var(--color-rose-500, lab(56.101% 79.4329 31.4532));
+  }
+}
+
+.apartment-card-heart-icon {
+  height: calc(var(--spacing, .25rem) * 5);
+  width: calc(var(--spacing, .25rem) * 5);
+}
+
+.apartment-card-heart-icon-2 {
+  animation: var(--animate-pulse, pulse 2s cubic-bezier(.4, 0, .6, 1) infinite);
+}
+
+.apartment-card-verified-badge {
+  background-color: #fffffff2;
+}
+
+@supports (color: color-mix(in lab, red, red)) {
+  .apartment-card-verified-badge {
+    background-color: color-mix(in oklab, var(--color-white, #fff) 95%, transparent);
+  }
+}
+
+.apartment-card-verified-badge {
+  -webkit-backdrop-filter: blur(var(--blur-sm, 8px)) initial initial initial initial initial initial initial initial;
+  backdrop-filter: blur(var(--blur-sm, 8px)) initial initial initial initial initial initial initial initial;
+  box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+}
+
+.apartment-card-pet-friendly {
+  background-image: linear-gradient(to right in oklab, var(--color-green-500, #00c758) 0%, var(--color-emerald-600, #009767) 100%);
+  box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .apartment-card-pet-friendly {
+    background-image: linear-gradient(to right in oklab, var(--color-green-500, lab(70.5521% -66.5147 45.8072)) 0%, var(--color-emerald-600, lab(55.0481% -49.9246 15.93)) 100%);
+  }
+}
+
+.apartment-card-badge {
+  background-color: var(--color-green-600, #00a544);
+  color: var(--color-white, #fff);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .apartment-card-badge {
+    background-color: var(--color-green-600, lab(59.0978% -58.6621 41.2579));
+  }
+}
+
+.apartment-card-badge-2 {
+  background-color: var(--color-red-600, #e40014);
+  color: var(--color-white, #fff);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .apartment-card-badge-2 {
+    background-color: var(--color-red-600, lab(48.4493% 77.4328 61.5452));
+  }
+}
+
+.apartment-card-badge-3 {
+  background-color: var(--color-slate-500, #666666);
+  color: var(--color-white, #fff);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .apartment-card-badge-3 {
+    background-color: var(--color-slate-500, lab(48.0876% -2.03595 -16.5814));
+  }
+}
+
+.apartment-card-badge-4 {
+  box-shadow: 0 10px 15px -3px #0000001a, 0 4px 6px -4px #0000001a;
+}
+
+.apartment-card-card-content {
+  background-image: linear-gradient(to bottom right in oklab, var(--color-white, #fff) 0%, #f2f6fa4d 100%);
+  padding: calc(var(--spacing, .25rem) * 4);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .apartment-card-card-content {
+    background-image: linear-gradient(to bottom right in oklab, var(--color-white, #fff) 0%, lab(97.6715% .299275 1.6911 / .3) 100%);
+  }
+}
+
+.apartment-card-row {
+  justify-content: space-between;
+  align-items: flex-start;
+  display: flex;
+}
+
+.apartment-card-panel-2 {
+  flex: 1;
+}
+
+.apartment-card-heading {
+  margin-bottom: var(--spacing, .25rem);
+  font-size: var(--text-lg, 1.125rem);
+  line-height: var(--text-lg--line-height, calc(1.75 / 1.125));
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-slate-900, #111111);
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke;
+  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
+  transition-duration: var(--default-transition-duration, .15s);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .apartment-card-heading {
+    color: var(--color-slate-900, lab(7.78673% 1.82346 -15.0537));
+  }
+}
+
+@media (hover: hover) {
+  .apartment-card-heading:is(:where(.group):hover *) {
+    color: #666666;
+  }
+}
+
+.apartment-card-apartment-rating-summary {
+  margin-bottom: calc(var(--spacing, .25rem) * 2);
+}
+
+.apartment-card-row-2 {
+  margin-bottom: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  color: var(--color-slate-600, #666666);
+  align-items: center;
+  display: flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .apartment-card-row-2 {
+    color: var(--color-slate-600, lab(35.5623% -1.74978 -15.4316));
+  }
+}
+
+.apartment-card-map-pin-icon {
+  margin-right: var(--spacing, .25rem);
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+  color: #16a5e1;
+}
+
+.apartment-card-panel-3 {
+  text-align: right;
+}
+
+.apartment-card-view-room-prices {
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  font-weight: var(--font-weight-bold, 700);
+  color: #666666;
+}
+
+.apartment-card-row-3 {
+  margin-top: calc(var(--spacing, .25rem) * 3);
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 4);
+  padding-top: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-sm, .875rem);
+  line-height: var(--text-sm--line-height, calc(1.25 / .875));
+  color: var(--color-slate-600, #666666);
+  border-color: #f2f6fa;
+  border-top-style: solid;
+  border-top-width: 1px;
+  display: flex;
+}
+
+@supports (color: lab(0% 0 0)) {
+  .apartment-card-row-3 {
+    color: var(--color-slate-600, lab(35.5623% -1.74978 -15.4316));
+  }
+}
+
+.apartment-card-row-4 {
+  align-items: center;
+  gap: var(--spacing, .25rem);
+  display: flex;
+}
+
+.apartment-card-bed-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+  color: #16a5e1;
+}
+
+.apartment-card-bath-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+  color: var(--color-purple-500, #16a5e1);
+}
+
+@supports (color: lab(0% 0 0)) {
+  .apartment-card-bath-icon {
+    color: var(--color-purple-500, lab(52.0183% 66.11 -78.2316));
+  }
+}
+
+.apartment-card-square-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+  color: #16a5e1;
+}
+
+.apartment-card-enter { animation: fadeIn 0.5s ease-out; }
+.apartment-card-badges-enter { animation: slideInLeft 0.4s ease-out; }
+
+.popular-page {
+  max-width: var(--container-7xl, 80rem);
+  margin-inline: auto;
+}
+
+:where(.popular-page > :not(:last-child)) {
+  margin-block-start: calc(calc(var(--spacing, .25rem) * 5) * 0);
+  margin-block-end: calc(calc(var(--spacing, .25rem) * 5) * calc(1 - 0));
+}
+
+.popular-hero {
+  border-radius: var(--radius-xl, .75rem);
+  background-image: linear-gradient(
+    to right,
+    #f2f6fa 0%,
+    #ffffff 100%
+  );
+  min-height: 175px;
+  padding: calc(var(--spacing, .25rem) * 6);
+  border: 1px solid #d9d9d9;
+  align-items: center;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (min-width: 48rem) {
+  .popular-hero {
+    padding-inline: calc(var(--spacing, .25rem) * 8);
+  }
+}
+
+.popular-section-panel {
+  z-index: 10;
+  max-width: 58%;
+  position: relative;
+}
+
+@media not (min-width: 48rem) {
+  .popular-section-panel {
+    max-width: 100%;
+  }
+}
+
+.popular-section-trending-choices {
+  margin-bottom: calc(var(--spacing, .25rem) * 4);
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 2);
+
+  background-color: #ffffff;
+
+  padding-inline: calc(var(--spacing, .25rem) * 4);
+  padding-block: calc(var(--spacing, .25rem) * 2);
+
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-semibold, 600);
+
+  letter-spacing: .12em;
+  color: #16a5e1;
+  text-transform: uppercase;
+
+  border: 1px solid #d9d9d9;
+  border-radius: 3.40282e38px;
+
+  display: inline-flex;
+
+  box-shadow:
+    0 1px 3px #0000001a,
+    0 1px 2px -1px #0000001a;
+}
+
+.popular-section-trending-up-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+}
+
+.popular-section-popular-apartments {
+  font-size: var(--text-3xl, 1.875rem);
+  line-height: var(--text-3xl--line-height, calc(2.25 / 1.875));
+  font-weight: var(--font-weight-bold, 700);
+  letter-spacing: var(--tracking-tight, -.025em);
+
+  color: #111111;
+}
+
+@media (min-width: 48rem) {
+  .popular-section-popular-apartments {
+    font-size: 34px;
+  }
+}
+
+.popular-section-text {
+  margin-top: calc(var(--spacing, .25rem) * 3);
+
+  font-size: var(--text-base, 1rem);
+  line-height: var(--text-base--line-height, calc(1.5 / 1));
+  font-weight: var(--font-weight-medium, 500);
+
+  color: #666666;
+}
+
+.popular-section-panel-2 {
+  pointer-events: none;
+
+  inset-block: 0;
+  right: calc(var(--spacing, .25rem) * 3);
+
+  color: #8a8a8a;
+
+  align-items: flex-end;
+
+  width: 43%;
+
+  display: none;
+  position: absolute;
+}
+
+@media (min-width: 48rem) {
+  .popular-section-panel-2 {
+    display: flex;
+  }
+}
+
+.popular-section-row {
+  justify-content: flex-end;
+  display: flex;
+}
+
+.popular-section-browse-all {
+  height: calc(var(--spacing, .25rem) * 11);
+
+  border-radius: var(--radius-lg, .5rem);
+
+  background-color: #ffffff;
+
+  padding-inline: calc(var(--spacing, .25rem) * 5);
+
+  font-weight: var(--font-weight-bold, 700);
+
+  color: #16a5e1;
+
+  border: 1px solid #d9d9d9;
+
+  transition:
+    background-color .15s ease,
+    color .15s ease,
+    border-color .15s ease;
+}
+
+@media (hover: hover) {
+  .popular-section-browse-all:hover {
+    background-color: #f2f6fa;
+    color: #0e93ca;
+    border-color: #16a5e1;
+  }
+}
+
+.popular-section-grid {
+  gap: calc(var(--spacing, .25rem) * 5);
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  display: grid;
+}
+
+@media (min-width: 48rem) {
+  .popular-section-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 80rem) {
+  .popular-section-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.popular-card {
+  position: relative;
+}
+
+.popular-section-popular {
+  top: calc(var(--spacing, .25rem) * 3);
+  right: calc(var(--spacing, .25rem) * 16);
+
+  z-index: 10;
+
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-semibold, 600);
+
+  color: #16a5e1;
+  background-color: #f2f6fa;
+
+  border: 1px solid #d9d9d9;
+
+  position: absolute;
+
+  box-shadow:
+    0 1px 3px #0000001a,
+    0 1px 2px -1px #0000001a;
+}
+
+@media (hover: hover) {
+  .popular-section-popular:hover {
+    background-color: #e8eef3;
+  }
+}
+
+.suggested-page {
+  max-width: var(--container-7xl, 80rem);
+  margin-inline: auto;
+}
+
+:where(.suggested-page > :not(:last-child)) {
+  margin-block-start: calc(calc(var(--spacing, .25rem) * 5) * 0);
+  margin-block-end: calc(calc(var(--spacing, .25rem) * 5) * calc(1 - 0));
+}
+
+.suggested-hero {
+  border-radius: var(--radius-xl, .75rem);
+
+  background-image: linear-gradient(
+    to right,
+    #f2f6fa 0%,
+    #ffffff 100%
+  );
+
+  min-height: 180px;
+
+  padding: calc(var(--spacing, .25rem) * 6);
+
+  border: 1px solid #d9d9d9;
+
+  align-items: center;
+
+  display: flex;
+  position: relative;
+  overflow: hidden;
+}
+
+@media (min-width: 48rem) {
+  .suggested-hero {
+    padding-inline: calc(var(--spacing, .25rem) * 8);
+  }
+}
+
+.suggested-section-panel {
+  z-index: 10;
+  max-width: 58%;
+  position: relative;
+}
+
+@media not (min-width: 48rem) {
+  .suggested-section-panel {
+    max-width: 100%;
+  }
+}
+
+.suggested-section-card {
+  margin-bottom: calc(var(--spacing, .25rem) * 4);
+
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 2);
+
+  background-color: #ffffff;
+
+  padding-inline: calc(var(--spacing, .25rem) * 4);
+  padding-block: calc(var(--spacing, .25rem) * 2);
+
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-semibold, 600);
+
+  letter-spacing: .12em;
+
+  color: #16a5e1;
+
+  text-transform: uppercase;
+
+  border: 1px solid #d9d9d9;
+
+  border-radius: 3.40282e38px;
+
+  display: inline-flex;
+
+  box-shadow:
+    0 1px 3px #0000001a,
+    0 1px 2px -1px #0000001a;
+}
+
+.suggested-section-sparkles-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+}
+
+.suggested-section-heading {
+  font-size: var(--text-3xl, 1.875rem);
+  line-height: var(--text-3xl--line-height, calc(2.25 / 1.875));
+
+  font-weight: var(--font-weight-bold, 700);
+
+  letter-spacing: var(--tracking-tight, -.025em);
+
+  color: #111111;
+}
+
+@media (min-width: 48rem) {
+  .suggested-section-heading {
+    font-size: 34px;
+  }
+}
+
+.suggested-section-text {
+  margin-top: calc(var(--spacing, .25rem) * 3);
+
+  font-size: var(--text-base, 1rem);
+  line-height: var(--text-base--line-height, calc(1.5 / 1));
+
+  font-weight: var(--font-weight-medium, 500);
+
+  color: #666666;
+}
+
+.suggested-section-panel-2 {
+  pointer-events: none;
+
+  inset-block: 0;
+  right: calc(var(--spacing, .25rem) * 3);
+
+  color: #8a8a8a;
+
+  align-items: flex-end;
+
+  width: 43%;
+
+  display: none;
+  position: absolute;
+}
+
+@media (min-width: 48rem) {
+  .suggested-section-panel-2 {
+    display: flex;
+  }
+}
+
+.suggested-section-row {
+  justify-content: flex-end;
+  display: flex;
+}
+
+.suggested-section-browse-all {
+  height: calc(var(--spacing, .25rem) * 11);
+
+  border-radius: var(--radius-lg, .5rem);
+
+  background-color: #ffffff;
+
+  padding-inline: calc(var(--spacing, .25rem) * 5);
+
+  font-weight: var(--font-weight-bold, 700);
+
+  color: #16a5e1;
+
+  border: 1px solid #d9d9d9;
+
+  transition:
+    background-color .15s ease,
+    color .15s ease,
+    border-color .15s ease;
+}
+
+@media (hover: hover) {
+  .suggested-section-browse-all:hover {
+    background-color: #f2f6fa;
+    color: #0e93ca;
+    border-color: #16a5e1;
+  }
+}
+
+.suggested-section-card-2 {
+  min-height: calc(var(--spacing, .25rem) * 72);
+
+  border-radius: var(--radius-lg, .5rem);
+
+  border: 1px solid #d9d9d9;
+
+  background-color: #ffffff;
+
+  justify-content: center;
+  align-items: center;
+
+  display: flex;
+}
+
+.suggested-section-loader2-icon {
+  height: calc(var(--spacing, .25rem) * 7);
+  width: calc(var(--spacing, .25rem) * 7);
+
+  animation: var(--animate-spin, spin 1s linear infinite);
+
+  color: #16a5e1;
+}
+
+.suggested-section-grid {
+  gap: calc(var(--spacing, .25rem) * 5);
+
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+
+  display: grid;
+}
+
+@media (min-width: 48rem) {
+  .suggested-section-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 80rem) {
+  .suggested-section-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.suggested-card {
+  position: relative;
+}
+
+.suggested-section-suggested {
+  top: calc(var(--spacing, .25rem) * 3);
+  right: calc(var(--spacing, .25rem) * 16);
+
+  z-index: 10;
+
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-semibold, 600);
+
+  color: #16a5e1;
+
+  background-color: #f2f6fa;
+
+  border: 1px solid #d9d9d9;
+
+  position: absolute;
+
+  box-shadow:
+    0 1px 3px #0000001a,
+    0 1px 2px -1px #0000001a;
+}
+
+@media (hover: hover) {
+  .suggested-section-suggested:hover {
+    background-color: #e8eef3;
+  }
+}

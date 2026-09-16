@@ -1,0 +1,133 @@
+@import '../components/component_layout.css';
+
+@import '../components/ui/ui.css';
+
+@import '../components/components.css';
+
+/* Load styles in their original order so page navigation cannot change the cascade. */
+
+@import './tailwind.css';
+
+@import './variables.css';
+
+
+/* =========================
+   TENANT
+========================= */
+
+@import '../tenant/Apartments.css';
+
+@import '../tenant/ApartmentDetails.css';
+
+@import '../tenant/ApartmentDiscovery.css';
+
+
+
+@import '../tenant/EmptyState.css';
+
+@import '../tenant/Favorites.css';
+
+
+
+@import '../tenant/Notifications.css';
+
+@import '../tenant/HelpSupport.css';
+
+@import '../tenant/ReportProblem.css';
+
+@import '../tenant/Dashboard.css';
+
+@import '../tenant/MobileNavigation.css';
+
+@import '../tenant/Sidebar.css';
+
+@import '../tenant/Settings.css';
+
+@import '../components/Shell.css';
+
+@import '../tenant/TenantShell.css';
+
+
+/* =========================
+   LANDLORD
+========================= */
+
+@import '../landlord/LandlordDashboard.css';
+
+@import '../landlord/LandlordSidebar.css';
+
+@import '../landlord/LandlordOverview.css';
+
+@import '../landlord/LandlordActivity.css';
+
+@import '../landlord/LandlordNotifications.css';
+
+@import '../landlord/LandlordHelpSupport.css';
+
+@import '../landlord/LandlordSettings.css';
+
+@import '../landlord/MyProperties.css';
+
+@import '../landlord/MyPropertyCard.css';
+
+@import '../landlord/MarketOverview.css';
+
+@import '../landlord/AddApartment.css';
+
+
+
+@import '../landlord/ManageRooms.css';
+
+@import '../landlord/PropertyLocationPicker.css';
+
+@import '../landlord/ProfileTab.css';
+
+@import '../landlord/SecurityTab.css';
+
+@import '../landlord/AlertsTab.css';
+
+@import '../landlord/BusinessTab.css';
+
+@import '../landlord/SettingsFormFields.css';
+
+@import '../landlord/AlertRow.css';
+
+@import '../landlord/NotificationDetailModal.css';
+
+@import '../landlord/AppealModal.css';
+
+@import '../landlord/PeopleModal.css';
+
+@import '../landlord/PropertyActivityEmptyIllustration.css';
+
+@import '../landlord/PropertyNotificationEmptyIllustration.css';
+
+
+/* =========================
+   ADMIN
+========================= */
+
+@import '../admin/admin_pages.css';
+
+
+
+/* =========================
+   LANDING / AUTH
+========================= */
+
+@import '../landing/landing_palette.css';
+
+@import '../auth/auth.css';
+
+
+/* =========================
+   GLOBAL
+========================= */
+
+@import './theme.css';
+
+@import './sidebar.css';
+
+@import 'leaflet/dist/leaflet.css';
+
+@import '../admin/admin_dashboard.css';

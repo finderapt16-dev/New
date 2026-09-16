@@ -1,0 +1,378 @@
+.ld-simple-dashboard {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 8px 4px 36px;
+  color: #172033;
+}
+
+.ld-simple-heading {
+  margin: 0 0 22px;
+}
+
+.ld-simple-heading h1 {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin: 0;
+}
+
+.ld-simple-heading p,
+.ld-section-title p,
+.ld-properties-header p {
+  font-size: 12px;
+  color: #8a96a8;
+  margin: 7px 0 0;
+}
+
+.ld-performance-card,
+.ld-properties-card {
+  background: #fff;
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.ld-performance-card {
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.ld-section-title h2,
+.ld-properties-header h2 {
+  font-size: 14px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.ld-performance-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 160px) minmax(260px, 1fr);
+  gap: 12px;
+  align-items: stretch;
+  margin-top: 22px;
+}
+
+.ld-metric,
+.ld-trend-card {
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  background: #fff;
+  min-height: 116px;
+  padding: 14px;
+}
+
+.ld-metric span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #8090a3;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.ld-metric strong {
+  display: block;
+  font-size: 23px;
+  margin: 9px 0 8px;
+}
+
+.ld-metric small {
+  font-size: 9px;
+  color: #6cae7b;
+}
+
+.ld-trend-card {
+  padding: 12px 16px;
+}
+
+.ld-trend-card > span {
+  font-size: 8px;
+  text-transform: uppercase;
+  color: #8a96a8;
+}
+
+.ld-trend-card svg {
+  width: 100%;
+  height: 65px;
+  overflow: visible;
+}
+
+.ld-trend-card polyline {
+  fill: none;
+  stroke: #18a7e4;
+  stroke-width: 1.4;
+}
+
+.ld-trend-axis {
+  border-top: 1px solid #dce3ea;
+  padding-top: 5px;
+  display: flex;
+  justify-content: space-between;
+  color: #9aa5b4;
+  font-size: 7px;
+}
+
+.ld-properties-card {
+  padding: 20px;
+}
+
+.ld-properties-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+
+.ld-add-button,
+.ld-primary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #16a5e1;
+  color: #fff !important;
+  border-radius: 7px;
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.ld-add-button {
+  min-height: 36px;
+  padding: 8px 16px;
+}
+
+.ld-property-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ld-property-row {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 200px;
+  gap: 18px;
+  align-items: center;
+  border-top: 1px solid #eef2f5;
+  padding-top: 16px;
+}
+
+.ld-property-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.ld-property-image {
+  height: 135px;
+  background: #dcecf8;
+  border: 1px solid #bcd5e5;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8da2b3;
+  font-size: 10px;
+  overflow: hidden;
+}
+
+.ld-property-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ld-property-info h3 {
+  font-size: 15px;
+  margin: 0 0 7px;
+}
+
+.ld-property-info > p {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #8492a5;
+  margin: 0 0 10px;
+}
+
+.ld-status {
+  display: inline-block;
+  background: #e7faee;
+  color: #39a966;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.ld-status.draft {
+  background: #f1f3f5;
+  color: #7b8794;
+}
+
+.ld-property-stats {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.ld-property-stats > div {
+  min-width: 120px;
+  border-radius: 7px;
+  padding: 9px 12px;
+  background: #eaf8ee;
+  border: 1px solid #bfe5c9;
+  display: flex;
+  flex-direction: column;
+  font-size: 9px;
+  color: #548264;
+}
+
+.ld-property-stats > div + div {
+  background: #eef7fc;
+  border-color: #c8e1ef;
+  color: #54788c;
+}
+
+.ld-property-stats b {
+  font-size: 11px;
+  color: #1f3544;
+}
+
+/* Property Actions */
+
+.ld-property-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ld-property-actions > a,
+.ld-property-actions > button {
+  min-height: 36px;
+  padding: 8px 12px;
+}
+
+/* View Property */
+
+.ld-view-property-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #16a5e1 !important;
+  border: 1px solid #16a5e1;
+  border-radius: 7px;
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.ld-view-property-action:hover {
+  background: #f3faff;
+}
+
+/* Edit / Publication Buttons */
+
+.ld-property-actions button {
+  min-height: 40px;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #d8e0e7;
+  border-radius: 7px;
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 600;
+  cursor: pointer;
+  color: #4c5968;
+}
+
+.ld-property-actions > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.ld-property-actions .danger {
+  color: #ef6a72;
+  border-color: #f1cbd0;
+}
+
+/* Empty State */
+
+.ld-empty {
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  color: #8794a5;
+  font-size: 12px;
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+  .ld-performance-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .ld-trend-card {
+    grid-column: 1 / -1;
+  }
+
+  .ld-property-row {
+    grid-template-columns: 120px 1fr;
+  }
+
+  .ld-property-actions {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .ld-property-actions > div {
+    display: grid;
+    grid-column: 1 / -1;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 600px) {
+  .ld-performance-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ld-trend-card {
+    grid-column: auto;
+  }
+
+  .ld-property-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ld-property-image {
+    height: 180px;
+  }
+
+  .ld-properties-header {
+    gap: 14px;
+  }
+
+  .ld-property-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .ld-property-stats {
+    flex-direction: column;
+  }
+
+  .ld-property-stats > div {
+    min-width: 0;
+  }
+}
