@@ -409,7 +409,7 @@ export function Dashboard() {
 
         {sidebarOpen && (<div className="app-sidebar-overlay" onClick={() => setSidebarOpen(false)}/>)}
 
-        <aside className={`app-sidebar-drawer ${sidebarOpen ? "tenant-dashboard-aside" : "tenant-dashboard-aside-2"}`}>
+        <aside className={`app-sidebar-drawer ${sidebarOpen ? "is-open" : ""}`}>
           <button aria-label="Close navigation" onClick={() => setSidebarOpen(false)} className="app-sidebar-close">
             <X className="tenant-dashboard-x-icon"/>
           </button>

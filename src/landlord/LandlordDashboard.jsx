@@ -1158,7 +1158,7 @@ export function LandlordDashboard() {
 
         {sidebarOpen && (<div className="app-sidebar-overlay" onClick={() => setSidebarOpen(false)}/>)}
 
-        <aside className={`app-sidebar-drawer ${sidebarOpen ? "landlord-dashboard-aside" : "landlord-dashboard-aside-2"}`}>
+        <aside className={`app-sidebar-drawer ${sidebarOpen ? "is-open" : ""}`}>
           <button onClick={() => setSidebarOpen(false)} aria-label="Close navigation" className="app-sidebar-close">
             <X className="landlord-dashboard-x-icon"/>
           </button>

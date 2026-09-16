@@ -117,6 +117,17 @@
 .tenant-browse .app-sidebar-trigger:focus-visible {
   outline-color: var(--tenant-accent) !important;
 }
+.tenant-browse .app-sidebar-drawer {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  z-index: 60 !important;
+  transform: translateX(-105%) !important;
+  transition: transform 220ms ease !important;
+}
+.tenant-browse .app-sidebar-drawer.is-open {
+  transform: translateX(0) !important;
+}
 .tenant-browse .app-sidebar-trigger {
   color: #fff !important;
   border-color: var(--tenant-accent) !important;

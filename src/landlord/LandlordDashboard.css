@@ -79,11 +79,22 @@
 }
 
 .landlord-dashboard-aside {
-  translate: 0;
+  transform: translateX(0);
 }
 
 .landlord-dashboard-aside-2 {
-  translate: -100%;
+  transform: translateX(-105%);
+}
+
+@media (max-width: 63.999rem) {
+  .app-sidebar-drawer {
+    transform: translateX(-105%);
+  }
+
+  .app-sidebar-drawer.is-open,
+  .landlord-dashboard-aside {
+    transform: translateX(0);
+  }
 }
 
 .app-sidebar-close {

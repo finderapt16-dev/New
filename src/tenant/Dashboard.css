@@ -1109,11 +1109,22 @@
 }
 
 .tenant-dashboard-aside {
-  translate: 0;
+  transform: translateX(0);
 }
 
 .tenant-dashboard-aside-2 {
-  translate: -100%;
+  transform: translateX(-105%);
+}
+
+@media (max-width: 63.999rem) {
+  .app-sidebar-drawer {
+    transform: translateX(-105%);
+  }
+
+  .app-sidebar-drawer.is-open,
+  .tenant-dashboard-aside {
+    transform: translateX(0);
+  }
 }
 
 .tenant-dashboard-x-icon {
