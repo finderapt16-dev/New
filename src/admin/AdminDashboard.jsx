@@ -11,7 +11,7 @@ import { archiveAppeal, archiveReport, createAuditLog, createViolation, deleteNo
 import { getReportEvidence } from "@/services/reportEvidenceService";
 import { supabase } from "@/services/supabaseClient";
 import { formatAuditLogForDisplay, formatNotificationType, safeNotificationText } from "@/utils/auditLogDisplay";
-import { Activity, AlertOctagon, AlertTriangle, Archive, Bell, BellRing, Building2, Calendar, CheckCheck, CheckCircle2, ChevronRight, ClipboardList, Clock, Edit2, Eye, FileText, Flag, History, LifeBuoy, Lock, Mail, MailOpen, Menu, Phone, RefreshCw, RotateCcw, Save, Search, Settings, Shield, ShieldAlert, ShieldCheck, Smartphone, Trash2, User as UserIcon, Users, Wrench, X, XCircle } from "lucide-react";
+import { Activity, AlertOctagon, AlertTriangle, Archive, Bell, BellRing, Building2, Calendar, CheckCheck, CheckCircle2, ChevronRight, ClipboardList, Clock, Edit2, Eye, FileText, Flag, History, Lock, Mail, MailOpen, Menu, Phone, RefreshCw, RotateCcw, Save, Search, Settings, Shield, ShieldAlert, ShieldCheck, Smartphone, Trash2, User as UserIcon, Users, X, XCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -20,17 +20,15 @@ import { AdminAppeals } from './AdminAppeals';
 import { activityTimestamp, ArchiveEmpty, canPublishForLandlord, formatOptionalDate, getLandlordVerificationStatus, isAdminModule, NOTICE_TYPES, NotificationEmpty, OverviewEmpty, SectionHeading, SettingsField, SettingsSectionTitle, text, toAdminProfileState, toEvidenceItem, VIOLATION_TYPES } from './adminDashboardHelpers';
 import { AdminReports } from './AdminReports';
 import { AdminSidebar } from './AdminSidebar';
-export function AdminDashboard({ portalMode = "admin" }) {
+export function AdminDashboard() {
     const { user, verifyLandlord, updateUser, refreshUsers, logout } = useAuth();
     const navigate = useNavigate();
     const routeLocation = useLocation();
-    const isSuperAdminPortal = portalMode === "super_admin";
-    const portalBasePath = isSuperAdminPortal ? "/super-admin" : "/dashboard";
-    const apartmentDetailBasePath = isSuperAdminPortal ? "/super-admin/apartment" : "/admin/apartment";
+    const portalBasePath = "/dashboard";
+    const apartmentDetailBasePath = "/admin/apartment";
     const [searchParams] = useSearchParams();
-    const requestedSection = searchParams.get("section")
-        ?? (routeLocation.pathname.endsWith("/admin-management") ? "admin-management" : routeLocation.pathname.endsWith("/user-management") ? "user-management" : routeLocation.pathname.endsWith("/help-center") ? "help-center" : routeLocation.pathname.endsWith("/audit-logs") ? "audit-logs" : routeLocation.pathname.endsWith("/system-control") ? "system-control" : routeLocation.pathname.endsWith("/profile") ? "profile" : "overview");
-    const isAvailableSection = (value) => isAdminModule(value) || (isSuperAdminPortal && ["admin-management", "user-management", "help-center", "audit-logs", "system-control", "profile"].includes(value));
+    const requestedSection = searchParams.get("section") ?? "overview";
+    const isAvailableSection = (value) => isAdminModule(value);
     const [activeSection, setActiveSection] = useState(() => isAvailableSection(requestedSection) ? requestedSection : "overview");
     useEffect(() => {
         if (isAvailableSection(requestedSection))
@@ -40,9 +38,6 @@ export function AdminDashboard({ portalMode = "admin" }) {
     const [navigationDataReady, setNavigationDataReady] = useState(false);
     // landlords
     const [landlords, setLandlords] = useState([]);
-    const [platformUsers, setPlatformUsers] = useState([]);
-    const [supportRequests, setSupportRequests] = useState([]);
-    const [platformStatus, setPlatformStatus] = useState(null);
     const [verifyAction, setVerifyAction] = useState(null);
     const [landlordSearch, setLandlordSearch] = useState("");
     const [landlordStatusFilter, setLandlordStatusFilter] = useState("all");
@@ -525,13 +520,8 @@ export function AdminDashboard({ portalMode = "admin" }) {
             setArchivedReports(loadedArchivedReports);
             setArchivedAppeals(loadedArchivedAppeals);
             setRecentActivityLogs(loadedActivityLogs);
-            setPlatformUsers(loadedUsers);
+
             setLandlords(loadedUsers.filter((account) => account.role === "landlord"));
-            if (isSuperAdminPortal) {
-                const [tickets, status] = await Promise.all([fetchSupportRequests(), fetchMaintenanceState()]);
-                setSupportRequests(tickets);
-                setPlatformStatus(status);
-            }
             setNavigationDataReady(true);
         };
         void loadData();
@@ -553,14 +543,14 @@ export function AdminDashboard({ portalMode = "admin" }) {
         }
     }, [activeSection, loadAdminNotifications]);
     useEffect(() => {
-        if (user?.role !== "admin" && user?.role !== "super_admin")
+        if (user?.role !== "admin")
             return;
         const refreshApartmentData = () => {
             void fetchApartments().then((items) => setAllApartments(items));
         };
         const refreshUserData = () => {
             void fetchUsers().then((users) => {
-                setPlatformUsers(users);
+
                 setLandlords(users.filter((account) => account.role === "landlord"));
             });
         };
@@ -987,30 +977,19 @@ export function AdminDashboard({ portalMode = "admin" }) {
     };
     const navigateToAdminModule = (section) => {
         setSidebarOpen(false);
-        if (!isAdminModule(section)) {
-            if (!isSuperAdminPortal)
-                return;
-            setActiveSection(section);
-            navigate(`${portalBasePath}/${section}`);
-            return;
-        }
+        if (!isAdminModule(section)) return;
         if (!user?.id) {
             setActiveSection(section);
             navigate(`${portalBasePath}?section=${section}`);
             return;
         }
         const rememberedPath = getAdminModulePath(user.id, section);
-        const path = isSuperAdminPortal && rememberedPath.startsWith("/admin/apartment/")
-            ? rememberedPath.replace("/admin/apartment/", `${apartmentDetailBasePath}/`)
-            : rememberedPath.startsWith("/dashboard") ? rememberedPath.replace("/dashboard", portalBasePath) : rememberedPath;
+        const path = rememberedPath;
         if (path.startsWith("/admin/apartment/")) {
             navigate(path, { state: { returnTo: `${portalBasePath}?section=apartments`, backLabel: "Back to Apartments" } });
             return;
         }
-        if (path.startsWith("/super-admin/apartment/")) {
-            navigate(path, { state: { returnTo: `${portalBasePath}?section=apartments`, backLabel: "Back to Apartments" } });
-            return;
-        }
+
         restoreAdminModule(section);
         setActiveSection(section);
         navigate(path);
@@ -1047,7 +1026,7 @@ export function AdminDashboard({ portalMode = "admin" }) {
     const handleLogout = () => { if (user?.id)
         clearAdminNavigationMemory(user.id); logout?.(); navigate("/"); };
     // ── Sidebar ───────────────────────────────────────────────────────────────
-    const PortalSidebarContent = () => (<AdminSidebar activeSection={activeSection} isSuperAdminPortal={isSuperAdminPortal} user={user} pendingReports={pendingReports} activeAppealsCount={activeAppealsCount} pendingCount={pendingCount} unreadNotifsCount={unreadNotifsCount} navigateToAdminModule={navigateToAdminModule} handleLogout={handleLogout}/>);
+    const PortalSidebarContent = () => (<AdminSidebar activeSection={activeSection} user={user} pendingReports={pendingReports} activeAppealsCount={activeAppealsCount} pendingCount={pendingCount} unreadNotifsCount={unreadNotifsCount} navigateToAdminModule={navigateToAdminModule} handleLogout={handleLogout}/>);
     // ── Section: Notifications ────────────────────────────────────────────────
     const renderOverview = () => {
         const pendingAppealCount = appeals.filter((appeal) => ["pending", "under_review", "needs_information"].includes(String(appeal.status ?? "").toLowerCase())).length;
@@ -1133,42 +1112,11 @@ export function AdminDashboard({ portalMode = "admin" }) {
             .sort((left, right) => new Date(right.timestamp).getTime() - new Date(left.timestamp).getTime())
             .slice(0, 5);
         const itemMotion = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
-        if (isSuperAdminPortal) {
-            const admins = platformUsers.filter((account) => account.role === "admin" || account.role === "super_admin");
-            const tenants = platformUsers.filter((account) => ["tenant", "student", "employee"].includes(String(account.role)));
-            const activeAdmins = admins.filter((account) => String(account.status ?? "active").toLowerCase() !== "disabled");
-            const publishedApartments = allApartments.filter((apartment) => apartment.isPublished ?? apartment.is_published);
-            const verifiedLandlords = landlords.filter((landlord) => landlord.isVerified ?? landlord.is_verified);
-            const openHelpRequests = supportRequests.filter((ticket) => ["open", "in_progress"].includes(String(ticket.status ?? "open"))).length;
-            const stats = [
-                { label: "Total Users", value: platformUsers.length, icon: Users },
-                { label: "Total Admins", value: admins.length, icon: ShieldCheck },
-                { label: "Active Admins", value: activeAdmins.length, icon: CheckCircle2 },
-                { label: "Total Landlords", value: landlords.length, icon: Users },
-                { label: "Total Tenants", value: tenants.length, icon: UserIcon },
-                { label: "Total Apartments", value: allApartments.length, icon: Building2 },
-                { label: "Open Help Requests", value: openHelpRequests, icon: LifeBuoy },
-                { label: "Platform Status", value: platformStatus?.status === "maintenance" ? "Maintenance" : "Operational", icon: Wrench },
-            ];
-            return <div className="admin-dashboard-container">
-        <header><h1 className="admin-dashboard-super-admin-dashboard">Super Admin Dashboard</h1><p className="admin-dashboard-text">Platform administration and user oversight</p></header>
-        <section className="admin-dashboard-section">{stats.map(({ label, value, icon: Icon }) => <article key={label} className="admin-dashboard-article"><span className="admin-dashboard-row"><Icon className="admin-dashboard-icon-icon"/></span><p className="admin-dashboard-text-2">{label}</p><strong className="admin-dashboard-strong">{value}</strong></article>)}</section>
-        <div className="admin-dashboard-grid">
-          <section className="admin-dashboard-section-2"><div className="admin-dashboard-row-2"><SectionHeading title="Admin Management" description="Recently registered administrator accounts."/><button onClick={() => navigateToAdminModule("admin-management")} className="admin-dashboard-manage-admins">Manage Admins →</button></div>{admins.length === 0 ? <OverviewEmpty icon={ShieldCheck} text="No administrators found."/> : <div className="admin-dashboard-panel">{admins.slice(0, 5).map((admin) => <div key={String(admin.id)} className="admin-dashboard-row-3"><span className="admin-dashboard-row-4">{String(admin.name ?? "A")[0]}</span><span className="admin-dashboard-span"><strong className="admin-dashboard-strong-2">{String(admin.name ?? "Administrator")}</strong><span className="admin-dashboard-span-2">{String(admin.email ?? "")}</span></span><Badge className={String(admin.status).toLowerCase() === "disabled" ? "admin-dashboard-badge" : "admin-dashboard-badge-2"}>{String(admin.status).toLowerCase() === "disabled" ? "Inactive" : "Active"}</Badge></div>)}</div>}</section>
-          <section className="admin-dashboard-section-2"><SectionHeading title="Platform Overview" description="Current platform-wide totals."/><dl className="admin-dashboard-dl">{[["Total Tenants", tenants.length], ["Total Landlords", landlords.length], ["Verified Landlords", verifiedLandlords.length], ["Total Apartments", allApartments.length], ["Published Apartments", publishedApartments.length]].map(([label, value]) => <div key={String(label)} className="admin-dashboard-row-5"><dt className="admin-dashboard-dt">{label}</dt><dd className="admin-dashboard-dd">{value}</dd></div>)}</dl></section>
-        </div>
-        <div className="admin-dashboard-grid-2">
-          <section className="admin-dashboard-section-2"><SectionHeading title="System Attention" description="Operational workload handled by normal Administrators."/><div className="admin-dashboard-grid-3">{[["Landlord Verifications", pendingCount], ["Apartment Reviews", pendingReviewCount], ["Open Reports", pendingReports], ["Pending Appeals", pendingAppealCount]].map(([label, value]) => <div key={String(label)} className="admin-dashboard-card"><p className="admin-dashboard-text-3">{label}</p><strong className="admin-dashboard-strong-3">{value}</strong></div>)}</div></section>
-          <section className="admin-dashboard-section-2"><div className="admin-dashboard-row-6"><SectionHeading title="Recent Administrative Activity" description="Latest real actions from audit logs."/><button onClick={() => navigateToAdminModule("audit-logs")} className="admin-dashboard-view-audit-logs">View Audit Logs →</button></div>{recentActivityLogs.length === 0 ? <OverviewEmpty icon={ClipboardList} text="No audit activity yet."/> : <div className="admin-dashboard-panel">{recentActivityLogs.slice(0, 5).map((log) => { const display = formatAuditLogForDisplay(log); return <div key={String(log.id)} className="admin-dashboard-panel-2"><strong className="admin-dashboard-strong-4">{display.title}</strong><p className="admin-dashboard-text-4">{display.detail}</p></div>; })}</div>}</section>
-        </div>
-        <section className="admin-dashboard-section-2"><div className="admin-dashboard-row-7"><SectionHeading title="User Overview" description="All registered user groups."/><button onClick={() => navigateToAdminModule("user-management")} className="admin-dashboard-view-all-users">View All Users →</button></div><div className="admin-dashboard-grid-4">{[["Admins", admins.length], ["Landlords", landlords.length], ["Tenants", tenants.length]].map(([label, value]) => <div key={String(label)} className="admin-dashboard-panel-3"><p className="admin-dashboard-text-3">{label}</p><strong className="admin-dashboard-strong-5">{value}</strong></div>)}</div></section>
-      </div>;
-        }
         return (<div className="admin-dashboard-container-2">
         <header className="admin-dashboard-header">
           <div className="admin-dashboard-panel-4">
-            <h1 className="admin-dashboard-title">{isSuperAdminPortal ? "Super Admin Dashboard" : "Admin Dashboard"}</h1>
-            <p className="admin-dashboard-text">{isSuperAdminPortal ? "Platform administration and user oversight" : "Monitor platform activity and manage items that require administrative attention."}</p>
+            <h1 className="admin-dashboard-title">{"Admin Dashboard"}</h1>
+            <p className="admin-dashboard-text">{"Monitor platform activity and manage items that require administrative attention."}</p>
           </div>
           <div className="admin-dashboard-row-8">
             <button onClick={() => navigateToAdminModule("notifications")} title="Notifications" className="admin-dashboard-button">
@@ -1471,8 +1419,6 @@ export function AdminDashboard({ portalMode = "admin" }) {
         const adminName = `${adminProfile.firstName} ${adminProfile.lastName}`.trim();
         const accountStatus = user?.status || "Unavailable";
         const ViewField = ({ label, value, wide = false }) => <div className={wide ? "admin-dashboard-panel-9" : ""}><p className="admin-dashboard-text-14">{label}</p><p className="admin-dashboard-text-15">{value?.trim() || (label === "Bio" ? "No bio provided" : "Not provided")}</p></div>;
-        if (isSuperAdminPortal)
-            return <div className="admin-dashboard-container-4"><header className="admin-dashboard-header-3"><p className="admin-dashboard-account">Account</p><h1 className="admin-dashboard-super-admin-settings">Super Admin Settings</h1><p className="admin-dashboard-text">Manage secure account options. Personal information is managed from Profile.</p></header><Card className="admin-dashboard-card-6"><CardContent className="admin-dashboard-content-2"><SettingsSectionTitle icon={Lock} tone="admin-tone-brand-icon" title="Password Security" description="Use AptFindr’s authenticated password-change flow."/><Button onClick={() => setPasswordModal(true)} variant="outline" className="admin-dashboard-change-password"><Lock className="admin-dashboard-lock-icon"/>Change Password</Button></CardContent></Card><Card className="admin-dashboard-card-6"><CardContent className="admin-dashboard-content-2"><SettingsSectionTitle icon={UserIcon} tone="admin-tone-brand-icon" title="Profile Information" description="Name, avatar, and department are managed on your protected profile page."/><Button onClick={() => navigateToAdminModule("profile")} className="admin-dashboard-open-profile"><UserIcon className="admin-dashboard-user-icon-icon"/>Open Profile</Button></CardContent></Card></div>;
         return (<div className="admin-dashboard-container-5">
         <header className="admin-dashboard-header-4">
           <div className="admin-dashboard-row-21">
@@ -1744,14 +1690,6 @@ export function AdminDashboard({ portalMode = "admin" }) {
         appeals: renderAppeals,
         history: renderHistory,
         admininfo: renderAdminInfo,
-        ...(isSuperAdminPortal ? {
-            "admin-management": () => <AdminManagement />,
-            "user-management": () => <UserManagement />,
-            "help-center": () => <HelpCenter />,
-            "audit-logs": () => <AuditLogs />,
-            "system-control": () => <SystemControl />,
-            "profile": () => <SuperAdminProfile />,
-        } : {}),
     };
     // ── Render ────────────────────────────────────────────────────────────────
     return (<div className="admin-portal-shell app-shell">

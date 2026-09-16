@@ -775,18 +775,6 @@
   overflow: hidden;
 }
 
-.admin-apartment-detail-super-admin {
-  margin-top: var(--spacing, .25rem);
-  padding-inline: calc(var(--spacing, .25rem) * 1.5);
-  padding-block: calc(var(--spacing, .25rem) * .5);
-  font-size: 9px;
-  font-weight: var(--font-weight-black, 900);
-  color: var(--color-white, #fff);
-  background-color: #8b735b;
-  border-radius: .25rem;
-  display: inline-flex;
-}
-
 .admin-apartment-detail-shield-check-icon {
   height: calc(var(--spacing, .25rem) * 4);
   width: calc(var(--spacing, .25rem) * 4);
@@ -10539,19 +10527,6 @@
   color: #302820;
 }
 
-.admin-dashboard-super-admin-dashboard {
-  font-size: var(--text-2xl, 1.5rem);
-  line-height: var(--text-2xl--line-height, calc(2 / 1.5));
-  font-weight: var(--font-weight-black, 900);
-}
-
-@media (min-width: 48rem) {
-  .admin-dashboard-super-admin-dashboard {
-    font-size: var(--text-3xl, 1.875rem);
-    line-height: var(--tw-leading, var(--text-3xl--line-height, calc(2.25 / 1.875)));
-  }
-}
-
 .admin-dashboard-text {
   margin-top: var(--spacing, .25rem);
   font-size: var(--text-sm, .875rem);
@@ -12797,14 +12772,6 @@
   letter-spacing: .16em;
   color: #8b735b;
   text-transform: uppercase;
-}
-
-.admin-dashboard-super-admin-settings {
-  margin-top: var(--spacing, .25rem);
-  font-size: var(--text-2xl, 1.5rem);
-  line-height: var(--text-2xl--line-height, calc(2 / 1.5));
-  font-weight: var(--font-weight-black, 900);
-  color: #302820;
 }
 
 .admin-dashboard-card-6 {
@@ -19429,19 +19396,6 @@
   line-height: var(--text-xs--line-height, calc(1 / .75));
   color: #756a60;
   overflow: hidden;
-}
-
-.admin-sidebar-super-admin {
-  margin-top: var(--spacing, .25rem);
-  padding-inline: calc(var(--spacing, .25rem) * 1.5);
-  padding-block: calc(var(--spacing, .25rem) * .5);
-  font-size: 9px;
-  font-weight: var(--font-weight-black, 900);
-  letter-spacing: var(--tracking-wider, .05em);
-  color: var(--color-white, #fff);
-  background-color: #8b735b;
-  border-radius: .25rem;
-  display: inline-flex;
 }
 
 .admin-sidebar-shield-icon {

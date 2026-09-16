@@ -14,6 +14,8 @@ const edge = process.env.EDGE_PATH || 'C:/Program Files (x86)/Microsoft/Edge/App
 const user = { id: 'tenant-fixture', authId: 'tenant-fixture', role: 'tenant', name: 'Test Tenant', email: 'tenant@example.test', isVerified: true, status: 'active' };
 const apartment = { id: 'apartment-fixture', title: 'La Paz Test Apartment', address: 'La Paz', city: 'Iloilo City', state: 'Iloilo', zip: '5000', description: 'A local fixture apartment.', landlordId: 'landlord-fixture', landlordVerified: true, isPublished: true, status: 'available', price: 3500, bedrooms: 2, bathrooms: 1, sqft: 30, lat: 10.7162, lng: 122.5675, images: [], image: '', amenities: ['WiFi'], utilities: [], features: {}, petFriendly: true, parking: true, furnished: true, availableDate: '2026-01-01', createdAt: '2026-01-01', updatedAt: '2026-01-02', rooms: [{ id: 'room-fixture', roomName: 'Room One', name: 'Room One', roomNumber: '1', roomType: 'Single', capacity: 1, price: 3500, status: 'available', isOccupied: false, images: [], amenities: ['WiFi'], description: 'Fixture room' }] };
 apartment.approvalStatus = 'approved';
+const adminMode = process.env.APTFINDR_TEST_ROLE === 'admin';
+if (adminMode) Object.assign(user, { role: 'admin', name: 'Test Admin' });
 const serviceSource = fs.readFileSync('src/services/dashboardSupabaseService.js', 'utf8');
 const prefsDeclaration = parseSync('service.js', serviceSource).program.body.find(n => n.type === 'ExportNamedDeclaration' && n.declaration?.declarations?.[0]?.id.name === 'defaultTenantPreferences');
 const prefs = serviceSource.slice(prefsDeclaration.start, prefsDeclaration.end);
@@ -78,6 +80,22 @@ try {
   ws.addEventListener('message', event => { const message = JSON.parse(event.data); if (message.id) { const p = pending.get(message.id); pending.delete(message.id); message.error ? p.reject(new Error(JSON.stringify(message.error))) : p.resolve(message.result); } if (message.method === 'Runtime.exceptionThrown') exceptions.push(message.params.exceptionDetails); });
   await send('Runtime.enable'); await send('Page.enable'); await send('Network.enable');
   await send('Network.setBlockedURLs', { urls: ['https://*'] });
+  if (adminMode) {
+    await send('Page.navigate', { url: 'http://127.0.0.1:4179/dashboard' });
+    await waitFor("!!document.querySelector('.admin-portal-shell')", 'initial admin render');
+    for (const width of [1440, 768, 390]) {
+      await send('Emulation.setDeviceMetricsOverride', { width, height: 900, deviceScaleFactor: 1, mobile: false });
+      for (const section of ['overview', 'notifications', 'landlords', 'apartments', 'reports', 'appeals', 'admininfo']) {
+        console.log(`Checking admin ${width}px ${section}`);
+        await navigate(`/dashboard?section=${section}`, '.admin-portal-shell');
+        await waitFor(`!!document.querySelector('nav button[aria-current="page"]') && document.querySelector('nav button[aria-current="page"]').textContent.trim().length > 0`, section);
+        assert.equal(await evaluate("/Super Admin|System Control|Manage Admins/.test(document.body.innerText)"), false);
+        assert.equal(await evaluate("document.querySelectorAll('.admin-sidebar-nav button').length"), 12, 'six regular admin items in each desktop/mobile menu');
+      }
+      results.push({ role: 'admin', width, sections: 7 });
+    }
+    await navigate('/super-admin', '.not-found-page');
+  } else {
   await send('Page.navigate', { url: 'http://127.0.0.1:4179/browse' });
   await waitFor("!!document.querySelector('.tenant-browse')", 'initial tenant render');
   for (const width of [1440, 768, 390]) {
@@ -111,6 +129,7 @@ try {
     await evaluate("document.querySelectorAll('.tenant-help-faq-question')[1].click()");
     assert.ok(await evaluate("document.querySelectorAll('.tenant-help-faq-question')[1].getAttribute('aria-expanded')==='true'"));
     results.push({ width, routes: routes.length, reverseNavigation: true, sidebarNavigation: true, roomDetails: true, leafletMarker: true, preferences: true, notificationDetail: true, faq: true });
+  }
   }
   assert.equal(exceptions.length, 0, JSON.stringify(exceptions));
   if (process.env.APTFINDR_SNAPSHOTS) fs.writeFileSync(process.env.APTFINDR_SNAPSHOTS, JSON.stringify(snapshots));

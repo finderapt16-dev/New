@@ -135,9 +135,8 @@ export function AdminApartmentDetail() {
     const navigate = useNavigate();
     const routeLocation = useLocation();
     const { user, logout } = useAuth();
-    const isSuperAdminPortal = user?.role === "super_admin";
-    const portalBasePath = isSuperAdminPortal ? "/super-admin" : "/dashboard";
-    const apartmentDetailBasePath = isSuperAdminPortal ? "/super-admin/apartment" : "/admin/apartment";
+    const portalBasePath = "/dashboard";
+    const apartmentDetailBasePath = "/admin/apartment";
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [apartment, setApartment] = useState(null);
     const [inspectionDetails, setInspectionDetails] = useState(null);
@@ -182,9 +181,7 @@ export function AdminApartmentDetail() {
         if (!user?.id)
             return navigate(`${portalBasePath}?section=${section}`);
         const rememberedPath = getAdminModulePath(user.id, section);
-        const destination = isSuperAdminPortal
-            ? rememberedPath.replace("/admin/apartment/", `${apartmentDetailBasePath}/`).replace("/dashboard", portalBasePath)
-            : rememberedPath;
+        const destination = rememberedPath;
         navigate(destination);
         setSidebarOpen(false);
     };
@@ -606,8 +603,8 @@ export function AdminApartmentDetail() {
         { label: "Appeals", section: "appeals", icon: AlertTriangle },
     ];
     const Sidebar = () => <div className="admin-apartment-detail-content">
-    <div className="admin-apartment-detail-panel-3"><div className="admin-apartment-detail-row-2"><span className="admin-apartment-detail-card-4"><img src="/icon.svg" alt="" className="admin-apartment-detail-image" aria-hidden="true"/></span><span><strong className="admin-apartment-detail-apt-findr">AptFindr</strong><small className="admin-apartment-detail-small">{isSuperAdminPortal ? "Super Admin Portal" : "Admin Portal"}</small></span></div></div>
-    <div className="admin-apartment-detail-panel-4"><div className="admin-apartment-detail-card-5"><span className="admin-apartment-detail-row-3">{user?.name?.[0]?.toUpperCase() ?? "A"}</span><span className="admin-apartment-detail-span"><strong className="admin-apartment-detail-strong">{user?.name ?? (isSuperAdminPortal ? "Super Administrator" : "Admin")}</strong><small className="admin-apartment-detail-small-2">{user?.email ?? ""}</small>{isSuperAdminPortal && <small className="admin-apartment-detail-super-admin">SUPER ADMIN</small>}</span><ShieldCheck className="admin-apartment-detail-shield-check-icon"/></div></div>
+    <div className="admin-apartment-detail-panel-3"><div className="admin-apartment-detail-row-2"><span className="admin-apartment-detail-card-4"><img src="/icon.svg" alt="" className="admin-apartment-detail-image" aria-hidden="true"/></span><span><strong className="admin-apartment-detail-apt-findr">AptFindr</strong><small className="admin-apartment-detail-small">{"Admin Portal"}</small></span></div></div>
+    <div className="admin-apartment-detail-panel-4"><div className="admin-apartment-detail-card-5"><span className="admin-apartment-detail-row-3">{user?.name?.[0]?.toUpperCase() ?? "A"}</span><span className="admin-apartment-detail-span"><strong className="admin-apartment-detail-strong">{user?.name ?? ("Admin")}</strong><small className="admin-apartment-detail-small-2">{user?.email ?? ""}</small></span><ShieldCheck className="admin-apartment-detail-shield-check-icon"/></div></div>
     <nav className="admin-apartment-detail-nav"><p className="admin-apartment-detail-main">Main</p>{adminNavItems.map(({ label, section, icon: Icon }) => <button key={section} onClick={() => navigateToAdminModule(section)} className={`admin-apartment-detail-button ${section === "apartments" ? "admin-apartment-detail-button-2" : "admin-apartment-detail-button-3"}`}><Icon className="admin-apartment-detail-icon-icon"/>{label}</button>)}</nav>
     <nav className="admin-apartment-detail-nav-2"><p className="admin-apartment-detail-account">Account</p><button onClick={() => navigateToAdminModule("admininfo")} className="admin-apartment-detail-settings"><Settings className="admin-apartment-detail-settings-icon"/>Settings</button></nav>
     <div className="admin-apartment-detail-panel-5"/><div className="admin-apartment-detail-panel-6"><LogoutConfirmation onConfirm={() => { if (user?.id)
