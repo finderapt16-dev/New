@@ -6,20 +6,20 @@ export function hasMeaningfulPreferences(preferences) {
     if (!preferences?.hasSavedPreferences)
         return false;
     const hasBudget = preferences.saveBudgetPreferences !== false
-        && Number.isFinite(Number(preferences.maxBudget))
-        && Number(preferences.maxBudget) > 0;
+        && (Number(preferences.maxBudget) > 0 || Number(preferences.minBudget) > 0);
     const hasLocation = preferences.recommendationLocation !== false
         && Boolean(preferences.preferredArea?.trim());
     const hasBedroomPreference = Boolean(preferences.minBedrooms && preferences.minBedrooms !== "any");
     const hasAmenityPreference = Boolean(preferences.petFriendly
         || preferences.parking
         || preferences.furnished
+        || preferences.ownBathroom
         || preferences.wifi
         || preferences.ac
         || preferences.studyArea
         || preferences.laundryArea
         || preferences.kitchenAccess);
-    const hasCapacityPreference = Number(preferences.roomCapacity) > 0;
+    const hasCapacityPreference = preferences.roomCapacity === "4+" || Number(preferences.roomCapacity) > 0;
     return hasBudget || hasLocation || hasBedroomPreference || hasCapacityPreference || hasAmenityPreference;
 }
 export const RATING_PRIOR_COUNT = 5;
@@ -69,10 +69,13 @@ function calculateLocationScore(apartment, preferences) {
  * Calculate budget compatibility score
  */
 function calculateBudgetScore(apartment, preferences) {
-    if (preferences?.saveBudgetPreferences === false || !preferences?.maxBudget) {
+    if (preferences?.saveBudgetPreferences === false || (!preferences?.maxBudget && !preferences?.minBudget)) {
         return 50; // Neutral if no preference
     }
     const price = getLowestAvailableRoomPrice(apartment) ?? apartment.price;
+    const minBudget = Number(preferences.minBudget) || 0;
+    if (minBudget > 0 && price < minBudget) return Math.max(0, 50 * price / minBudget);
+    if (!preferences.maxBudget) return 100;
     const { maxBudget } = preferences;
     // Within budget: highest score
     if (price <= maxBudget) {
@@ -137,7 +140,7 @@ function calculateAvailabilityScore(apartment, preferences) {
     else if (daysUntilAvailable <= 30) {
         score += 5; // Available within a month
     }
-    const minimum = Number(preferences?.minBedrooms);
+    const minimum = preferences?.minBedrooms === "4+" ? 4 : Number(preferences?.minBedrooms);
     if (!matchesRoomCapacity(apartment, preferences?.roomCapacity))
         score *= 0.65;
     if (Number.isFinite(minimum) && minimum > 0 && apartment.bedrooms < minimum)
@@ -155,6 +158,8 @@ function calculateAvailabilityScore(apartment, preferences) {
  */
 function calculateAmenitiesScore(apartment, preferences) {
     const preferredAmenities = [];
+    if (preferences?.ownBathroom)
+        preferredAmenities.push('own_bathroom');
     // Collect preferences
     if (preferences?.wifi)
         preferredAmenities.push('wifi');
@@ -165,7 +170,7 @@ function calculateAmenitiesScore(apartment, preferences) {
     if (preferences?.parking)
         preferredAmenities.push('parking');
     if (preferences?.laundryArea)
-        preferredAmenities.push('laundry area');
+        preferredAmenities.push('laundry_area');
     if (preferences?.kitchenAccess)
         preferredAmenities.push('kitchen access');
     if (preferences?.furnished)

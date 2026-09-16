@@ -5,12 +5,14 @@ import { resolveAppUserId } from "./apartmentsService";
 export const defaultTenantPreferences = {
     hasSavedPreferences: false,
     preferredArea: "",
+    minBudget: 0,
     maxBudget: 0,
     minBedrooms: "any",
     roomCapacity: "any",
     petFriendly: false,
     parking: false,
     furnished: false,
+    ownBathroom: false,
     wifi: false,
     ac: false,
     laundryArea: false,
@@ -546,17 +548,19 @@ function isTenantPreferenceSortOption(value) {
 }
 function normalizeTenantPreferences(value, fallback = defaultTenantPreferences) {
     const source = typeof value === "object" && value !== null ? value : {};
-    const minBedrooms = source.minBedrooms === "1" || source.minBedrooms === "2" || source.minBedrooms === "3" ? source.minBedrooms : "any";
+    const minBedrooms = ["1", "2", "3", "4+"].includes(source.minBedrooms) ? source.minBedrooms : "any";
     const sortBy = isTenantPreferenceSortOption(source.sortBy) ? source.sortBy : fallback.sortBy;
     return {
         hasSavedPreferences: getOptionalBooleanValue(source.hasSavedPreferences, fallback.hasSavedPreferences),
         preferredArea: typeof source.preferredArea === "string" ? source.preferredArea : fallback.preferredArea,
         maxBudget: getPositiveNumberValue(source.maxBudget, fallback.maxBudget),
+        minBudget: getPositiveNumberValue(source.minBudget, fallback.minBudget),
         minBedrooms,
-        roomCapacity: Number.isInteger(Number(source.roomCapacity)) && Number(source.roomCapacity) > 0 ? String(source.roomCapacity) : "any",
+        roomCapacity: source.roomCapacity === "4+" ? "4+" : Number.isInteger(Number(source.roomCapacity)) && Number(source.roomCapacity) > 0 ? String(source.roomCapacity) : "any",
         petFriendly: getOptionalBooleanValue(source.petFriendly, fallback.petFriendly),
         parking: getOptionalBooleanValue(source.parking, fallback.parking),
         furnished: getOptionalBooleanValue(source.furnished, fallback.furnished),
+        ownBathroom: getOptionalBooleanValue(source.ownBathroom, fallback.ownBathroom),
         wifi: getOptionalBooleanValue(source.wifi, fallback.wifi),
         ac: getOptionalBooleanValue(source.ac, fallback.ac),
         laundryArea: getOptionalBooleanValue(source.laundryArea, fallback.laundryArea),

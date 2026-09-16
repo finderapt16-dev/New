@@ -1,5 +1,6 @@
-import { getAvailableRoomCapacities, matchesRoomCapacity } from "@/tenant/roomCapacity";
-import { Bath, Bed, Building2, Car, ChevronLeft, ChevronRight, Eye, Grid2X2, Heart, Home as HomeIcon, LocateFixed, Map, MapPin, PawPrint, RefreshCw, Search, ShieldCheck, SlidersHorizontal, Sofa, Square, Tag, TriangleAlert, Users } from "lucide-react";
+import { matchesRoomCapacity } from "@/tenant/roomCapacity";
+import { Preferences } from "./Preferences";
+import { Bath, Bed, Building2, ChevronLeft, ChevronRight, Eye, Grid2X2, Heart, LocateFixed, Map, MapPin, RefreshCw, Search, SlidersHorizontal, Square, TriangleAlert } from "lucide-react";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -8,9 +9,7 @@ import { ApartmentRatingSummary } from "@/components/ApartmentRatingSummary";
 import { MapView } from "@/components/MapView";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { useApartmentsContext } from "@/contexts/ApartmentsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { isTenantRole } from "@/services/authService";
@@ -30,8 +29,6 @@ import { MarketOverview } from "@/landlord/MarketOverview";
 import { MobileNavigation } from "@/tenant/MobileNavigation";
 import { Sidebar } from "@/tenant/Sidebar";
 import { useTenantNotifications } from "@/tenant/useTenantNotifications";
-const DEFAULT_PRICE_RANGE = [1000, 6000];
-const hasMeaningfulBudgetPreference = (preferences) => preferences.saveBudgetPreferences === true && Number(preferences.maxBudget) !== DEFAULT_PRICE_RANGE[1];
 const STATUS_LABEL = {
     available: "Available",
     occupied: "Occupied",
@@ -123,20 +120,8 @@ function TenantBrowse() {
     const { apartments: allApartments, isLoading: apartmentsLoading, isRefreshing: apartmentsRefreshing, error: apartmentsError, refreshApartments, } = useApartmentsContext();
     const { isFavorite, toggleFavorite, updatingFavoriteIds } = useFavorites();
     const urlSearchQuery = searchParams.get("search")?.trim() || "";
-    const initialPriceRange = [
-        DEFAULT_PRICE_RANGE[0],
-        defaultTenantPreferences.saveBudgetPreferences === false ? DEFAULT_PRICE_RANGE[1] : Number(defaultTenantPreferences.maxBudget) || DEFAULT_PRICE_RANGE[1],
-    ];
-    const initialBudgetFilterEnabled = defaultTenantPreferences.saveBudgetPreferences === true;
     const [searchQuery, setSearchQuery] = useState(urlSearchQuery);
-    const [priceRange, setPriceRange] = useState(initialPriceRange);
-    const [budgetFilterEnabled, setBudgetFilterEnabled] = useState(initialBudgetFilterEnabled);
-    const [minPriceInput, setMinPriceInput] = useState(String(initialPriceRange[0]));
-    const [maxPriceInput, setMaxPriceInput] = useState(String(initialPriceRange[1]));
     const [roomCapacity, setRoomCapacity] = useState(defaultTenantPreferences.roomCapacity || "any");
-    const [petFriendly, setPetFriendly] = useState(Boolean(defaultTenantPreferences.petFriendly));
-    const [parking, setParking] = useState(Boolean(defaultTenantPreferences.parking));
-    const [furnished, setFurnished] = useState(Boolean(defaultTenantPreferences.furnished));
     const [sortBy, setSortBy] = useState(defaultTenantPreferences.sortBy || "recommended");
     const [browseMode, setBrowseMode] = useState("all");
     const [shuffleVersion, setShuffleVersion] = useState(0);
@@ -155,12 +140,6 @@ function TenantBrowse() {
     const [nearbySearchError, setNearbySearchError] = useState("");
     const geocodeRequest = useRef(0);
     const geocodeController = useRef(null);
-    const applyPriceRange = (range, enabled = true) => {
-        setPriceRange(range);
-        setMinPriceInput(String(range[0]));
-        setMaxPriceInput(String(range[1]));
-        setBudgetFilterEnabled(enabled);
-    };
     useEffect(() => {
         let mounted = true;
         if (!user?.id)
@@ -171,14 +150,8 @@ function TenantBrowse() {
             if (!mounted || !preferences)
                 return;
             setSavedPreferences(preferences);
-            setBudgetFilterEnabled(preferences.saveBudgetPreferences);
             setSortBy(preferences.sortBy || "recommended");
-            setPriceRange([DEFAULT_PRICE_RANGE[0], preferences.maxBudget || DEFAULT_PRICE_RANGE[1]]);
-            setMaxPriceInput(String(preferences.maxBudget || DEFAULT_PRICE_RANGE[1]));
             setRoomCapacity(preferences.roomCapacity);
-            setPetFriendly(preferences.petFriendly);
-            setParking(preferences.parking);
-            setFurnished(preferences.furnished);
         })
             .catch(() => {
             if (!mounted)
@@ -192,7 +165,7 @@ function TenantBrowse() {
     useEffect(() => () => geocodeController.current?.abort(), []);
     useEffect(() => {
         setCurrentPage(1);
-    }, [searchQuery, priceRange, budgetFilterEnabled, roomCapacity, petFriendly, parking, furnished, sortBy, browseMode, itemsPerPage, savedPreferences]);
+    }, [searchQuery, roomCapacity, sortBy, browseMode, itemsPerPage, savedPreferences]);
     useEffect(() => {
         let mounted = true;
         const loadRankingData = () => Promise.all([fetchApartmentViews(), fetchDashboardFavorites(), fetchApartmentRatings()])
@@ -278,7 +251,6 @@ function TenantBrowse() {
                 setNearbySearchLoading(false);
         }
     };
-    const capacityOptions = useMemo(() => [...new Set(allApartments.filter(isTenantVisibleApartment).flatMap(getAvailableRoomCapacities))].sort((a, b) => a - b), [allApartments]);
     const randomizedApartments = useMemo(() => shuffleApartments(allApartments), [allApartments, shuffleVersion]);
     const filteredApartments = useMemo(() => {
         const filtered = randomizedApartments.filter((apt) => {
@@ -309,6 +281,9 @@ function TenantBrowse() {
             if (!isTenantRole(user?.role))
                 return [];
             const preferences = {
+                minBudget: savedPreferences.minBudget,
+                minBedrooms: savedPreferences.minBedrooms,
+                ownBathroom: savedPreferences.ownBathroom,
                 hasSavedPreferences: savedPreferences.hasSavedPreferences,
                 maxBudget: savedPreferences.saveBudgetPreferences
                     ? savedPreferences.maxBudget || undefined
@@ -393,85 +368,25 @@ function TenantBrowse() {
     const safePage = Math.min(currentPage, totalPages);
     const pageStart = (safePage - 1) * itemsPerPage;
     const paginatedApartments = filteredApartments.slice(pageStart, pageStart + itemsPerPage);
-    const activeBudgetFilter = budgetFilterEnabled && (priceRange[0] !== DEFAULT_PRICE_RANGE[0] || priceRange[1] !== DEFAULT_PRICE_RANGE[1]);
-    const activeFilterCount = [petFriendly, parking, furnished, roomCapacity !== "any", activeBudgetFilter].filter(Boolean).length;
+    const activeFilterCount = [savedPreferences.preferredArea?.trim(), savedPreferences.minBedrooms !== "any", roomCapacity !== "any", savedPreferences.saveBudgetPreferences, ...["petFriendly", "parking", "ownBathroom", "wifi", "ac", "laundryArea"].map(key => savedPreferences[key])].filter(Boolean).length;
     const mappedApartmentCount = filteredApartments.filter((apartment) => hasValidApartmentCoordinates(apartment.lat, apartment.lng)).length;
     const tenantGreeting = getTimeBasedGreeting(user?.name);
     const hasActiveApartmentFilters = Boolean(searchQuery.trim() || activeNearbySearch || activeFilterCount > 0);
     const mapCenter = DEFAULT_LA_PAZ_MAP_CENTER;
     const resetFilters = () => {
         setSearchQuery("");
-        applyPriceRange(DEFAULT_PRICE_RANGE, false);
+        setSavedPreferences({ ...defaultTenantPreferences });
         setRoomCapacity("any");
-        setPetFriendly(false);
-        setParking(false);
-        setFurnished(false);
         setSortBy("recommended");
     };
-    const resetBrowsePreferences = () => {
-        setSavedPreferences({ ...defaultTenantPreferences });
-        applyPriceRange(DEFAULT_PRICE_RANGE, false);
-        setRoomCapacity(defaultTenantPreferences.roomCapacity || "any");
-        setPetFriendly(Boolean(defaultTenantPreferences.petFriendly));
-        setParking(Boolean(defaultTenantPreferences.parking));
-        setFurnished(Boolean(defaultTenantPreferences.furnished));
-        setSortBy(defaultTenantPreferences.sortBy || "recommended");
-    };
-    const saveBrowsePreferences = async () => {
-        if (!user?.id) {
-            toast.error("Please sign in to save browse preferences.");
-            return;
-        }
-        if (!minPriceInput.trim() || !maxPriceInput.trim()) {
-            toast.error("Please enter both minimum and maximum price.");
-            return;
-        }
-        if (priceRange[0] > priceRange[1]) {
-            toast.error("Minimum price cannot be higher than maximum price.");
-            return;
-        }
-        try {
-            await saveTenantPreferences(user.id, {
-                preferredArea: savedPreferences.preferredArea,
-                maxBudget: priceRange[1],
-                minBedrooms: "any", roomCapacity,
-                petFriendly,
-                parking,
-                furnished,
-                wifi: savedPreferences.wifi,
-                ac: savedPreferences.ac,
-                laundryArea: savedPreferences.laundryArea,
-                sortBy,
-                saveBudgetPreferences: activeBudgetFilter,
-            });
-            setSavedPreferences((current) => ({ ...current, hasSavedPreferences: true, sortBy, maxBudget: priceRange[1], minBedrooms: "any", roomCapacity, petFriendly, parking, furnished, saveBudgetPreferences: activeBudgetFilter }));
-            toast.success("Preferences saved for recommendations.");
-            setPreferencesOpen(false);
-        }
-        catch (error) {
-            const message = error instanceof Error ? error.message : "Unable to save browse preferences.";
-            toast.error(message);
-        }
-    };
-    const updateMinimumPrice = (value) => {
-        setMinPriceInput(value);
-        if (!value.trim())
-            return;
-        const next = Number(value);
-        if (!Number.isFinite(next))
-            return;
-        setBudgetFilterEnabled(true);
-        setPriceRange((current) => [Math.max(0, next), current[1]]);
-    };
-    const updateMaximumPrice = (value) => {
-        setMaxPriceInput(value);
-        if (!value.trim())
-            return;
-        const next = Number(value);
-        if (!Number.isFinite(next))
-            return;
-        setBudgetFilterEnabled(true);
-        setPriceRange((current) => [current[0], Math.max(0, next)]);
+    const saveBrowsePreferences = async (draft) => {
+        if (!user?.id) throw new Error("Please sign in to save preferences.");
+        const saved = await saveTenantPreferences(user.id, { ...draft, sortBy });
+        if (!saved) throw new Error("Unable to save preferences. Please try again.");
+        setSavedPreferences(saved);
+        setRoomCapacity(saved.roomCapacity);
+        toast.success("Preferences saved for recommendations.");
+        setPreferencesOpen(false);
     };
     const renderFilterTrigger = (floating = false) => (<DialogTrigger asChild>
       <Button type="button" className={floating ? "apartment-browse-button" : "apartment-browse-button-2"} variant={floating ? "default" : "outline"}>
@@ -479,104 +394,7 @@ function TenantBrowse() {
         {!floating && `Preferences${activeFilterCount ? ` (${activeFilterCount})` : ""}`}
       </Button>
     </DialogTrigger>);
-    const renderFilterContent = () => (<DialogContent onClick={(event) => event.stopPropagation()} className="tenant-preferences">
-        <div onClick={(event) => event.stopPropagation()}>
-          <DialogHeader className="apartment-browse-dialog-header">
-            <div className="apartment-browse-row">
-              <div className="apartment-browse-card">
-                <SlidersHorizontal className="apartment-browse-sliders-horizontal-icon"/>
-              </div>
-              <div>
-                <p className="apartment-browse-personalize-your-search">Personalize your search</p>
-                <DialogTitle className="apartment-browse-preferences">Preferences</DialogTitle>
-                <DialogDescription className="apartment-browse-dialog-description">
-                  Adjust what matters most when browsing apartments and receiving recommendations.
-                </DialogDescription>
-              </div>
-            </div>
-          </DialogHeader>
-
-          <div className="apartment-browse-panel">
-          <section className="apartment-browse-section">
-            <div className="apartment-browse-content">
-              <div className="apartment-browse-row-2">
-                <HomeIcon className="apartment-browse-home-icon-icon"/>
-              </div>
-              <div className="apartment-browse-panel-2">
-                <h3 className="apartment-browse-improve-your-recommendations">Improve your recommendations</h3>
-                <p className="apartment-browse-text">
-                  Saved preferences are used only for Recommended apartments.
-                </p>
-              </div>
-            </div>
-          </section>
-
-          <section className="apartment-browse-section">
-            <Label htmlFor="preferred-area" className="apartment-browse-preferred-area">Preferred location</Label>
-            <input id="preferred-area" value={savedPreferences.preferredArea} onChange={(event) => setSavedPreferences((current) => ({ ...current, preferredArea: event.target.value }))} placeholder="Barangay or street within La Paz" className="apartment-browse-preferred-area-2"/>
-          </section>
-
-          <section className="apartment-browse-section">
-            <div className="apartment-browse-row-3">
-              <div className="apartment-browse-row-4">
-                <Tag className="apartment-browse-tag-icon"/>
-              </div>
-              <h3 className="apartment-browse-price-range">Price Range</h3>
-            </div>
-
-            <div className="apartment-browse-grid">
-              <PriceField label="Minimum Price" value={minPriceInput} onChange={updateMinimumPrice}/>
-              <span className="apartment-browse-span">-</span>
-              <PriceField label="Maximum Price" value={maxPriceInput} onChange={updateMaximumPrice}/>
-            </div>
-
-          </section>
-
-          <section className="apartment-browse-section">
-            <div className="apartment-browse-row-3">
-              <div className="apartment-browse-row-4">
-                <Users className="apartment-browse-bed-icon"/>
-              </div>
-              <h3 id="room-capacity-label" className="apartment-browse-bedrooms">Room Capacity</h3>
-            </div>
-            <select aria-labelledby="room-capacity-label" value={roomCapacity} onChange={(event) => setRoomCapacity(event.target.value)} className="apartment-browse-input">
-              <option value="any">Any capacity</option>
-              {roomCapacity !== "any" && !capacityOptions.includes(Number(roomCapacity)) && <option value={roomCapacity}>{roomCapacity} persons (currently unavailable)</option>}
-              {capacityOptions.map(capacity => <option key={capacity} value={String(capacity)}>{capacity} {capacity === 1 ? "person" : "persons"}</option>)}
-            </select>
-          </section>
-
-          <section className="apartment-browse-section-2">
-            <div className="apartment-browse-row-3">
-              <div className="apartment-browse-row-4">
-                <Sofa className="apartment-browse-sofa-icon"/>
-              </div>
-              <h3 className="apartment-browse-amenities">Amenities</h3>
-            </div>
-            <div className="apartment-browse-panel-4">
-              <AmenityToggle icon={PawPrint} label="Pet Friendly" checked={petFriendly} onChange={setPetFriendly} tone="tenant-tone-brand"/>
-              <AmenityToggle icon={Car} label="Parking" checked={parking} onChange={setParking} tone="tenant-tone-brand"/>
-              <AmenityToggle icon={Sofa} label="Fully Furnished" checked={furnished} onChange={setFurnished} tone="tenant-tone-brand"/>
-              <AmenityToggle icon={Sofa} label="Wi-Fi" checked={savedPreferences.wifi} onChange={(wifi) => setSavedPreferences((current) => ({ ...current, wifi }))} tone="tenant-tone-brand"/>
-              <AmenityToggle icon={Sofa} label="Air Conditioning" checked={savedPreferences.ac} onChange={(ac) => setSavedPreferences((current) => ({ ...current, ac }))} tone="tenant-tone-brand"/>
-              <AmenityToggle icon={Sofa} label="Laundry Area" checked={savedPreferences.laundryArea} onChange={(laundryArea) => setSavedPreferences((current) => ({ ...current, laundryArea }))} tone="tenant-tone-brand"/>
-            </div>
-          </section>
-          </div>
-
-          <div className="apartment-browse-preference-actions">
-            <Button type="button" onClick={saveBrowsePreferences}>Save</Button>
-            <Button type="button" variant="outline" onClick={resetBrowsePreferences}>Reset</Button>
-          </div>
-
-          <div className="apartment-browse-card-2">
-            <div className="apartment-browse-row-5">
-              <ShieldCheck className="apartment-browse-shield-check-icon"/>
-            </div>
-            <p className="apartment-browse-text-2">Your preferences are private and stay connected to your tenant account.</p>
-          </div>
-        </div>
-      </DialogContent>);
+    const renderFilterContent = () => <Preferences open={preferencesOpen} preferences={savedPreferences} onSave={saveBrowsePreferences} />;
     const ApartmentsCard = ({ apartment }) => {
         const status = apartment.status ?? "available";
         const availableRooms = getAvailableRooms(apartment);
@@ -746,26 +564,6 @@ function BrowseButton({ label, active, onClick }) {
     return (<button type="button" onClick={onClick} aria-pressed={active} className={`apartment-browse-button-10 ${active ? "apartment-browse-button-11" : "apartment-browse-button-12"}`}>
       {label}
     </button>);
-}
-function PriceField({ label, value, onChange, }) {
-    return (<div className="apartment-browse-panel-18">
-      <Label className="apartment-browse-label">{label}</Label>
-      <div className="apartment-browse-card-7">
-        <span className="apartment-browse-span-5">₱</span>
-        <input type="number" value={value} onChange={(event) => onChange(event.target.value)} className="apartment-browse-input-3"/>
-      </div>
-    </div>);
-}
-function AmenityToggle({ icon: Icon, label, checked, onChange, tone, }) {
-    return (<div className="apartment-browse-row-11">
-      <div className="apartment-browse-row-12">
-        <div className={`apartment-browse-row-13 ${tone}`}>
-          <Icon className="apartment-browse-icon-icon-3"/>
-        </div>
-        <span className="apartment-browse-span-6">{label}</span>
-      </div>
-      <Switch checked={checked} onCheckedChange={onChange}/>
-    </div>);
 }
 function Pagination({ currentPage, totalPages, totalItems, pageStart, pageCount, itemsPerPage, setCurrentPage, setItemsPerPage, }) {
     const visiblePageCount = Math.min(5, totalPages);

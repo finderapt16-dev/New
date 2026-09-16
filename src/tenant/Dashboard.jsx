@@ -136,6 +136,8 @@ export function Dashboard() {
             maxBudget: tenantPreferences.saveBudgetPreferences && Number.isFinite(parsedBudget) && parsedBudget > 0 ? parsedBudget : undefined,
             preferredArea: tenantPreferences.recommendationLocation && tenantPreferences.preferredArea.trim() ? tenantPreferences.preferredArea.trim() : undefined,
             minBedrooms: tenantPreferences.minBedrooms,
+            minBudget: tenantPreferences.minBudget,
+            ownBathroom: tenantPreferences.ownBathroom,
             roomCapacity: tenantPreferences.roomCapacity,
             petFriendly: tenantPreferences.petFriendly,
             parking: tenantPreferences.parking,

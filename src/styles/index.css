@@ -16,6 +16,7 @@
 ========================= */
 
 @import '../tenant/Apartments.css';
+@import '../tenant/Preferences.css';
 
 @import '../tenant/ApartmentDetails.css';
 

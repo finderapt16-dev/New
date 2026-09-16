@@ -32,7 +32,7 @@ function mockedExports(file, overrides) {
   return `import {apartments,user,landlord,preferences} from '/__tenant_fixture.js';\n` + names.map(name => name === 'defaultTenantPreferences' ? prefs : `export const ${name}=${overrides[name] || 'async()=>[]'};`).join('\n');
 }
 models.set('/src/services/dashboardSupabaseService.js', mockedExports('dashboardSupabaseService.js', {
-  fetchTenantPreferences: 'async()=>preferences', saveTenantPreferences: 'async(_id,p)=>p',
+  fetchTenantPreferences: 'async()=>JSON.parse(localStorage.getItem("fixture-preferences")||"null")||preferences', saveTenantPreferences: 'async(_id,p)=>{const saved={...preferences,...p,hasSavedPreferences:true};localStorage.setItem("fixture-preferences",JSON.stringify(saved));return saved}',
   fetchApartments: 'async()=>apartments', fetchUsers: 'async()=>[user,landlord]',
   fetchPublicLandlordById: 'async()=>landlord', fetchUserPreferenceSections: 'async()=>({})',
   fetchUserProfileDetails: 'async()=>({user,adminProfile:null})',
@@ -120,6 +120,30 @@ try {
     assert.ok(await evaluate("!!document.querySelector('.leaflet-container .leaflet-marker-icon')"), 'Leaflet detail marker');
     await navigate('/browse?preferences=open', '[role="dialog"]');
     assert.ok(await evaluate("document.querySelector('[role=dialog]').getBoundingClientRect().width <= innerWidth+1"), 'Preferences fit viewport');
+    assert.equal(await evaluate("document.querySelector('[role=dialog] h2').textContent"), 'Search Filters');
+    await evaluate(`(()=>{const d=document.querySelector('[role=dialog]');const click=text=>[...d.querySelectorAll('button')].find(b=>b.textContent===text).click();click('Clear all');const input=(placeholder,value)=>{const el=d.querySelector('input[placeholder="'+placeholder+'"]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el,value);el.dispatchEvent(new Event('input',{bubbles:true}));};input('Min Price','2000');input('Max Price','5000');click('4+');click('4+ people');click('Own Bathroom');click('Wi-Fi');})()`);
+    await evaluate(`(()=>{const el=document.querySelector('input[placeholder="Max Price"]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el,'1000');el.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+    await evaluate("document.querySelector('.tenant-filter-actions button[type=submit]').click()");
+    await waitFor("document.querySelector('.tenant-filter-error')?.textContent.includes('Minimum price')", 'invalid range rejected');
+    await evaluate(`(()=>{const el=document.querySelector('input[placeholder="Max Price"]');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(el,'5000');el.dispatchEvent(new Event('input',{bubbles:true}));})()`);
+    if (process.env.APTFINDR_SCREENSHOT && width === 390) {
+      const shot = await send('Page.captureScreenshot', { format: 'png' });
+      fs.writeFileSync(process.env.APTFINDR_SCREENSHOT, Buffer.from(shot.data, 'base64'));
+    }
+    await evaluate("document.querySelector('.tenant-filter-actions button[type=submit]').click()");
+    await waitFor("!document.querySelector('[role=dialog]')", 'preferences saved');
+    const saved = await evaluate("JSON.parse(localStorage.getItem('fixture-preferences'))");
+    assert.equal(saved.minBudget, 2000); assert.equal(saved.maxBudget, 5000); assert.equal(saved.minBedrooms, '4+'); assert.equal(saved.roomCapacity, '4+'); assert.equal(saved.ownBathroom, true); assert.equal(saved.wifi, true);
+    await evaluate("document.querySelector('.apartment-browse-button-2').click()");
+    await waitFor("document.querySelector('input[placeholder=\"Min Price\"]')?.value==='2000'", 'saved minimum restored');
+    await evaluate("document.documentElement.classList.add('dark')");
+    assert.equal(await evaluate("document.querySelector('[role=dialog]').scrollWidth <= document.querySelector('[role=dialog]').clientWidth+1"), true);
+    await evaluate("document.documentElement.classList.remove('dark')");
+    await evaluate("[...document.querySelectorAll('.tenant-filter-actions button')].find(b=>b.textContent==='Clear all').click()");
+    assert.equal(await evaluate("document.querySelector('input[placeholder=\"Min Price\"]').value"), '');
+    await evaluate("document.querySelector('.tenant-filter-actions button[type=submit]').click()");
+    await waitFor("!document.querySelector('[role=dialog]')", 'cleared preferences saved');
+    assert.equal(await evaluate("JSON.parse(localStorage.getItem('fixture-preferences')).ownBathroom"), false);
     await send('Input.dispatchKeyEvent', {type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});
     await send('Input.dispatchKeyEvent', {type:'keyUp',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});
     await navigate('/dashboard?section=notifications', '.tenant-notifications-container');
