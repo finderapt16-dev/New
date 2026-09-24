@@ -1,11 +1,11 @@
 import { EvidenceViewer } from "@/admin/EvidenceViewer";
+import "./AdminReports.css";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { canArchiveReportStatus } from "@/services/dashboardSupabaseService";
 import { formatApartmentLocation } from "@/utils/apartmentLocation";
-import { Archive, ArrowLeft, Bell, Building2, Calendar, CheckCheck, CheckCircle2, ChevronRight, Clock, Eye, Flag, Mail, Phone, RotateCcw, Search, Trash2, User as UserIcon, X, XCircle } from "lucide-react";
+import { Archive, ArrowLeft, Bell, Building2, Calendar, CheckCheck, CheckCircle2, Clock, Eye, Flag, Mail, Phone, RotateCcw, Search, Trash2, User as UserIcon, X, XCircle } from "lucide-react";
 import { ArchiveEmpty, formatOptionalDate, OverviewEmpty, SEVERITY_LABEL, text } from './adminDashboardHelpers';
 export function AdminReports({ reports, reportArchiveView, archivedReports, reportSearch, allApartments, reportStatusFilter, reportTypeFilter, reportSort, selectedReport, selectedReportDetails, setSelectedReport, setActiveSection, unreadNotifsCount, setViewingUserProfile, navigate, apartmentDetailBasePath, portalBasePath, selectedReportEvidence, resolveReport, setDismissReportModal, setCaseAction, setReportSearch, setReportStatusFilter, setReportTypeFilter, setReportSort, setReportArchiveView, dismissReportModal, dismissReport, viewingUserProfile, }) {
     const pending = reports.filter((r) => r.status === "pending");
@@ -16,13 +16,13 @@ export function AdminReports({ reports, reportArchiveView, archivedReports, repo
     const normalizedSearch = reportSearch.trim().toLowerCase();
     const getReportApartment = (report) => allApartments.find((apartment) => apartment.id === (report.apartmentId ?? report.apartment_id));
     const getReportApartmentTitle = (report) => report.apartment_title ?? report.apartment ?? getReportApartment(report)?.title ?? report.apartment_id ?? "Apartment unavailable";
-    const getReporterLabel = (report) => report.reporter_name ?? report.reporter ?? report.reporter_id ?? "Reporter unavailable";
+    const getReporterLabel = () => "Anonymous Tenant";
     const visibleReports = reportSource
         .filter((report) => {
         const type = String(report.issueType ?? report.issue_type ?? report.category ?? "");
         const matchesStatus = reportArchiveView || reportStatusFilter === "all" || report.status === reportStatusFilter;
         const matchesType = reportTypeFilter === "all" || type === reportTypeFilter;
-        const matchesSearch = !normalizedSearch || [getReportApartmentTitle(report), getReporterLabel(report), type, report.details, report.id]
+        const matchesSearch = !normalizedSearch || [getReportApartmentTitle(report), type, report.details, report.id]
             .some((value) => String(value ?? "").toLowerCase().includes(normalizedSearch));
         return matchesStatus && matchesType && matchesSearch;
     })
@@ -36,11 +36,9 @@ export function AdminReports({ reports, reportArchiveView, archivedReports, repo
     });
     if (selectedReport) {
         const reportApartment = selectedReportDetails?.apartment ?? getReportApartment(selectedReport);
-        const reporter = selectedReportDetails?.reporter;
         const landlord = selectedReportDetails?.landlord;
-        const reporterName = reporter?.name ?? selectedReport.reporter_name ?? selectedReport.reporter ?? "Reporter unavailable";
-        const reporterRole = reporter?.role ?? selectedReport.reporter_role ?? selectedReport.role ?? "Role unavailable";
-        const reporterContact = reporter?.email ?? selectedReport.contact;
+        const reporterName = "Anonymous Tenant";
+        const reporterRole = "Tenant";
         const issueType = String(selectedReport.issueType ?? selectedReport.issue_type ?? selectedReport.category ?? "Report type not specified");
         const apartmentName = selectedReport.apartment_title ?? selectedReport.apartment ?? reportApartment?.title;
         const statusClass = selectedReport.status === "resolved" ? "admin-tone-success-badge admin-status-border-success" : selectedReport.status === "dismissed" ? "admin-tone-muted-icon admin-status-border-muted" : "admin-status-pending";
@@ -74,7 +72,7 @@ export function AdminReports({ reports, reportArchiveView, archivedReports, repo
         <div className="admin-reports-grid-2">
           <section className={sectionClass}>
             <h2 className={sectionTitleClass}>2. Reported By</h2>
-            <div className="admin-reports-row-6"><span className="admin-reports-row-7">{text(reporterName).split(" ").map((name) => name[0]).join("").slice(0, 2).toUpperCase() || "R"}</span><div className="admin-reports-panel"><p className="admin-reports-text-4">{reporterName}</p><p className="admin-reports-text-5">{reporterRole}</p>{reporterContact && <p className="admin-reports-text-6"><Mail className="admin-reports-mail-icon"/>{reporterContact}</p>}</div>{reporter && <Button size="sm" variant="outline" onClick={() => setViewingUserProfile(reporter)} className="admin-reports-view-reporter"><UserIcon className="admin-reports-user-icon-icon"/>View Reporter</Button>}</div>
+            <div className="admin-reports-row-6"><span className="admin-reports-row-7">AT</span><div className="admin-reports-panel"><p className="admin-reports-text-4">{reporterName}</p><p className="admin-reports-text-5">{reporterRole}</p></div></div>
           </section>
 
           <section className={sectionClass}>
@@ -90,45 +88,9 @@ export function AdminReports({ reports, reportArchiveView, archivedReports, repo
 
         <section className={sectionClass}><h2 className={sectionTitleClass}>5. Evidence ({selectedReportEvidence.length})</h2><div className="admin-reports-panel-3"><EvidenceViewer evidence={selectedReportEvidence} title="Submitted Evidence"/></div></section>
 
-        <section className={sectionClass}><h2 className={sectionTitleClass}>6. Admin Decision</h2>{!reportArchiveView && selectedReport.status === "pending" ? <><p className="admin-reports-text-12">Choose the appropriate action based on your review of the report and evidence.</p><div className="admin-reports-grid-3"><Button onClick={() => resolveReport(text(selectedReport.id))} className="admin-reports-resolve-report"><CheckCheck className="admin-reports-check-check-icon"/>Resolve Report</Button><Button variant="outline" onClick={() => setDismissReportModal({ reportId: text(selectedReport.id), reason: "" })} className="admin-reports-dismiss-report"><XCircle className="admin-reports-xcircle-icon"/>Dismiss Report</Button></div></> : <div className="admin-reports-panel-4"><p className="admin-reports-this-report-has-been">This report has been <span className="admin-reports-span-5">{selectedReport.status}</span> on {formatOptionalDate(selectedReport.resolved_at, { month: "short", day: "numeric" })}.</p>{!reportArchiveView && canArchiveReportStatus(selectedReport.status) && <Button variant="outline" onClick={() => setCaseAction({ type: "archive-report", id: text(selectedReport.id), label: selectedReport.apartment || text(selectedReport.id) })} className="admin-reports-archive"><Archive className="admin-reports-archive-icon"/>Archive</Button>}</div>}</section>
+        <section className={sectionClass}><h2 className={sectionTitleClass}>6. Admin Decision</h2>{!reportArchiveView && selectedReport.status === "pending" ? <><p className="admin-reports-text-12">Verify the report before it becomes visible to the landlord, or dismiss it.</p><div className="admin-reports-grid-3"><Button onClick={() => resolveReport(text(selectedReport.id))} className="admin-reports-resolve-report"><CheckCheck className="admin-reports-check-check-icon"/>Verify Report</Button><Button variant="outline" onClick={() => setDismissReportModal({ reportId: text(selectedReport.id), reason: "" })} className="admin-reports-dismiss-report"><XCircle className="admin-reports-xcircle-icon"/>Dismiss Report</Button></div></> : <div className="admin-reports-panel-4"><p className="admin-reports-this-report-has-been">This report has been <span className="admin-reports-span-5">{selectedReport.status}</span> on {formatOptionalDate(selectedReport.resolved_at, { month: "short", day: "numeric" })}.</p>{!reportArchiveView && canArchiveReportStatus(selectedReport.status) && <Button variant="outline" onClick={() => setCaseAction({ type: "archive-report", id: text(selectedReport.id), label: selectedReport.apartment || text(selectedReport.id) })} className="admin-reports-archive"><Archive className="admin-reports-archive-icon"/>Archive</Button>}</div>}</section>
       </div>);
     }
-    const ReportRow = ({ report }) => {
-        const sev = SEVERITY_LABEL[report.severity] ?? SEVERITY_LABEL["med"];
-        const reporterLabel = getReporterLabel(report);
-        const reporterRole = String(report.reporter_role ?? report.role ?? "tenant");
-        const reporterInitials = reporterLabel.split(/\s+/).map((name) => name[0]).join("").slice(0, 2).toUpperCase() || "T";
-        const apartmentLabel = getReportApartmentTitle(report);
-        const issueType = String(report.issueType ?? report.issue_type ?? report.category ?? "Report");
-        return (<div className={`admin-reports-panel-5 ${report.status === "pending" ? "admin-reports-panel-6" : "admin-reports-panel-7"}`} onClick={() => setSelectedReport(report)}>
-        <div className="admin-reports-row-11">
-          <div className="admin-reports-row-12">
-            <div className={`admin-reports-row-13 ${reporterRole === "student" ? "admin-reports-panel-8" : "admin-reports-panel-9"}`}>
-              {reporterInitials}
-            </div>
-            <div className="admin-reports-panel">
-              <div className="admin-reports-row-14">
-                <span className="admin-reports-span-6">{reporterLabel}</span>
-                <span className={`admin-reports-span-7 ${reporterRole === "student" ? "admin-reports-span-8" : "admin-reports-span-9"}`}>{reporterRole}</span>
-                <span className={`admin-reports-card-3 ${sev.class}`}>{sev.label}</span>
-                {report.status === "resolved" && <span className="admin-reports-resolved">Resolved</span>}
-                {report.status === "dismissed" && <span className="admin-reports-dismissed">Dismissed</span>}
-              </div>
-              <p className="admin-reports-text-13">
-                <span className="admin-reports-span-10">{apartmentLabel}</span> — {issueType}
-              </p>
-              <p className="admin-reports-text-14">{report.details}</p>
-            </div>
-          </div>
-          <div className="admin-reports-panel-10">
-            <p className="admin-reports-text-15">
-              {formatOptionalDate(report.submittedAt ?? report.submitted_at, { month: "short", day: "numeric" })}
-            </p>
-            <ChevronRight className="admin-reports-chevron-right-icon"/>
-          </div>
-        </div>
-      </div>);
-    };
     return (<div className="admin-reports-panel-11">
       <div className="admin-reports-container">
         <header className="admin-reports-header-2">
@@ -151,7 +113,7 @@ export function AdminReports({ reports, reportArchiveView, archivedReports, repo
         </section>
 
         <section className="admin-reports-section-3">
-          <label className="admin-reports-label"><Search className="admin-reports-search-icon"/><input value={reportSearch} onChange={(event) => setReportSearch(event.target.value)} placeholder="Search reports by apartment, reporter, type, or ID" className="admin-reports-input"/></label>
+          <label className="admin-reports-label"><Search className="admin-reports-search-icon"/><input value={reportSearch} onChange={(event) => setReportSearch(event.target.value)} placeholder="Search reports by apartment, type, or ID" className="admin-reports-input"/></label>
           <select value={reportStatusFilter} onChange={(event) => setReportStatusFilter(event.target.value)} disabled={reportArchiveView} className="admin-reports-select"><option value="all">Status: All</option><option value="pending">Pending</option><option value="resolved">Resolved</option><option value="dismissed">Dismissed</option></select>
           <select value={reportTypeFilter} onChange={(event) => setReportTypeFilter(event.target.value)} className="admin-reports-select-2"><option value="all">Type: All</option>{reportTypes.map((type) => <option key={type} value={type}>{type}</option>)}</select>
           <select value={reportSort} onChange={(event) => setReportSort(event.target.value)} className="admin-reports-select-2"><option value="newest">Sort by: Newest</option><option value="oldest">Sort by: Oldest</option></select>
@@ -184,44 +146,6 @@ export function AdminReports({ reports, reportArchiveView, archivedReports, repo
             </div>)}
         </section>
       </div>
-
-      <div className="admin-reports-panel-13">
-        <div className="admin-reports-row-22">
-          <Flag className="admin-reports-flag-icon-5"/>
-        </div>
-        <div>
-          <h2 className="admin-reports-reports-2">Reports</h2>
-          <p className="admin-reports-submitted-by-tenants">Submitted by tenants</p>
-        </div>
-      </div>
-      <div className="admin-reports-grid-5">
-        {[
-            { label: "Pending", count: pending.length, grad: "from-amber-500 to-orange-600" },
-            { label: "Resolved", count: resolved.length, grad: "from-green-500 to-emerald-600" },
-            { label: "Dismissed", count: dismissed.length, grad: "from-slate-400 to-slate-500" },
-        ].map(({ label, count, grad }) => (<div key={label} className="admin-reports-card-9">
-            <p className={`admin-reports-text-25 ${grad} admin-reports-text-26`}>{count}</p>
-            <p className="admin-reports-text-27">{label}</p>
-          </div>))}
-      </div>
-      {pending.length > 0 && (<Card className="admin-reports-card-10">
-          <div className="admin-reports-row-23">
-            <span className="admin-reports-span-14"/>
-            <span className="admin-reports-pending-needs-action">Pending — needs action</span>
-          </div>
-          <div className="admin-reports-panel-14">{pending.map((r) => <ReportRow key={r.id} report={r}/>)}</div>
-        </Card>)}
-      {(resolved.length > 0 || dismissed.length > 0) && (<Card className="admin-reports-card-11">
-          <div className="admin-reports-row-24">
-            <span className="admin-reports-span-15"/>
-            <span className="admin-reports-closed">Closed</span>
-          </div>
-          <div className="admin-reports-panel-15">{[...resolved, ...dismissed].map((r) => <ReportRow key={r.id} report={r}/>)}</div>
-        </Card>)}
-      {reports.length === 0 && (<div className="admin-reports-panel-16">
-          <Flag className="admin-reports-flag-icon-6"/>
-          <p className="admin-reports-no-reports-submitted-yet-2">No reports submitted yet</p>
-        </div>)}
 
       {dismissReportModal && (<div className="admin-reports-overlay" onClick={() => setDismissReportModal(null)}>
           <div className="admin-reports-overlay-2"/>

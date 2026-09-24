@@ -70,10 +70,6 @@ const identityFromInput = (input) => {
         role: toStringOrUndefined(input.role),
     };
 };
-/** @deprecated Use AuthContext or resolveAppUserId(); authentication is asynchronous. */
-export const getCurrentSessionUser = () => null;
-/** @deprecated Use AuthContext or resolveAppUserId(); authentication is asynchronous. */
-export const getCurrentUserId = () => null;
 const normalizeApartmentRows = (rows) => rows.map((row) => apartmentRowToApartment(row));
 const attachLandlordVerification = (apartments, landlordRows) => {
     const verificationById = new Map((landlordRows ?? [])
@@ -310,29 +306,6 @@ export const updateApartmentPublication = async (id, isPublished, actorUserId) =
     if (!before) {
         throw new Error('Apartment not found.');
     }
-    const landlordId = isRecord(before) && typeof before.landlord_id === 'string' ? before.landlord_id : '';
-    if (isPublished) {
-        const { data: landlord, error: landlordError } = await supabase
-            .from('public_landlords')
-            .select('id, is_verified, status, verification_status')
-            .eq('id', landlordId)
-            .maybeSingle();
-        if (landlordError) {
-            throw new Error(unwrapErrorMessage(landlordError, 'Unable to verify the landlord before publishing.'));
-        }
-        const landlordRecord = isRecord(landlord) ? landlord : null;
-        const normalizedStatuses = [
-            landlordRecord?.status,
-            landlordRecord?.verification_status,
-        ]
-            .filter((value) => typeof value === 'string')
-            .map((value) => value.trim().toLowerCase())
-            .filter(Boolean);
-        const blockedStatus = normalizedStatuses.some((status) => ['pending', 'unverified', 'rejected', 'suspended', 'disabled'].includes(status));
-        if (!landlordRecord || landlordRecord.is_verified !== true || blockedStatus) {
-            throw new Error('This apartment cannot be published because the landlord has not been verified.');
-        }
-    }
     const { error } = await supabase.rpc('fn_set_apartment_publication', {
         p_apartment_id: id,
         p_published: isPublished,
@@ -444,21 +417,73 @@ export const toggleFavorite = async (apartmentId, userId) => {
     return true;
 };
 export const listFavoriteApartments = async (userId) => {
-    const resolvedUserId = await resolveAppUserId(ensureUserIdentity(userId));
-    const favoriteIds = await getFavoriteApartmentIds(resolvedUserId);
-    if (favoriteIds.length === 0) {
+    const resolvedUserId = await resolveAppUserId(
+        ensureUserIdentity(userId)
+    );
+
+    // Get favorite records together with the date they were added.
+    const { data: favoriteRows, error: favoritesError } = await supabase
+        .from('favorites')
+        .select('apartment_id, created_at')
+        .eq('user_id', resolvedUserId)
+        .order('created_at', { ascending: false });
+
+    if (favoritesError) {
+        throw new Error(
+            unwrapErrorMessage(
+                favoritesError,
+                'Unable to load favorite apartments.'
+            )
+        );
+    }
+
+    if (!favoriteRows?.length) {
         return [];
     }
+
+    const favoriteIds = favoriteRows.map(
+        (favorite) => favorite.apartment_id
+    );
+
     const { data, error } = await supabase
         .from('apartments')
         .select(APARTMENT_SELECT)
-        .in('id', favoriteIds)
-        .order('created_at', { ascending: false });
+        .in('id', favoriteIds);
+
     if (error) {
-        throw new Error(unwrapErrorMessage(error, 'Unable to load favorite apartments.'));
+        throw new Error(
+            unwrapErrorMessage(
+                error,
+                'Unable to load favorite apartments.'
+            )
+        );
     }
-    const apartments = await attachLandlordVerificationFromDatabase(normalizeApartmentRows((data ?? [])));
-    return apartments.filter((apartment) => favoriteIds.includes(apartment.id));
+
+    const apartments =
+        await attachLandlordVerificationFromDatabase(
+            normalizeApartmentRows(data ?? [])
+        );
+
+    // Connect each apartment to the date the tenant favorited it.
+    const favoritedAtByApartment = new Map(
+        favoriteRows.map((favorite) => [
+            favorite.apartment_id,
+            favorite.created_at,
+        ])
+    );
+
+    return apartments
+        .filter((apartment) => favoriteIds.includes(apartment.id))
+        .map((apartment) => ({
+            ...apartment,
+            favoritedAt: favoritedAtByApartment.get(apartment.id) ?? null,
+        }))
+        .sort((a, b) => {
+            const aDate = new Date(a.favoritedAt || 0).getTime();
+            const bDate = new Date(b.favoritedAt || 0).getTime();
+
+            return bDate - aDate;
+        });
 };
 export const reportApartment = async (report, userId) => {
     const resolvedUserId = await resolveAppUserId(ensureUserIdentity(userId));

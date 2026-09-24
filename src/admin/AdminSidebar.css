@@ -1,0 +1,340 @@
+/* Admin portal follows the shared tenant and landlord product palette. */
+.admin-portal-shell .app-sidebar {
+  background: #ffffff !important;
+  color: #111111 !important;
+  border-color: #d9d9d9 !important;
+  box-shadow: none !important;
+}
+.admin-portal-shell .app-sidebar::before { display: none !important; }
+.admin-portal-shell .app-sidebar::-webkit-scrollbar-thumb { background: rgba(22, 165, 225, .24) !important; }
+.admin-portal-shell .app-sidebar-brand { box-shadow: none !important; }
+.admin-portal-shell .app-sidebar-brand svg { color: #16a5e1 !important; background: transparent !important; box-shadow: none !important; }
+.admin-portal-shell .app-sidebar-brand strong { color: #111111 !important; -webkit-text-fill-color: #111111 !important; }
+.admin-portal-shell .app-sidebar-brand small { color: #666666 !important; -webkit-text-fill-color: #666666 !important; }
+.admin-portal-shell .app-sidebar-profile {
+  background: #f2f6fa !important;
+  border-color: #d9d9d9 !important;
+  box-shadow: none !important;
+}
+.admin-portal-shell .app-sidebar-profile:hover { transform: none !important; border-color: #d9d9d9 !important; box-shadow: none !important; }
+.admin-portal-shell .app-sidebar-profile > div:first-child { background: #16a5e1 !important; color: #fff !important; box-shadow: none !important; }
+.admin-portal-shell .app-sidebar-profile p:first-child { color: #111111 !important; }
+.admin-portal-shell .app-sidebar-profile p:nth-child(2),
+.admin-portal-shell .app-sidebar-profile > svg { color: #666666 !important; }
+.admin-portal-shell .app-sidebar nav { border-color: #d9d9d9 !important; }
+.admin-portal-shell .app-sidebar nav > p { color: #666666 !important; }
+.admin-portal-shell .app-sidebar nav > p::after { background: #16a5e1 !important; opacity: .45 !important; }
+.admin-portal-shell .app-sidebar nav button,
+.admin-portal-shell .app-sidebar-nav-item {
+  color: #111111 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+.admin-portal-shell .app-sidebar nav button:hover,
+.admin-portal-shell .app-sidebar-nav-item:hover { background: #f2f6fa !important; color: #16a5e1 !important; }
+.admin-portal-shell .app-sidebar nav button[aria-current="page"],
+.admin-portal-shell .app-sidebar-nav-item[aria-current="page"] { background: #e8f6fc !important; color: #16a5e1 !important; }
+.admin-portal-shell .app-sidebar-nav-item[aria-current="page"]::before {
+  background: #16a5e1 !important;
+  box-shadow: none !important;
+}
+.admin-portal-shell .app-sidebar nav button > svg:first-child,
+.admin-portal-shell .app-sidebar-nav-item > svg:first-child {
+  color: #666666 !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.admin-portal-shell .app-sidebar nav button:hover > svg:first-child,
+.admin-portal-shell .app-sidebar nav button[aria-current="page"] > svg:first-child { color: #16a5e1 !important; }
+.admin-portal-shell .app-sidebar-badge {
+  background: #16a5e1 !important;
+  border-color: #16a5e1 !important;
+  color: #fff !important;
+  box-shadow: none !important;
+  animation: none !important;
+}
+.admin-portal-shell .app-sidebar-logout { background: #fff !important; border: 1px solid #d9d9d9 !important; color: #666666 !important; box-shadow: none !important; }
+.admin-portal-shell .app-sidebar-logout svg { color: #666666 !important; }
+.admin-portal-shell .app-sidebar-logout:hover { background: #fff5f5 !important; border-color: #fee2e2 !important; color: #9f4b4b !important; }
+.admin-portal-shell .app-sidebar-logout:hover svg { color: #9f4b4b !important; }
+.admin-portal-shell .app-sidebar-close { background: #f2f6fa !important; color: #666666 !important; border-color: #d9d9d9 !important; }
+.admin-portal-shell .app-sidebar-trigger { background: #16a5e1 !important; color: #fff !important; box-shadow: 0 8px 18px rgba(22, 165, 225, .18) !important; }
+.admin-apartment-detail .app-sidebar-trigger {
+  border-color: rgba(255, 255, 255, .55) !important;
+  background: #16a5e1 !important;
+  color: #fff !important;
+  box-shadow: 0 8px 18px rgba(22, 165, 225, .18) !important;
+}
+.admin-apartment-detail .app-sidebar-trigger:hover {
+  background: #0e93ca !important;
+}
+.landlord-shell .app-sidebar-trigger {
+  border-color: #16a5e1 !important;
+  background: #16a5e1 !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 18px rgba(22, 165, 225, .18) !important;
+}
+
+.landlord-shell .app-sidebar-trigger:hover {
+  background: #0e93ca !important;
+}
+.landlord-home .landlord-panel { box-shadow: 0 10px 28px rgba(76, 60, 45, .045); }
+
+.admin-portal-shell .admin-sidebar-nav,
+.admin-portal-shell .admin-sidebar-nav-2 {
+  padding: 12px !important;
+  border: 0 !important;
+}
+
+.admin-portal-shell .admin-sidebar-nav-management {
+  margin-top: 14px;
+}
+
+.admin-portal-shell .admin-sidebar-nav-2 {
+  margin-top: 14px;
+}
+
+.admin-portal-shell .admin-sidebar-text-3 {
+  margin: 0 0 8px !important;
+  padding: 0 !important;
+  letter-spacing: 0 !important;
+  font-size: 10px !important;
+}
+
+.admin-portal-shell .admin-sidebar-text-3 .admin-sidebar-span {
+  display: none;
+}
+
+.admin-portal-shell .app-sidebar nav button {
+  min-height: 46px;
+  margin-bottom: 3px;
+  padding: 0 13px !important;
+  border: 0 !important;
+  border-radius: 6px !important;
+}
+
+.admin-portal-shell .app-sidebar nav button:hover,
+.admin-portal-shell .app-sidebar nav button[aria-current="page"] {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.admin-portal-shell .app-sidebar nav button[aria-current="page"] {
+  background: #e8f6fc !important;
+}
+
+.admin-portal-shell .admin-sidebar-panel-4 {
+  padding: 12px !important;
+  border: 0 !important;
+}
+
+.admin-portal-shell .app-sidebar-logout {
+  min-height: 42px;
+  border: 0 !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+}
+
+/* The apartment inspection route uses the same reusable navigation. */
+:is(.admin-portal-shell, .admin-apartment-detail) .app-sidebar {
+  background: #ffffff !important;
+  color: #111111 !important;
+  border-color: #d9d9d9 !important;
+  box-shadow: none !important;
+}
+
+:is(.admin-portal-shell, .admin-apartment-detail) .admin-sidebar-nav,
+:is(.admin-portal-shell, .admin-apartment-detail) .admin-sidebar-nav-2 {
+  padding: 12px !important;
+  border: 0 !important;
+}
+
+:is(.admin-portal-shell, .admin-apartment-detail) .admin-sidebar-nav-management {
+  margin-top: 14px;
+}
+
+:is(.admin-portal-shell, .admin-apartment-detail) .admin-sidebar-nav-2 {
+  margin-top: 18px;
+  padding-top: 20px !important;
+  border-top: 1px solid #d9d9d9 !important;
+}
+
+:is(.admin-portal-shell, .admin-apartment-detail) .admin-sidebar-text-3 {
+  margin: 0 0 8px !important;
+  padding: 0 !important;
+  letter-spacing: 0 !important;
+  font-size: 10px !important;
+}
+
+:is(.admin-portal-shell, .admin-apartment-detail) .admin-sidebar-text-3 .admin-sidebar-span {
+  display: none;
+}
+
+:is(.admin-portal-shell, .admin-apartment-detail) .app-sidebar nav button {
+  min-height: 46px;
+  margin-bottom: 3px;
+  padding: 0 13px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  color: #111111 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+:is(.admin-portal-shell, .admin-apartment-detail) .app-sidebar nav button:hover,
+:is(.admin-portal-shell, .admin-apartment-detail) .app-sidebar nav button[aria-current="page"] {
+  color: #16a5e1 !important;
+  background: #e8f6fc !important;
+}
+
+:is(.admin-portal-shell, .admin-apartment-detail) .app-sidebar nav button > svg:first-child {
+  width: 17px !important;
+  height: 17px !important;
+  color: currentColor !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+:is(.admin-portal-shell, .admin-apartment-detail) .admin-sidebar-panel-4 {
+  padding: 20px 12px 12px !important;
+  border-top: 1px solid #d9d9d9 !important;
+}
+
+:is(.admin-portal-shell, .admin-apartment-detail) .app-sidebar-logout {
+  min-height: 42px;
+  border: 1px solid #8ed6f5 !important;
+  border-radius: 12px !important;
+  color: #16a5e1 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+:is(.admin-portal-shell, .admin-apartment-detail) .app-sidebar-logout svg {
+  width: 17px !important;
+  height: 17px !important;
+  color: #16a5e1 !important;
+}
+
+.admin-sidebar-row {
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 2.5);
+  display: flex;
+}
+
+.admin-sidebar-card {
+  height: calc(var(--spacing, .25rem) * 11);
+  width: calc(var(--spacing, .25rem) * 11);
+  border-radius: var(--radius-xl, .75rem);
+  color: #16a5e1;
+  background-color: #f2f6fa;
+  border: 1px solid #d9d9d9;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.admin-sidebar-image {
+  height: calc(var(--spacing, .25rem) * 9);
+  width: calc(var(--spacing, .25rem) * 9);
+  object-fit: contain;
+}
+
+.admin-sidebar-apt-findr {
+  font-size: var(--text-xl, 1.25rem);
+  line-height: var(--text-xl--line-height, calc(1.75 / 1.25));
+  font-weight: var(--font-weight-bold, 700);
+  letter-spacing: var(--tracking-tight, -.025em);
+  color: #111111;
+  display: block;
+}
+
+.admin-sidebar-small {
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-medium, 500);
+  color: #666666;
+}
+
+:where(.admin-sidebar-nav > :not(:last-child)) {
+  margin-block-start: calc(var(--spacing, .25rem) * 0);
+  margin-block-end: calc(var(--spacing, .25rem) * calc(1 - 0));
+}
+
+.admin-sidebar-nav {
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 3);
+}
+
+.admin-sidebar-text-3 {
+  margin-bottom: calc(var(--spacing, .25rem) * 2);
+  align-items: center;
+  gap: calc(var(--spacing, .25rem) * 3);
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  font-size: var(--text-xs, .75rem);
+  line-height: var(--text-xs--line-height, calc(1 / .75));
+  font-weight: var(--font-weight-semibold, 600);
+  letter-spacing: .14em;
+  color: #666666;
+  text-transform: uppercase;
+  display: flex;
+}
+
+.admin-sidebar-span {
+  height: 1px;
+  width: calc(var(--spacing, .25rem) * 5);
+  background-color: #16a5e173;
+  background-color: lab(50.2977% 7.00188 17.0275 / .45);
+}
+
+.admin-sidebar-icon-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+  flex-shrink: 0;
+}
+
+.admin-sidebar-span-2 {
+  text-align: left;
+  flex: 1;
+}
+
+:where(.admin-sidebar-nav-2 > :not(:last-child)) {
+  margin-block-start: calc(var(--spacing, .25rem) * 0);
+  margin-block-end: calc(var(--spacing, .25rem) * calc(1 - 0));
+}
+
+.admin-sidebar-nav-2 {
+  padding-inline: calc(var(--spacing, .25rem) * 3);
+  padding-block: calc(var(--spacing, .25rem) * 4);
+  border-color: #d9d9d9;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+.admin-sidebar-panel-3 {
+  flex: 1;
+}
+
+.admin-sidebar-panel-4 {
+  margin-top: calc(var(--spacing, .25rem) * 2);
+  padding-inline: calc(var(--spacing, .25rem) * 4);
+  padding-block: calc(var(--spacing, .25rem) * 4);
+  border-color: #d9d9d9;
+  border-top-style: solid;
+  border-top-width: 1px;
+}
+
+.admin-sidebar-log-out-icon {
+  height: calc(var(--spacing, .25rem) * 4);
+  width: calc(var(--spacing, .25rem) * 4);
+  flex-shrink: 0;
+}
+.admin-sidebar-nav-active { background:#e8f6fc; color:#16a5e1; position:relative; }
+.admin-sidebar-nav-active::before { content:""; position:absolute; top:.5rem; bottom:.5rem; left:0; width:2px; border-radius:999px; background:#16a5e1; }
+.admin-sidebar-nav-idle { color:#111111; }
+.admin-sidebar-nav-idle:hover { background:#f2f6fa; color:#16a5e1; }

@@ -10,5 +10,5 @@ export function getAvailableRoomCapacities(apartment) {
 export function matchesRoomCapacity(apartment, capacity) {
     return !capacity || capacity === "any"
         || (capacity === "4+" && getAvailableRoomCapacities(apartment).some(value => value >= 4))
-        || getAvailableRoomCapacities(apartment).includes(Number(capacity));
+        || getAvailableRoomCapacities(apartment).some(value => value >= Number(capacity));
 }

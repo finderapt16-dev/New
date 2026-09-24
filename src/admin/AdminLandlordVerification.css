@@ -1,0 +1,92 @@
+.admin-verification-page { max-width: 1180px; margin: 0 auto; padding: 32px 28px 48px; color: #111; container-type: inline-size; }
+.admin-verification-header { padding: 18px 16px; background: #fff; border: 1px solid #d9d9d9; border-radius: 7px; }
+.admin-verification-header h1 { margin: 0; font-size: 18px; }
+.admin-verification-header p { margin: 5px 0 0; color: #666; font-size: 11px; }
+.admin-verification-filters { display: grid; grid-template-columns: 1fr 140px; gap: 90px; margin: 18px 0 24px; }
+.admin-verification-filters label, .admin-verification-filters select { height: 40px; border: 1px solid #d9d9d9; border-radius: 7px; background: #fff; box-sizing: border-box; }
+.admin-verification-filters label { display: flex; align-items: center; gap: 8px; padding: 0 14px; color: #666; }
+.admin-verification-filters input { width: 100%; border: 0; outline: 0; font-size: 12px; }
+.admin-verification-filters select { padding: 0 12px; color: #333; font-size: 11px; }
+.admin-verification-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 34px; margin-bottom: 26px; }
+.admin-verification-metrics article { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 112px; background: #fff; border: 1px solid #d9d9d9; border-radius: 7px; }
+.admin-verification-metrics article > span { display: grid; width: 34px; height: 34px; margin-bottom: 8px; border-radius: 50%; place-items: center; }
+.admin-verification-metrics .is-total { color: #168ed0; background: #e8f6fc; }.admin-verification-metrics .is-pending { color: #d58a00; background: #fff4db; }.admin-verification-metrics .is-verified { color: #15935c; background: #ddf8ea; }.admin-verification-metrics .is-rejected { color: #dc3545; background: #ffe5e7; }
+.admin-verification-metrics strong { font-size: 12px; }.admin-verification-metrics small { margin-top: 3px; color: #718096; font-size: 9px; }
+.admin-verification-table-wrap { overflow-x: auto; background: #fff; border: 1px solid #d9d9d9; }
+.admin-verification-table-wrap table { width: 100%; min-width: 900px; border-collapse: collapse; }
+.admin-verification-table-wrap th { padding: 13px 18px; color: #46576a; font-size: 10px; font-weight: 600; text-align: left; border-bottom: 1px solid #d9d9d9; }
+.admin-verification-table-wrap td { padding: 14px 18px; color: #4b5d70; font-size: 10px; border-bottom: 1px solid #e8eef3; }
+.admin-verification-table-wrap tr:last-child td { border-bottom: 0; }
+.admin-verification-person { display: flex; align-items: center; gap: 12px; }.admin-verification-person > span { display: grid; flex: 0 0 36px; height: 36px; color: #16a5e1; background: #e8f6fc; border-radius: 50%; place-items: center; }.admin-verification-person div { display: grid; gap: 3px; }.admin-verification-person strong { color: #111; font-size: 11px; }.admin-verification-person small { color: #718096; font-size: 9px; }
+.admin-verification-status { display: inline-flex; padding: 5px 12px; border-radius: 999px; font-size: 9px; }.admin-verification-status.is-verified { color: #15935c; background: #ddf8ea; }.admin-verification-status.is-pending { color: #b56d00; background: #fff4db; }.admin-verification-status.is-rejected { color: #c73343; background: #ffe5e7; }
+.admin-verification-table-wrap td > button { min-width: 112px; height: 34px; color: #0e93ca; font-size: 10px; background: #fff; border: 1px solid #16a5e1; border-radius: 6px; cursor: pointer; }.admin-verification-table-wrap td > button:hover { color: #fff; background: #16a5e1; }
+.admin-verification-empty { height: 100px; color: #718096 !important; text-align: center; }
+@media (max-width: 800px) { .admin-verification-page { padding: 72px 16px 32px; }.admin-verification-filters { grid-template-columns: 1fr; gap: 10px; }.admin-verification-metrics { grid-template-columns: repeat(2, 1fr); gap: 10px; } }
+
+/* Let the overview reflow inside the sidebar workspace instead of scrolling sideways. */
+@container (max-width: 1000px) {
+  .admin-verification-table-wrap { overflow: visible; border: 0; background: transparent; }
+  .admin-verification-table-wrap table,
+  .admin-verification-table-wrap tbody,
+  .admin-verification-table-wrap tr,
+  .admin-verification-table-wrap td { display: block; width: 100%; min-width: 0; }
+  .admin-verification-table-wrap thead { display: none; }
+  .admin-verification-table-wrap tbody { display: grid; gap: 10px; }
+  .admin-verification-table-wrap tr { padding: 16px; border: 1px solid #d9d9d9; border-radius: 7px; background: #fff; }
+  .admin-verification-table-wrap td { display: grid; grid-template-columns: minmax(118px, .8fr) minmax(0, 1.2fr); align-items: center; gap: 12px; padding: 8px 0; border: 0; }
+  .admin-verification-table-wrap td::before { content: attr(data-label); color: #718096; font-size: 9px; font-weight: 700; text-transform: uppercase; }
+  .admin-verification-table-wrap td > button { width: 100%; min-width: 0; }
+  .admin-verification-empty { display: block !important; height: auto; padding: 28px 16px !important; text-align: center; }
+  .admin-verification-empty::before { display: none; }
+}
+
+@container (max-width: 800px) {
+  .admin-verification-filters { grid-template-columns: 1fr; gap: 10px; }
+  .admin-verification-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+}
+
+@container (max-width: 520px) {
+  .admin-verification-table-wrap td { grid-template-columns: 1fr; gap: 5px; }
+  .admin-verification-table-wrap td > button { margin-top: 3px; }
+}
+
+/* Compact dashboard records: no table width and no horizontal scroll. */
+.admin-verification-list { display: grid; gap: 10px; }
+.admin-verification-row { display: grid; grid-template-columns: minmax(160px, 1.2fr) minmax(95px, .7fr) 110px minmax(110px, .8fr) 100px 116px; align-items: center; gap: 14px; min-height: 66px; padding: 12px 14px; border: 1px solid #d9d9d9; border-radius: 7px; background: #fff; }
+.admin-verification-row:hover { border-color: #b9dfee; background: #f8fbfd; }
+.admin-verification-row .admin-verification-person { min-width: 0; }
+.admin-verification-row .admin-verification-person > span { width: 34px; height: 34px; flex-basis: 34px; }
+.admin-verification-field, .admin-verification-state { display: grid; min-width: 0; gap: 4px; margin: 0; color: #46576a; font-size: 10px; }
+.admin-verification-field > span, .admin-verification-state > span { display: none; color: #718096; font-size: 9px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+.admin-verification-field { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-verification-state { justify-items: start; }
+.admin-verification-row > button { min-width: 0; height: 32px; color: #0e93ca; font-size: 10px; background: #fff; border: 1px solid #16a5e1; border-radius: 6px; cursor: pointer; }
+.admin-verification-row > button:hover { color: #fff; background: #16a5e1; }
+
+@container (max-width: 820px) {
+  .admin-verification-row { grid-template-columns: minmax(0, 1fr) 120px; align-items: start; gap: 12px 16px; padding: 16px; }
+  .admin-verification-row .admin-verification-person, .admin-verification-field { grid-column: 1; }
+  .admin-verification-state { grid-column: 2; grid-row: 1 / span 4; align-self: center; }
+  .admin-verification-row > button { grid-column: 1 / -1; width: 100%; }
+  .admin-verification-field > span, .admin-verification-state > span { display: block; }
+}
+
+@container (max-width: 520px) {
+  .admin-verification-row { grid-template-columns: 1fr; }
+  .admin-verification-row .admin-verification-person, .admin-verification-field, .admin-verification-state, .admin-verification-row > button { grid-column: 1; grid-row: auto; }
+}
+
+.landlord-property-review-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; margin-bottom: 16px; padding: 0 0 14px; border-bottom: 1px solid #d9e1e8; }
+.landlord-property-review-header button { border: 0; padding: 0; color: #168dc8; background: transparent; font-size: 11px; cursor: pointer; }
+.landlord-property-review-header h1 { margin: 9px 0 3px; color: #111827; font-size: 17px; font-weight: 700; }
+.landlord-property-review-header p { margin: 0; color: #718096; font-size: 10px; }
+.landlord-property-review-status { flex: 0 0 auto; margin-top: 3px; border-radius: 999px; padding: 6px 10px; font-size: 10px; font-weight: 700; }
+.landlord-property-review-status.is-pending { color: #aa6500; background: #fff4db; }.landlord-property-review-status.is-published { color: #16803c; background: #dcfce7; }.landlord-property-review-status.is-changes { color: #c83343; background: #ffe5e7; }
+.landlord-property-review-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 24px; border: 1px solid #d9e1e8; border-radius: 7px; background: #ffffff; }
+.landlord-property-review-summary > article { min-width: 0; padding: 22px 24px; }.landlord-property-review-summary > article + article { border-left: 1px solid #d9e1e8; }
+.landlord-property-review-summary h2 { display: flex; align-items: center; gap: 9px; margin: 0 0 21px; color: #172033; font-size: 14px; font-weight: 700; }
+.landlord-property-review-summary h2 svg { width: 16px; height: 16px; color: #16a5e1; }
+.landlord-property-review-summary dl { display: grid; gap: 13px; margin: 0; }.landlord-property-review-summary dl > div { display: grid; grid-template-columns: minmax(105px, .8fr) minmax(0, 1.4fr); gap: 12px; }.landlord-property-review-summary dt { color: #718096; font-size: 11px; }.landlord-property-review-summary dd { margin: 0; color: #172033; font-size: 11px; font-weight: 700; overflow-wrap: anywhere; }
+.landlord-property-review-permit { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 17px; align-items: center; }.landlord-property-review-document-preview { display: grid; width: 120px; height: 136px; place-items: center; align-content: center; gap: 8px; border: 1px solid #d9e1e8; border-radius: 4px; color: #718096; background: #fafcff; }.landlord-property-review-document-preview svg { width: 34px; height: 34px; color: #16a5e1; }.landlord-property-review-document-preview small { color: #172033; font-size: 9px; font-weight: 700; text-align: center; }
+.landlord-property-review-document-link { display: inline-flex; margin: 14px 0 0 137px; border-radius: 5px; padding: 8px 11px; color: #ffffff; background: #16a5e1; font-size: 10px; font-weight: 700; text-decoration: none; }.landlord-property-review-document-link:hover { background: #0e93ca; }.landlord-property-review-no-document { margin: 13px 0 0 137px; color: #718096; font-size: 10px; }
+@media (max-width: 760px) { .landlord-property-review-summary { grid-template-columns: 1fr; }.landlord-property-review-summary > article + article { border-top: 1px solid #d9e1e8; border-left: 0; }.landlord-property-review-header { flex-direction: column; }.landlord-property-review-summary dl > div { grid-template-columns: 1fr; gap: 3px; }.landlord-property-review-permit { grid-template-columns: 92px minmax(0, 1fr); }.landlord-property-review-document-preview { width: 92px; height: 112px; }.landlord-property-review-document-link, .landlord-property-review-no-document { margin-left: 0; } }

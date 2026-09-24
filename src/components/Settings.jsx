@@ -10,19 +10,6 @@ import { fetchUserPreferenceSections, fetchUserProfileDetails, saveUserPreferenc
 import { Settings as TenantSettings } from "@/tenant/Settings";
 const inputClass = "settings-input";
 const textareaClass = "settings-textarea";
-function SettingsLineArt() {
-    return (<svg aria-hidden="true" className="tenant-architecture" viewBox="0 0 520 210" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g className="tenant-architecture-lines" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M18 194h484M95 194v-70h268v70M76 124h307M113 194v-43h45v43m171 0v-43h24v43"/>
-        <path d="M141 124V48h102v76M156 64h72v45h-72M173 78h38m-30 15h22"/>
-        <path d="M272 124V67h99v57M288 83h67m-67 18h67M306 76v14m29 4v14"/>
-        <path d="M407 194V80m0 0c0-17 13-29 30-29h20M394 80h26M457 51l18 11-18 11"/>
-        <path d="M48 194v-34h39v34M68 160c-1-25-6-46-16-64m16 64c2-28 9-51 23-69m-23 69c-10-18-23-32-39-42m39 26c11-13 24-22 39-27"/>
-        <path d="M405 120h66v53h-66zM425 120v-12c0-9 7-16 13-16s13 7 13 16v12M430 145h16M438 139v13"/>
-        <path d="m477 31 2.5 6.5L486 40l-6.5 2.5L477 49l-2.5-6.5L468 40l6.5-2.5L477 31Z"/>
-      </g>
-    </svg>);
-}
 const Toggle = ({ checked, onChange, disabled }) => (<button type="button" onClick={() => !disabled && onChange(!checked)} className={`settings-toggle ${checked ? "settings-toggle-on" : "settings-toggle-off"} ${disabled ? "settings-toggle-disabled" : "settings-toggle-enabled"}`}>
     <span className={`settings-toggle-thumb ${checked ? "settings-toggle-thumb-on" : "settings-toggle-thumb-off"}`}/>
   </button>);
@@ -546,7 +533,6 @@ export function Settings({ embedded = false } = {}) {
               </button>
               </div>}
             </div>
-            {!isTenantAccount && <div className="settings-style-89"><SettingsLineArt /></div>}
           </header>
 
           <nav className="settings-style-90 settings-tabs-grid">

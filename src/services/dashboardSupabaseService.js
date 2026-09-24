@@ -5,6 +5,8 @@ import { resolveAppUserId } from "./apartmentsService";
 export const defaultTenantPreferences = {
     hasSavedPreferences: false,
     preferredArea: "",
+    preferredLat: null,
+    preferredLng: null,
     minBudget: 0,
     maxBudget: 0,
     minBedrooms: "any",
@@ -543,6 +545,12 @@ function getPositiveNumberValue(value, fallback) {
     const parsed = getNumberValue(value);
     return parsed >= 0 ? parsed : fallback;
 }
+function getNullableCoordinate(value, fallback = null) {
+    if (value === null || value === undefined || value === "")
+        return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+}
 function isTenantPreferenceSortOption(value) {
     return value === "recommended" || value === "price_low" || value === "price_high" || value === "newest" || value === "popular";
 }
@@ -553,6 +561,8 @@ function normalizeTenantPreferences(value, fallback = defaultTenantPreferences) 
     return {
         hasSavedPreferences: getOptionalBooleanValue(source.hasSavedPreferences, fallback.hasSavedPreferences),
         preferredArea: typeof source.preferredArea === "string" ? source.preferredArea : fallback.preferredArea,
+        preferredLat: getNullableCoordinate(source.preferredLat, fallback.preferredLat),
+        preferredLng: getNullableCoordinate(source.preferredLng, fallback.preferredLng),
         maxBudget: getPositiveNumberValue(source.maxBudget, fallback.maxBudget),
         minBudget: getPositiveNumberValue(source.minBudget, fallback.minBudget),
         minBedrooms,
@@ -1156,15 +1166,36 @@ export async function sendAdminMessageToLandlord(input) {
     return true;
 }
 export async function fetchUsers() {
-    const [{ data: userRows }, { data: publicLandlordRows }] = await Promise.all([
+    const [{ data: userRows, error: usersError }, { data: publicLandlordRows, error: publicLandlordsError }] = await Promise.all([
         supabase.from("app_users").select("*"),
         supabase.from("public_landlords").select("*"),
     ]);
+    if (usersError || publicLandlordsError) {
+        console.error("Error fetching admin users:", usersError ?? publicLandlordsError);
+        return [];
+    }
+    const publicLandlordsById = new Map((publicLandlordRows ?? [])
+        .map((row) => toUserRow(row))
+        .filter((row) => Boolean(row.id))
+        .map((row) => [row.id, row]));
     const usersById = new Map();
-    [...(publicLandlordRows ?? []), ...(userRows ?? [])].forEach((row) => {
+    (userRows ?? []).forEach((row) => {
         const normalizedUser = toUserRow(row);
-        if (normalizedUser.id)
-            usersById.set(normalizedUser.id, normalizedUser);
+        if (!normalizedUser.id)
+            return;
+        const publicLandlord = publicLandlordsById.get(normalizedUser.id);
+        usersById.set(normalizedUser.id, {
+            ...publicLandlord,
+            ...normalizedUser,
+            // public_landlords is the read model used for landlord verification.
+            // Keep its boolean when app_users does not expose that column.
+            is_verified: publicLandlord?.is_verified ?? normalizedUser.is_verified,
+            isVerified: publicLandlord?.isVerified ?? normalizedUser.isVerified,
+        });
+    });
+    publicLandlordsById.forEach((landlord, id) => {
+        if (!usersById.has(id))
+            usersById.set(id, landlord);
     });
     const normalized = [...usersById.values()];
     if (normalized.length > 0) {
@@ -1374,36 +1405,6 @@ export async function fetchApartments() {
     writeCachedValue("apartments", "[]");
     return [];
 }
-export async function fetchAdminAnalyticsData() {
-    const [apartmentsResult, usersResult, viewsResult, favoritesResult, ratingsResult] = await Promise.all([
-        supabase
-            .from("apartments")
-            .select("id, title, is_published, approval_status, is_archived, deleted_at, status, created_at, published_at, apartment_rooms(id, status, is_occupied, rent)"),
-        supabase
-            .from("app_users")
-            .select("id, role, is_verified, status, verification_status, landlord_status")
-            .eq("role", "landlord"),
-        supabase
-            .from("apartment_views")
-            .select("apartment_id, viewed_at, view_count"),
-        supabase
-            .from("favorites")
-            .select("apartment_id, created_at"),
-        supabase.from("apartment_ratings").select("apartment_id, rating, created_at"),
-    ]);
-    const firstError = apartmentsResult.error ?? usersResult.error ?? viewsResult.error ?? favoritesResult.error ?? ratingsResult.error;
-    if (firstError) {
-        console.error("Unable to load admin analytics:", firstError);
-        throw new Error("Analytics could not be refreshed. Please try again.");
-    }
-    return {
-        apartments: (apartmentsResult.data ?? []),
-        users: (usersResult.data ?? []),
-        views: (viewsResult.data ?? []),
-        favorites: (favoritesResult.data ?? []),
-        ratings: (ratingsResult.data ?? []),
-    };
-}
 export async function fetchFavorites() {
     const favorites = await fetchRows("favorites");
     const normalized = favorites.map((row) => toFavoriteRow(row));
@@ -1533,7 +1534,7 @@ export async function updateReportStatus(reportId, status) {
     return normalized;
 }
 /**
- * Notify landlord and reporter when a report is resolved
+ * Notify landlord and reporter after an admin verifies a report.
  * Creates notifications for both the landlord (apartment owner) and the reporting tenant
  */
 export async function notifyReportResolved(reportId, landlordId, reporterId, apartmentTitle) {
@@ -1541,9 +1542,9 @@ export async function notifyReportResolved(reportId, landlordId, reporterId, apa
         // Notify landlord
         await createNotification({
             user_id: landlordId,
-            type: "report_resolved",
-            title: "Report Resolved",
-            message: `A report for "${apartmentTitle}" has been reviewed and resolved by admin.`,
+            type: "report_verified",
+            title: "Verified Property Report",
+            message: `A report for "${apartmentTitle}" was verified by admin and is now available for your review.`,
             payload: {
                 report_id: reportId,
                 apartment_title: apartmentTitle,
@@ -1555,8 +1556,8 @@ export async function notifyReportResolved(reportId, landlordId, reporterId, apa
         await createNotification({
             user_id: reporterId,
             type: "report_status_updated",
-            title: "Your Report Has Been Resolved",
-            message: `Your report for "${apartmentTitle}" has been resolved and closed.`,
+            title: "Your Report Was Verified",
+            message: `Your report for "${apartmentTitle}" was verified by admin and shared with the landlord.`,
             payload: {
                 report_id: reportId,
                 apartment_title: apartmentTitle,
@@ -1619,16 +1620,13 @@ export async function fetchReportDetails(reportId) {
 }
 /**
  * Fetch all necessary information for a report detail view
- * Includes reporter info, apartment details, and landlord info
+ * Includes apartment and landlord info without exposing reporter identity.
  */
 export async function fetchReportWithDetails(reportId) {
     try {
         const report = await fetchReportDetails(reportId);
         if (!report)
             return null;
-        const reporter = report.reporter_id
-            ? await fetchUserById(report.reporter_id)
-            : null;
         // Try to fetch apartment details
         const apartmentId = report.apartment_id || report.apartmentId;
         let apartment = null;
@@ -1650,7 +1648,7 @@ export async function fetchReportWithDetails(reportId) {
         if (apartment?.user_id || apartment?.landlord_id) {
             landlord = await fetchUserById(apartment.user_id || apartment.landlord_id);
         }
-        return { report, reporter, apartment, landlord };
+        return { report, apartment, landlord };
     }
     catch (err) {
         console.error("Error fetching report with details:", err);
@@ -1760,7 +1758,7 @@ export async function fetchLandlordWithDetails(landlordId) {
             fetchViolations(),
             fetchAdminReports(),
             fetchApartmentViews(),
-            fetchApartmentFavorites(""),
+            fetchFavorites(),
         ]);
         const userPermit = getStringValue(user.permit_number ?? user.permitNumber);
         const profile = {
@@ -1772,7 +1770,8 @@ export async function fetchLandlordWithDetails(landlordId) {
         };
         const normalizedProperties = properties.map((row) => toApartmentRow(row));
         const violations = allViolations.filter((v) => (v.landlord_id ?? v.landlordId) === landlordId);
-        const reports = allReports.filter((r) => normalizedProperties.some((p) => p.id === (r.apartment_id ?? r.apartmentId)));
+        const reports = allReports.filter((report) => report.status === "resolved"
+            && normalizedProperties.some((property) => property.id === (report.apartment_id ?? report.apartmentId)));
         const totalViews = views
             .filter((v) => normalizedProperties.some((p) => p.id === (v.apartment_id ?? v.apartmentId)))
             .reduce((total, view) => total + (view.view_count === undefined || view.view_count === null ? 1 : getNumberValue(view.view_count)), 0);

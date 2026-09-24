@@ -224,9 +224,6 @@
     display: none;
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .tenant-architecture, .tenant-architecture-lines { animation: none !important; stroke-dashoffset: 0; }
-}
 
 .help-section-button {
   height: calc(var(--spacing, .25rem) * 12);
@@ -896,11 +893,6 @@
     opacity: .5;
   }
 }
-
-.tenant-architecture { display: block; width: 100%; animation: tenant-architecture-float 12s ease-in-out infinite; }
-.tenant-architecture-lines { stroke-dasharray: 1250; stroke-dashoffset: 1250; animation: tenant-line-draw 1.6s ease-out forwards; }
-@keyframes tenant-line-draw { to { stroke-dashoffset: 0; } }
-@keyframes tenant-architecture-float { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-3px) scale(1.01); } }
 
 :root {
   --apt-primary: #16A5E1;

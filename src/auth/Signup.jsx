@@ -1,7 +1,7 @@
 import { AuthField } from "./AuthField";
 import "./signup.css";
 import { AppLogo } from "@/components/AppLogo";
-import { ImageWithFallback } from "@/components/ImageWithFallback";
+
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -242,10 +242,8 @@ export function Signup() {
 
       <div className="auth-visual-panel signup-visual-panel">
         <div className="signup-background">
-          <ImageWithFallback src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=960" alt="Modern apartment in La Paz" className="auth-background-image signup-background-image"/>
-          <div className="auth-background-overlay signup-background-overlay"/>
-        </div>
-
+          <div className="auth-background-overlay signup-background-overlay" />
+         </div>
         <div className="signup-visual-content">
           <Link to="/" className="signup-brand">
             <AppLogo className="signup-brand-logo"/>

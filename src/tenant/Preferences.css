@@ -1,39 +1,36 @@
 .tenant-search-filters.ui-dialog-content {
-  width: min(336px, calc(100vw - 24px));
-  max-width: 336px;
+  width: min(360px, calc(100vw - 24px));
+  max-width: 360px;
   max-height: calc(100dvh - 24px);
   overflow-y: auto;
   display: block;
-  padding: 19px 18px 14px;
+  padding: 18px 18px 14px;
   border: 1px solid #e2e7ed;
   border-radius: 8px;
   background: #f7f9fc;
   color: #182337;
   box-shadow: 0 20px 60px #0f172a26;
 }
-.tenant-search-filters [data-slot="dialog-title"] { margin: 0 24px 4px 0; font-size: 20px; font-weight: 750; line-height: 1.3; }
-.tenant-search-filters [data-slot="dialog-description"] { margin: 0 0 16px; color: #74869f; font-size: 12px; line-height: 1.4; }
+.tenant-search-filters [data-slot="dialog-title"] { margin: 0 24px 3px 0; font-size: 18px; font-weight: 750; line-height: 1.3; }
+.tenant-search-filters [data-slot="dialog-description"] { margin: 0 0 15px; color: #74869f; font-size: 11px; line-height: 1.4; }
 .tenant-search-filters fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
-.tenant-search-filters .tenant-filter-fields { display: grid; gap: 12px; }
+.tenant-search-filters .tenant-filter-fields { display: grid; gap: 10px; }
 .tenant-search-filters legend, .tenant-search-filters .tenant-filter-location { font-size: 13px; line-height: 1.4; font-weight: 700; }
 .tenant-search-filters legend { margin-bottom: 5px; }
-.tenant-search-filters input { display: block; width: 100%; min-width: 0; height: 35px; margin-top: 4px; padding: 0 8px; border: 1px solid #cfd3d9; border-radius: 8px; background: transparent; color: inherit; font-size: 12px; font-weight: 400; }
+.tenant-search-filters :is(input, select) { display: block; width: 100%; min-width: 0; height: 36px; margin-top: 4px; padding: 0 9px; border: 1px solid #cfd3d9; border-radius: 8px; background: #f9fbfd; color: inherit; font-size: 12px; font-weight: 400; }
+.tenant-search-filters select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, #64748b 50%), linear-gradient(135deg, #64748b 50%, transparent 50%); background-position: calc(100% - 13px) 15px, calc(100% - 9px) 15px; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat; padding-right: 28px; }
 .tenant-search-filters input::placeholder { color: #94a3b8; }
-.tenant-search-filters .tenant-filter-prices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.tenant-search-filters .tenant-filter-prices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .tenant-search-filters .tenant-filter-prices label { font-size: 12px; color: #74869f; }
 .tenant-search-filters .tenant-filter-choices { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
 .tenant-search-filters button { cursor: pointer; }
 .tenant-search-filters .tenant-filter-choices button { min-width: 0; padding: 4px 0; border: 1px solid #cfd3d9; border-radius: 999px; background: transparent; color: #66768d; font-size: 10px; line-height: 1.4; }
 .tenant-search-filters .tenant-filter-choices button[aria-pressed="true"] { background: #0ba5df; border-color: #0ba5df; color: white; }
-.tenant-search-filters .tenant-filter-amenities { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 16px; }
+.tenant-search-filters .tenant-filter-amenities { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
 .tenant-search-filters .tenant-filter-amenities button, .tenant-search-filters .tenant-filter-actions button { min-height: 36px; padding: 7px 5px; border: 1px solid #cfd3d9; border-radius: 8px; background: transparent; color: inherit; font-size: 12px; line-height: 1.4; }
 .tenant-search-filters .tenant-filter-amenities button[aria-pressed="true"] { border-color: #38bdf8; background: #e0f2fe; }
-.tenant-search-filters .tenant-filter-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin-top: 6px; }
+.tenant-search-filters .tenant-filter-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 6px; }
 .tenant-search-filters .tenant-filter-actions button[type="submit"] { background: #0ba5df; border-color: #0ba5df; color: #fff; font-weight: 600; }
 .tenant-search-filters :is(input, button):focus-visible { outline: 2px solid #0284c7; outline-offset: 2px; }
 .tenant-search-filters .tenant-filter-error { color: #b91c1c; font-size: 12px; margin: 0; }
 .tenant-search-filters fieldset:disabled { opacity: .65; }
-.dark .tenant-search-filters.ui-dialog-content { background: #152033; color: #e2e8f0; border-color: #475569; }
-.dark .tenant-search-filters :is(input, .tenant-filter-choices button, .tenant-filter-amenities button, .tenant-filter-actions button) { border-color: #526178; }
-.dark .tenant-search-filters .tenant-filter-amenities button[aria-pressed="true"] { background: #153b53; border-color: #38bdf8; }
-.dark .tenant-search-filters :is([data-slot="dialog-description"], .tenant-filter-prices label, .tenant-filter-choices button) { color: #a7b7cc; }

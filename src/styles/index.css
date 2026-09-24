@@ -100,19 +100,6 @@
 
 @import '../landlord/PeopleModal.css';
 
-@import '../landlord/PropertyActivityEmptyIllustration.css';
-
-@import '../landlord/PropertyNotificationEmptyIllustration.css';
-
-
-/* =========================
-   ADMIN
-========================= */
-
-@import '../admin/admin_pages.css';
-
-
-
 /* =========================
    LANDING / AUTH
 ========================= */
@@ -132,4 +119,3 @@
 
 @import 'leaflet/dist/leaflet.css';
 
-@import '../admin/admin_dashboard.css';

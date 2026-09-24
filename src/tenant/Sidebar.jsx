@@ -4,6 +4,7 @@ import { LogoutConfirmation } from "@/components/LogoutConfirmation";
 import { AppLogo } from "@/components/AppLogo";
 import { useAuth } from "@/contexts/AuthContext";
 import { useFavorites } from "@/tenant/useFavorites";
+
 const NAV_MAIN = [
     {
         icon: Search,

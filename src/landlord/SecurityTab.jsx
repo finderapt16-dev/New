@@ -4,7 +4,7 @@ import { SettingsField as Field, SettingsSectionTitle as SectionTitle, SettingsI
 import { toast } from "sonner";
 export const SecurityTab = ({ security, passwordState, setPasswordState, handlePasswordChange, twoFAState, handleSetup2FA, updateSecurity, setTwoFAState, handleCancel2FASetup, handleVerify2FA, handleSaveSecurity, handleDeleteAccount, }) => (<div className="security-tab-panel">
     <div className="security-tab-card">
-      <SectionTitle icon="🔑" title="Password" subtitle={security.passwordLastChanged ? `Last changed: ${new Date(security.passwordLastChanged).toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" })}` : "Last changed: Not provided"}/>
+      <SectionTitle title="Password" subtitle={security.passwordLastChanged ? `Last changed: ${new Date(security.passwordLastChanged).toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" })}` : "Last changed: Not provided"}/>
       <Field label="Current Password">
         <div className="security-tab-panel-2">
           <SettingsInput type={passwordState.showCurrent ? "text" : "password"} placeholder="Enter current password" value={passwordState.current} onChange={(e) => setPasswordState((p) => ({ ...p, current: e.target.value }))}/>
@@ -35,7 +35,7 @@ export const SecurityTab = ({ security, passwordState, setPasswordState, handleP
     </div>
 
     <div className="security-tab-card">
-      <SectionTitle icon="🛡️" title="Two-Factor Authentication" subtitle="Extra layer of protection for your account"/>
+      <SectionTitle title="Two-Factor Authentication" subtitle="Extra layer of protection for your account"/>
 
       {!security.twoFactor && !twoFAState.setupMode ? (<>
           <div className="security-tab-card-2">
@@ -98,7 +98,7 @@ export const SecurityTab = ({ security, passwordState, setPasswordState, handleP
     </div>
 
     <div className="security-tab-card">
-      <SectionTitle icon="💻" title="Login & Sessions" subtitle="Manage active sessions and login security"/>
+      <SectionTitle title="Login & Sessions" subtitle="Manage active sessions and login security"/>
       <div className="security-tab-panel-4">
         {[
         { key: "loginAlerts", label: "Login Alerts", hint: "Get notified when your account is accessed from a new device or location" },
@@ -145,7 +145,7 @@ export const SecurityTab = ({ security, passwordState, setPasswordState, handleP
     </div>
 
     <div className="security-tab-card">
-      <SectionTitle icon="📧" title="Account Recovery" subtitle="Backup contacts if you lose access to your account"/>
+      <SectionTitle title="Account Recovery" subtitle="Backup contacts if you lose access to your account"/>
       <Field label="Recovery Email" hint="Must be different from your primary email">
         <SettingsInput type="email" value={security.recoveryEmail} onChange={(e) => updateSecurity(p => ({ ...p, recoveryEmail: e.target.value }))} placeholder="backup@email.com"/>
       </Field>
@@ -155,7 +155,7 @@ export const SecurityTab = ({ security, passwordState, setPasswordState, handleP
     </div>
 
     <div className="security-tab-card">
-      <SectionTitle icon="🔐" title="Privacy & Data" subtitle="Control how your data is used on the platform"/>
+      <SectionTitle title="Privacy & Data" subtitle="Control how your data is used on the platform"/>
       {[
         { key: "profileIndexing", label: "Allow search engine indexing", hint: "Your profile may appear in Google / Bing search results" },
         { key: "analyticsConsent", label: "Share usage analytics", hint: "Help improve the platform with anonymous usage data" },
@@ -174,7 +174,7 @@ export const SecurityTab = ({ security, passwordState, setPasswordState, handleP
     </Button>
 
     <div className="security-tab-card-8">
-      <SectionTitle icon="⚠️" title="Danger Zone" subtitle="Irreversible account actions"/>
+      <SectionTitle title="Danger Zone" subtitle="Irreversible account actions"/>
       <p className="security-tab-text-10">Once you delete your account, there is no going back. Please be certain.</p>
       <Button variant="destructive" className="security-tab-delete-my-account" onClick={handleDeleteAccount}>
         Delete My Account

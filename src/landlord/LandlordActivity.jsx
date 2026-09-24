@@ -1,6 +1,5 @@
 import "./LandlordActivity.css";
 import { Calendar, Clock, Eye, Heart, Star, TrendingUp } from "lucide-react";
-import { PropertyActivityEmptyIllustration } from "@/landlord/PropertyActivityEmptyIllustration";
 export const LandlordActivity = ({ activityRange, landlordViewRows, landlordFavoriteRows, ratingRows, propertyIds, myApartments, getViewWeight, setActivityRange, isLoadingApartments, isLoadingActivityData, }) => {
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -57,7 +56,7 @@ export const LandlordActivity = ({ activityRange, landlordViewRows, landlordFavo
         <div className="activity-section-panel"><div className="activity-section-row"><span className="activity-section-row-4"><Clock className="activity-section-clock-icon"/></span><div><h2 className="activity-section-recent-activity">Recent Activity</h2><p className="activity-section-text-2">The latest tenant interactions during the selected period.</p></div></div></div>
 
         <div className="activity-section-panel-2">
-          {isLoadingApartments || isLoadingActivityData ? (<div className="activity-section-row-5"><Clock className="activity-section-clock-icon-2"/></div>) : recentActivity.length === 0 ? (<div className="activity-section-card-2"><PropertyActivityEmptyIllustration /><h3 className="activity-section-no-activity-yet">No activity yet</h3><p className="activity-section-text-3">Tenant views, favorites, and ratings will appear here.</p></div>) : (<div className="activity-section-panel-3">
+          {isLoadingApartments || isLoadingActivityData ? (<div className="activity-section-row-5"><Clock className="activity-section-clock-icon-2"/></div>) : recentActivity.length === 0 ? (<div className="activity-section-card-2"><h3 className="activity-section-no-activity-yet">No activity yet</h3><p className="activity-section-text-3">Tenant views, favorites, and ratings will appear here.</p></div>) : (<div className="activity-section-panel-3">
               {recentActivity.map(({ id, timestamp, title, property, icon: Icon }) => <article key={id} className="activity-section-article"><span className="activity-section-row-6"><Icon className="activity-section-icon-icon-2"/></span><div className="activity-section-panel-4"><h3 className="activity-section-heading">{title}</h3><p className="activity-section-text-4">{property}</p><time className="activity-section-time">{new Date(timestamp).toLocaleString("en-PH", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}</time></div></article>)}
             </div>)}
         </div>

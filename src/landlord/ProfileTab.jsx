@@ -19,7 +19,7 @@ export const ProfileTab = ({ profile, isUploadingProfilePhoto, profilePhotoInput
     </div>
 
     <div className="profile-tab-card-2">
-      <SectionTitle icon="👤" title="Personal Information" subtitle="Your public-facing landlord profile"/>
+      <SectionTitle title="Personal Information" subtitle="Your public-facing landlord profile"/>
       <div className="profile-tab-grid-2">
         <Field label="First Name">
           <SettingsInput value={profile.firstName} onChange={(e) => updateProfile(p => ({ ...p, firstName: e.target.value }))} placeholder="First name"/>

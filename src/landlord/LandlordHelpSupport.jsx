@@ -1,123 +1,43 @@
 import "./LandlordHelpSupport.css";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { BookOpen, Building2, CheckCircle2, ChevronRight, HelpCircle, ListPlus, MessageSquare, Send, Settings, ShieldCheck } from "lucide-react";
-export const LandlordHelpSupport = ({ navigate, setSettingsTab, supportSubmitted, setSupportSubmitted, supportForm, setSupportForm, handleSupportSubmit, isSubmittingSupport, }) => (<div className="help-section-container">
-    <header className="help-section-header">
-      <div className="help-section-row">
-        <span className="help-section-grid"><HelpCircle className="help-section-help-circle-icon"/></span>
-        <div><p className="help-section-help-amp-support">Help &amp; Support</p><h1 className="help-section-landlord-support-center">Landlord Support Center</h1><p className="help-section-text">Get help managing listings, verification, and tenant inquiries.</p></div>
-      </div>
-    </header>
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CheckCircle, ChevronDown, Send } from "lucide-react";
 
-    <div className="help-section-grid-2">
-      {[
-        { icon: ListPlus, title: "Add a Property", desc: "Create a listing with photos, rent, rooms, and location.", action: () => navigate("/add-apartment"), tone: "landlord-tone-brand" },
-        { icon: Building2, title: "Manage Listings", desc: "Review your posted properties and listing performance.", action: () => navigate("/dashboard?section=overview"), tone: "landlord-tone-brand" },
-        { icon: Settings, title: "Business Settings", desc: "Update permit details, rental policies, and visibility.", action: () => { setSettingsTab("business"); navigate("/dashboard?section=settings"); }, tone: "landlord-tone-brand" },
-    ].map(({ icon: Icon, title, desc, action, tone }) => (<button key={title} onClick={action} className="help-section-button">
-          <span className={`help-section-grid-3 ${tone}`}><Icon className="help-section-icon-icon"/></span>
-          <span className="help-section-span"><strong className="help-section-strong">{title}</strong><span className="help-section-span-2">{desc}</span></span>
-          <ChevronRight className="help-section-chevron-right-icon"/>
-        </button>))}
+const helpCategories = [
+  ["Listing Setup", [["How do I add a property?", "Use Add Property to enter the listing address, rent, amenities, house rules, and property photos."], ["How do I add or edit rooms?", "Open a property and select Manage Rooms to add rooms, update rent and capacity, or upload room photos."], ["Why is my listing not visible?", "A listing must be complete, published, and have at least one available room before tenants can see it."]]],
+  ["Listing Management", [["How do I update availability?", "Open Manage Rooms and mark a room as occupied, available, or under maintenance."], ["How do I improve my listing?", "Use accurate photos, complete amenities, clear rent details, and current availability information."], ["Where can I see listing performance?", "Open Overview or Market Trends to review views, favorites, and listing activity."]]],
+  ["Verification & Compliance", [["How do I update my permit details?", "Open Settings, then Business, to update your permit number and expiry information."], ["What happens when a report is filed?", "Review the notification, verify the listing details, and correct inaccurate information as soon as possible."], ["How do I avoid a violation?", "Keep prices, room availability, images, and property details accurate and follow the platform's listing policies."]]],
+  ["Tenant Communication", [["How should I respond to inquiries?", "Confirm the rent, included utilities, viewing schedule, and move-in requirements clearly."], ["Can I contact tenants directly?", "Use the available contact details only for legitimate rental-related communication."], ["What should I do when a room is rented?", "Mark the room as occupied right away so tenants do not see outdated availability."]]],
+  ["Account & Settings", [["How do I update my profile?", "Open Settings, then Profile, to update your name, mobile number, photo, and business details."], ["How do I change alert preferences?", "Open Settings, then Alerts, to manage notifications, digest delivery, and quiet hours."], ["How do I secure my account?", "Open Settings, then Security, to update your password and security preferences."]]],
+  ["Safety", [["How can I keep my listing trustworthy?", "Use photos of the actual property, provide clear rules, and never post unavailable rooms as open."], ["What should I do with suspicious activity?", "Send a support request with the property details and any relevant information."], ["How are reports handled?", "Reports are reviewed by the platform team and may require you to clarify or update listing information."]]],
+];
+
+export const LandlordHelpSupport = ({ supportSubmitted, setSupportSubmitted, supportForm, setSupportForm, handleSupportSubmit, isSubmittingSupport }) => {
+  const [openTopic, setOpenTopic] = useState(null);
+  const [supportOpen, setSupportOpen] = useState(false);
+  return <div className="landlord-help-page">
+    <header className="landlord-help-header"><h1 className="landlord-help-title">Help &amp; Support</h1><p className="landlord-help-subtitle">Find guidance for managing listings, rooms, verification, and tenant activity.</p></header>
+    <div className="landlord-help-category-grid" aria-label="Landlord help topics">
+      {helpCategories.map(([title, items], categoryIndex) => <div className="landlord-help-category" key={title}>
+        <h2 className="landlord-help-category-title">{title}</h2><div className="landlord-help-topic-list">
+          {items.map(([question, answer], itemIndex) => { const id = `${categoryIndex}-${itemIndex}`; const isOpen = openTopic === id; return <div className={`landlord-help-topic-item ${isOpen ? "landlord-help-topic-item-open" : ""}`} key={question}>
+            <button type="button" className="landlord-help-topic-question" onClick={() => setOpenTopic(current => current === id ? null : id)} aria-expanded={isOpen}><span>{question}</span><ChevronDown className={`landlord-help-topic-chevron ${isOpen ? "landlord-help-topic-chevron-open" : ""}`}/></button>
+            {isOpen && <div className="landlord-help-topic-answer"><p>{answer}</p></div>}
+          </div>; })}
+        </div>
+      </div>)}
     </div>
-
-    <div className="help-section-grid-4">
-      <Card className="help-section-card">
-        <CardHeader>
-          <CardTitle className="help-section-listing-guide">
-            <BookOpen className="help-section-book-open-icon"/>
-            Listing Guide
-          </CardTitle>
-          <CardDescription>What landlords should put in each listing.</CardDescription>
-        </CardHeader>
-        <CardContent className="help-section-card-content">
-          {[
-        ["Complete listing details", "Add rent, address, amenities, bedroom count, available date, and clear house rules."],
-        ["Use real photos", "Upload accurate photos of the room, bathroom, kitchen, entrance, and shared areas."],
-        ["Keep availability updated", "Mark units or rooms occupied as soon as they are no longer available."],
-        ["Set clear policies", "Use Business settings for deposit, advance payment, lease term, pet, smoking, and maintenance terms."],
-    ].map(([title, desc]) => (<div key={title} className="help-section-card-2">
-              <p className="help-section-text-2">{title}</p>
-              <p className="help-section-text-3">{desc}</p>
-            </div>))}
-        </CardContent>
-      </Card>
-
-      <Card className="help-section-card">
-        <CardHeader>
-          <CardTitle className="help-section-verification-tenant-safety">
-            <ShieldCheck className="help-section-shield-check-icon"/>
-            Verification & Tenant Safety
-          </CardTitle>
-          <CardDescription>Keep listings trustworthy and easy to review.</CardDescription>
-        </CardHeader>
-        <CardContent className="help-section-card-content">
-          {[
-        ["Permit verification", "Make sure your permit number and expiry date are current in Business settings."],
-        ["Respond clearly", "Confirm rent inclusions, deposit requirements, viewing schedule, and move-in rules before visits."],
-        ["Avoid misleading details", "Do not post outdated prices, unavailable rooms, or photos from a different unit."],
-        ["Handle reports", "If a listing receives a report, review the details and update incorrect information quickly."],
-    ].map(([title, desc]) => (<div key={title} className="help-section-card-3">
-              <CheckCircle2 className="help-section-check-circle2-icon"/>
-              <div>
-                <p className="help-section-text-2">{title}</p>
-                <p className="help-section-text-3">{desc}</p>
-              </div>
-            </div>))}
-        </CardContent>
-      </Card>
-    </div>
-
-    <Card className="help-section-card">
-      <CardHeader>
-        <CardTitle className="help-section-contact-support">
-          <MessageSquare className="help-section-message-square-icon"/>
-          Contact Support
-        </CardTitle>
-        <CardDescription>Your request uses the contact email associated with your landlord profile.</CardDescription>
-      </CardHeader>
-      <CardContent className="help-section-card-content-2">
-        {supportSubmitted ? (<div className="help-section-card-4">
-            <CheckCircle2 className="help-section-check-circle2-icon-2"/>
-            <p className="help-section-support-request-received">Support request received</p>
-            <p className="help-section-text-4">Our team will review your concern and contact you using the details provided.</p>
-            <Button onClick={() => setSupportSubmitted(false)} className="help-section-send-another-request">
-              Send Another Request
-            </Button>
-          </div>) : (<>
-            <div className="help-section-grid-5">
-              <div className="help-section-panel">
-                <Label className="help-section-topic">Topic</Label>
-                <select value={supportForm.topic} onChange={(e) => setSupportForm((f) => ({ ...f, topic: e.target.value }))} className="help-section-select">
-                  <option value="">Choose a topic...</option>
-                  <option value="Listing setup">Listing setup</option>
-                  <option value="Verification">Verification</option>
-                  <option value="Property visibility">Property visibility</option>
-                  <option value="Tenant inquiry issue">Tenant inquiry issue</option>
-                  <option value="Account or login">Account or login</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div className="help-section-panel">
-                <Label className="help-section-contact-email">Contact Email</Label>
-                <Input value={supportForm.contact} onChange={(e) => setSupportForm((f) => ({ ...f, contact: e.target.value }))} placeholder="your@email.com" className="help-section-input"/>
-              </div>
-            </div>
-            <div className="help-section-panel">
-              <div className="help-section-row-2">
-                <Label className="help-section-message">Message</Label>
-                <span className="help-section-500">{supportForm.message.length}/500</span>
-              </div>
-              <textarea rows={4} maxLength={500} value={supportForm.message} onChange={(e) => setSupportForm((f) => ({ ...f, message: e.target.value }))} placeholder="Tell us what happened or what you need help with..." className="help-section-textarea"/>
-            </div>
-            <Button onClick={() => void handleSupportSubmit()} disabled={isSubmittingSupport} className="help-section-button-2">
-              <Send className="help-section-send-icon"/>
-              {isSubmittingSupport ? "Sending..." : "Send Support Request"}
-            </Button>
-          </>)}
-      </CardContent>
-    </Card>
-  </div>);
+    <div className="landlord-help-contact-cta"><div><h2>Still need help?</h2><p>Send us your landlord concern and our support team will assist you.</p></div><Button type="button" onClick={() => setSupportOpen(true)} className="landlord-help-contact-button">Contact Support</Button></div>
+    <Dialog open={supportOpen} onOpenChange={setSupportOpen}><DialogContent className="landlord-help-dialog"><DialogHeader><DialogTitle>Send a Support Request</DialogTitle><DialogDescription>Share your landlord concern and our team will get back to you.</DialogDescription></DialogHeader>
+      {supportSubmitted ? <div className="landlord-help-success"><CheckCircle className="landlord-help-success-icon"/><p className="landlord-help-success-title">Support request received</p><p className="landlord-help-success-text">Our team will review your concern and contact you using the details provided.</p><Button type="button" onClick={() => setSupportSubmitted(false)}>Send Another Request</Button></div> :
+        <div className="landlord-help-support-content"><div className="landlord-help-field"><Label htmlFor="landlord-support-topic">Topic</Label><select id="landlord-support-topic" value={supportForm.topic} onChange={event => setSupportForm(current => ({ ...current, topic: event.target.value }))} className="landlord-help-select"><option value="">Choose a topic...</option><option value="Listing setup">Listing setup</option><option value="Room management">Room management</option><option value="Verification or compliance">Verification or compliance</option><option value="Tenant inquiry issue">Tenant inquiry issue</option><option value="Account or login">Account or login</option><option value="Other">Other</option></select></div>
+          <div className="landlord-help-field"><Label htmlFor="landlord-support-contact">Email or phone number</Label><Input id="landlord-support-contact" type="text" value={supportForm.contact} onChange={event => setSupportForm(current => ({ ...current, contact: event.target.value }))} placeholder="Enter your email or phone number"/></div>
+          <div className="landlord-help-field"><div className="landlord-help-message-header"><Label htmlFor="landlord-support-message">Message</Label><span>{supportForm.message.length}/500</span></div><textarea id="landlord-support-message" rows={5} maxLength={500} value={supportForm.message} onChange={event => setSupportForm(current => ({ ...current, message: event.target.value }))} placeholder="Tell us more about your concern..." className="landlord-help-textarea"/></div>
+          <div className="landlord-help-dialog-actions"><Button type="button" variant="outline" onClick={() => setSupportOpen(false)} disabled={isSubmittingSupport}>Cancel</Button><Button type="button" onClick={() => void handleSupportSubmit()} disabled={isSubmittingSupport} className="landlord-help-submit"><Send/>{isSubmittingSupport ? "Sending..." : "Send Message"}</Button></div>
+        </div>}
+    </DialogContent></Dialog>
+  </div>;
+};

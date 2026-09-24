@@ -28,6 +28,8 @@ const ManageRooms = lazy(() => import("./landlord/ManageRooms").then((module) =>
 // Admin
 const AdminDashboard = lazy(() => import("@/admin/AdminDashboard").then((module) => ({ default: module.AdminDashboard })));
 const AdminApartmentDetail = lazy(() => import("./admin/AdminApartmentDetail").then((module) => ({ default: module.AdminApartmentDetail })));
+const AdminRoomsOverview = lazy(() => import("./admin/AdminRoomsOverview").then((module) => ({ default: module.AdminRoomsOverview })));
+const AdminDocumentReview = lazy(() => import("./admin/AdminDocumentReview").then((module) => ({ default: module.AdminDocumentReview })));
 const roleDashboard = <Dashboard tenant={<TenantDashboard />} landlord={<LandlordDashboard />} admin={<AdminDashboard />}/>;
 const APARTMENT_LOGIN_MESSAGE = "Please sign in or create an account to view apartment details.";
 function PublicLandingRoute() {
@@ -52,6 +54,8 @@ export const router = createBrowserRouter([
             { path: "landlord/market/:id", element: <ProtectedRoute allowedRoles={["landlord"]}><PageLoader><ApartmentDetail /></PageLoader></ProtectedRoute> },
             // Admin apartment review.
             { path: "admin/apartment/:id", element: <ProtectedRoute allowedRoles={["admin"]}><PageLoader><AdminApartmentDetail /></PageLoader></ProtectedRoute> },
+            { path: "admin/apartment/:id/rooms", element: <ProtectedRoute allowedRoles={["admin"]}><PageLoader><AdminRoomsOverview /></PageLoader></ProtectedRoute> },
+            { path: "admin/apartment/:id/document/:documentId", element: <ProtectedRoute allowedRoles={["admin"]}><PageLoader><AdminDocumentReview /></PageLoader></ProtectedRoute> },
             // Landlord property management.
             { path: "add-apartment", element: <ProtectedRoute allowedRoles={["landlord"]}><PageLoader><AddApartment /></PageLoader></ProtectedRoute> },
             { path: "landlord/properties/:id/rooms", element: <ProtectedRoute allowedRoles={["landlord"]}><PageLoader><ManageRooms /></PageLoader></ProtectedRoute> },

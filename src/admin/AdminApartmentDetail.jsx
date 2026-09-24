@@ -1,6 +1,6 @@
 import { MapView } from "@/components/MapView";
+import "./AdminApartmentDetail.css";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
-import { LogoutConfirmation } from "@/components/LogoutConfirmation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,8 +13,9 @@ import { formatAuditLogForDisplay } from "@/utils/auditLogDisplay";
 import { fetchApartmentRatings, subscribeToApartmentRatings } from "@/services/apartmentRatingsService";
 import { supabase } from "@/services/supabaseClient";
 import { clearAdminNavigationMemory, getAdminModulePath, rememberAdminModuleLocation } from "@/admin/adminNavigationMemory";
-import { getAdminAvailabilityLabel, getAdminListingLabel, getAdminRoomState } from "@/admin/adminListingState";
-import { AlertTriangle, ArrowLeft, Bell, Building2, CalendarCheck, Check, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, ExternalLink, Eye, EyeOff, FileSearch, FileText, Flag, Home, Image as ImageIcon, Lock, LayoutDashboard, LogOut, Mail, Menu, MapPin, MessageSquare, Phone, Send, ShieldCheck, Settings, Star, Users, X } from "lucide-react";
+import { AdminSidebar } from "@/admin/AdminSidebar";
+import { getAdminAvailabilityLabel, getAdminListingLabel, getAdminRoomState, getLowestRoomRent } from "@/admin/adminListingState";
+import { AlertTriangle, ArrowLeft, Building2, CalendarCheck, Check, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, ExternalLink, Eye, EyeOff, Expand, FileSearch, FileText, Flag, Home, Image as ImageIcon, Lock, Mail, Menu, MapPin, MessageSquare, Phone, Send, ShieldCheck, Star, Users, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -368,11 +369,6 @@ export function AdminApartmentDetail() {
         if (!apartment?.id || !user?.id || isUpdatingPublication)
             return;
         const nextPublished = apartment.isPublished === false;
-        if (nextPublished && !canPublishForLandlord(landlord)) {
-            toast.error("This apartment cannot be published because the landlord has not been verified.");
-            scrollToFirstVisibleSection(["admin-verification-rail", "admin-verification"]);
-            return;
-        }
         setIsUpdatingPublication(true);
         try {
             await updateApartmentPublication(apartment.id, nextPublished, user.id);
@@ -440,6 +436,13 @@ export function AdminApartmentDetail() {
             return;
         }
         navigate(`/apartment/${apartment.id}`, { state: { preview: true, returnTo: routeLocation.pathname } });
+    };
+    const openDocumentReview = (document) => {
+        if (!apartment?.id || !document?.id)
+            return;
+        navigate(`/admin/apartment/${apartment.id}/document/${document.id}`, {
+            state: { returnTo: routeLocation.pathname, backLabel: "Back to Review" },
+        });
     };
     const handleSendMessage = async () => {
         const landlordId = landlord?.id ?? apartment?.landlordId;
@@ -580,7 +583,7 @@ export function AdminApartmentDetail() {
     const averageRating = ratings.length > 0 ? ratings.reduce((sum, rating) => sum + getRecordNumber(rating, ["rating"], 0), 0) / ratings.length : 0;
     const landlordVerificationStatus = getLandlordVerificationStatus(landlord);
     const landlordCanPublish = canPublishForLandlord(landlord);
-    const publicationBlockedByLandlord = apartment.isPublished === false && !landlordCanPublish;
+    const publicationBlockedByLandlord = false;
     const formattedDatePosted = datePosted
         ? new Date(datePosted).toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" })
         : "—";
@@ -594,22 +597,19 @@ export function AdminApartmentDetail() {
         { label: "Location", target: "admin-location", icon: MapPin },
         { label: "Documents", target: "admin-verification", icon: FileSearch },
     ];
-    const adminNavItems = [
-        { label: "Dashboard", section: "overview", icon: LayoutDashboard },
-        { label: "Notifications", section: "notifications", icon: Bell },
-        { label: "Landlords", section: "landlords", icon: Users },
-        { label: "Apartments", section: "apartments", icon: Building2 },
-        { label: "Reports", section: "reports", icon: Flag },
-        { label: "Appeals", section: "appeals", icon: AlertTriangle },
-    ];
-    const Sidebar = () => <div className="admin-apartment-detail-content">
-    <div className="admin-apartment-detail-panel-3"><div className="admin-apartment-detail-row-2"><span className="admin-apartment-detail-card-4"><img src="/icon.svg" alt="" className="admin-apartment-detail-image" aria-hidden="true"/></span><span><strong className="admin-apartment-detail-apt-findr">AptFindr</strong><small className="admin-apartment-detail-small">{"Admin Portal"}</small></span></div></div>
-    <div className="admin-apartment-detail-panel-4"><div className="admin-apartment-detail-card-5"><span className="admin-apartment-detail-row-3">{user?.name?.[0]?.toUpperCase() ?? "A"}</span><span className="admin-apartment-detail-span"><strong className="admin-apartment-detail-strong">{user?.name ?? ("Admin")}</strong><small className="admin-apartment-detail-small-2">{user?.email ?? ""}</small></span><ShieldCheck className="admin-apartment-detail-shield-check-icon"/></div></div>
-    <nav className="admin-apartment-detail-nav"><p className="admin-apartment-detail-main">Main</p>{adminNavItems.map(({ label, section, icon: Icon }) => <button key={section} onClick={() => navigateToAdminModule(section)} className={`admin-apartment-detail-button ${section === "apartments" ? "admin-apartment-detail-button-2" : "admin-apartment-detail-button-3"}`}><Icon className="admin-apartment-detail-icon-icon"/>{label}</button>)}</nav>
-    <nav className="admin-apartment-detail-nav-2"><p className="admin-apartment-detail-account">Account</p><button onClick={() => navigateToAdminModule("admininfo")} className="admin-apartment-detail-settings"><Settings className="admin-apartment-detail-settings-icon"/>Settings</button></nav>
-    <div className="admin-apartment-detail-panel-5"/><div className="admin-apartment-detail-panel-6"><LogoutConfirmation onConfirm={() => { if (user?.id)
-        clearAdminNavigationMemory(user.id); logout?.(); navigate("/"); }}><button className="admin-apartment-detail-log-out"><LogOut className="admin-apartment-detail-log-out-icon"/>Log Out</button></LogoutConfirmation></div>
-  </div>;
+    const Sidebar = () => <AdminSidebar
+        activeSection="apartments"
+        pendingReports={activeReports.length}
+        activeAppealsCount={0}
+        unreadNotifsCount={0}
+        navigateToAdminModule={navigateToAdminModule}
+        handleLogout={() => {
+            if (user?.id)
+                clearAdminNavigationMemory(user.id);
+            logout?.();
+            navigate("/");
+        }}
+    />;
     return (<div className="admin-apartment-detail">
       <aside className="admin-apartment-detail-aside"><Sidebar /></aside>
       {sidebarOpen && <button aria-label="Close navigation" onClick={() => setSidebarOpen(false)} className="admin-apartment-detail-close-navigation"/>}
@@ -621,11 +621,11 @@ export function AdminApartmentDetail() {
           <div className="admin-apartment-detail-panel-7">
             <Button variant="ghost" onClick={handleBack} className="admin-apartment-detail-button-4">
               <ArrowLeft className="admin-apartment-detail-arrow-left-icon"/>
-              {backLabel}
+              Back to Apartments
             </Button>
             <div className="admin-apartment-detail-content-3">
-              <h1 className="admin-apartment-detail-apartment-review">Apartment Review</h1>
-              <p className="admin-apartment-detail-text-3">Review the submitted apartment information, landlord verification, documents, rooms, reports, and publishing readiness.</p>
+              <h1 className="admin-apartment-detail-apartment-review">Landlord &amp; Property Review</h1>
+              <p className="admin-apartment-detail-text-3">Review the landlord submission, permit, property details, rooms, and location before deciding on this listing.</p>
             </div>
           </div>
           <div className="admin-apartment-detail-row-4">
@@ -635,6 +635,86 @@ export function AdminApartmentDetail() {
             </Button>
           </div>
         </div>
+
+        <section className="property-review" aria-label="Landlord and property review">
+          <div className="property-review-status">
+            <span className={apartment.isPublished ? "property-review-status-published" : "property-review-status-pending"}>
+              {apartment.isPublished ? "Published" : "Pending approval"}
+            </span>
+            <span>Submitted {formattedDatePosted}</span>
+          </div>
+
+          <div className="property-review-top-grid">
+            <section className="property-review-panel">
+              <div className="property-review-panel-heading"><span><Users /></span><div><h2>Account Information</h2><p>Landlord details submitted with this property.</p></div></div>
+              <dl className="property-review-details">
+                <div><dt>Full Name</dt><dd>{landlord?.name || "Not provided"}</dd></div>
+                <div><dt>Email</dt><dd>{landlord?.email || "Not provided"}</dd></div>
+                <div><dt>Contact Number</dt><dd>{landlord?.mobile || landlordProfile?.phone || "Not provided"}</dd></div>
+                <div><dt>Address</dt><dd>{landlordProfile?.address || `${apartment.address}, ${apartment.city}`}</dd></div>
+                <div><dt>Date Registered</dt><dd>{(landlord?.createdAt ?? landlord?.created_at) ? new Date(landlord.createdAt ?? landlord.created_at).toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" }) : formattedDatePosted}</dd></div>
+              </dl>
+            </section>
+
+            <section className="property-review-panel" id="admin-verification">
+              <div className="property-review-panel-heading"><span><FileSearch /></span><div><h2>Permit Document Review</h2><p>Documents submitted for this listing.</p></div></div>
+              {submittedDocumentCards.filter(({ document }) => document).slice(0, 1).map(({ key, label, document }) => <div className="property-review-permit" key={key}>
+                {document.mimeType === "application/pdf" ? <div className="property-review-pdf"><FileText /><small>PDF</small></div> : <img src={document.previewUrl} alt={label} />}
+                <dl className="property-review-details">
+                  <div><dt>Document</dt><dd>{label}</dd></div>
+                  <div><dt>Permit Number</dt><dd>{getText(verificationData, ["businessPermit"], landlordProfile?.business_permit_number || "Not provided")}</dd></div>
+                  <div><dt>File</dt><dd>{document.fileName || "Submitted document"}</dd></div>
+                </dl>
+                <Button onClick={() => openDocumentReview(document)} size="sm">View Full Document</Button>
+              </div>)}
+              {!submittedDocumentCards.some(({ document }) => document) && <p className="property-review-empty">No verification document has been submitted yet.</p>}
+              <button type="button" className="property-review-link" onClick={() => setShowAllDocuments((current) => !current)}>{showAllDocuments ? "Show fewer documents" : `View all documents (${verificationDocuments.length})`}</button>
+              {showAllDocuments && <div className="property-review-document-list">{submittedDocumentCards.slice(1).map(({ key, label, document }) => <div key={key}><strong>{label}</strong><span>{document?.fileName || "Not provided"}</span>{document && <button type="button" onClick={() => openDocumentReview(document)}>Open</button>}</div>)}</div>}
+            </section>
+          </div>
+
+          <section className="property-review-panel property-review-property" id="admin-property-details">
+            <div className="property-review-panel-heading"><span><Building2 /></span><div><h2>Property Listing Review</h2></div><Button variant="outline" size="sm" onClick={() => apartment.id && navigate(`/apartment/${apartment.id}`, { state: { preview: true, returnTo: routeLocation.pathname } })}><Eye /> Preview Tenant View</Button></div>
+            <div className="property-review-property-grid">
+              <div className="property-review-gallery">
+                <div className="property-review-main-image">{selectedImage ? <ImageWithFallback src={selectedImage} alt={apartment.title} /> : <div className="property-review-image-empty"><Building2 />No property image</div>}
+                  {selectedImage && <button type="button" className="property-review-full-image" onClick={() => window.open(selectedImage, "_blank", "noopener,noreferrer")}><Expand />View Full Image</button>}
+                  {canNavigateImages && <><button type="button" className="property-review-image-arrow is-previous" onClick={handlePreviousImage} aria-label="Previous property image"><ChevronLeft /></button><button type="button" className="property-review-image-arrow is-next" onClick={handleNextImage} aria-label="Next property image"><ChevronRight /></button><span className="property-review-image-dots">{images.map((image, index) => <i key={`${image}-${index}`} className={index === currentImageIndex ? "is-active" : ""}/>)}</span></>}
+                </div>
+                {imageCount > 1 && <div className="property-review-thumbnails">{images.slice(0, 5).map((image, index) => <button type="button" key={`${image}-${index}`} onClick={() => setCurrentImageIndex(index)} aria-label={`View image ${index + 1}`} className={currentImageIndex === index ? "is-active" : ""}><ImageWithFallback src={image} alt={`Property image ${index + 1}`} /></button>)}</div>}
+              </div>
+              <div className="property-review-listing-details">
+                <h3>{apartment.title}</h3>
+                <dl className="property-review-details">
+                  <div><dt>Property Address</dt><dd>{apartment.address}, {apartment.city}, {apartment.state} {apartment.zip}</dd></div>
+                  <div><dt>Property Type</dt><dd>{propertyType}</dd></div>
+                  <div><dt>Total Rooms</dt><dd>{roomsForDisplay.length || apartment.bedrooms}</dd></div>
+                  <div><dt>Price Range</dt><dd>{getLowestRoomRent(apartment) ? `P${getLowestRoomRent(apartment).toLocaleString()} and up / month` : "See room records"}</dd></div>
+                  <div><dt>Description</dt><dd>{apartment.description || "No description provided."}</dd></div>
+                </dl>
+                <div className="property-review-tags">{apartment.amenities.slice(0, 5).map((amenity) => <span key={amenity}>{amenity}</span>)}</div>
+              </div>
+            </div>
+          </section>
+
+          <section className="property-review-panel property-review-rooms-panel" id="admin-rooms">
+            <div className="property-review-panel-heading"><span><Home /></span><div><h2>Rooms Overview</h2><p>Review the submitted rooms for this property.</p></div>{roomsForDisplay.length > 0 && <button type="button" className="property-review-outline-action" onClick={() => navigate(`/admin/apartment/${apartment.id}/rooms`, { state: { returnTo: routeLocation.pathname } })}>View all rooms</button>}</div>
+            <div className="property-review-rooms">{roomsForDisplay.length ? roomsForDisplay.slice(0, 4).map((room, index) => <article key={room.id || index}>
+              {getStringList(room.images ?? room.image_url ?? room.imageUrl)[0] ? <ImageWithFallback src={getStringList(room.images ?? room.image_url ?? room.imageUrl)[0]} alt={getText(room, ["room_name", "name"], `Room ${index + 1}`)} /> : <div className="property-review-room-image"><Home /></div>}
+              <strong>{getText(room, ["room_name", "name"], `Room ${index + 1}`)}</strong><span>P{getRecordNumber(room, ["rent", "price"], 0).toLocaleString()} / month</span><small>{getRecordNumber(room, ["sqft"], 0)} sqft · {getRecordNumber(room, ["maxOccupants", "max_occupants"], 1)} occupants</small><em>{STATUS_LABEL[getRoomStatus(room)] || "Available"}</em>
+            </article>) : <p className="property-review-empty">No rooms have been added to this property.</p>}</div>
+          </section>
+
+          <section className="property-review-panel property-review-location-panel" id="admin-location">
+            <div className="property-review-panel-heading"><span><MapPin /></span><div><h2>Location</h2></div><button type="button" className="property-review-outline-action" onClick={() => window.open(`https://www.google.com/maps?q=${apartment.lat},${apartment.lng}`, "_blank", "noopener,noreferrer")}>View on Map <ExternalLink /></button></div>
+            <div className="property-review-location"><div><MapView lat={apartment.lat} lng={apartment.lng} zoom={15} showSingleMarker={true}/></div><dl className="property-review-details"><div><dt>Address</dt><dd>{apartment.address}, {apartment.city}, {apartment.state} {apartment.zip}</dd></div></dl></div>
+          </section>
+
+          <section className="property-review-decision">
+            <div><strong>Review Decision</strong><p>Confirm the landlord details, permit, property listing, rooms, and location before publishing.</p></div>
+            <div><Button variant="outline" onClick={() => { setMessageText("Please update the submitted property information before approval."); setMessageModalOpen(true); }}>Request Changes</Button><Button onClick={() => void handlePublicationReview()} disabled={isUpdatingPublication}>{isUpdatingPublication ? "Updating..." : apartment.isPublished ? "Unpublish Listing" : "Approve Listing"}</Button></div>
+          </section>
+        </section>
 
         <section className="admin-apartment-detail-section" aria-labelledby="review-summary-title">
           <h2 id="review-summary-title" className="admin-apartment-detail-review-summary-title">Review Summary</h2>
@@ -963,7 +1043,7 @@ export function AdminApartmentDetail() {
                         </div>
                         {document ? <>
                           {document.mimeType === "application/pdf" ? <div className="admin-apartment-detail-card-14"><FileText className="admin-apartment-detail-file-text-icon-2"/></div> : <img src={document.previewUrl} alt={label} className="admin-apartment-detail-image-2"/>}
-                          <Button onClick={() => window.open(document.previewUrl, "_blank", "noopener,noreferrer")} className="admin-apartment-detail-view-full-document"><ExternalLink className="admin-apartment-detail-external-link-icon-2"/>View Full Document</Button>
+                          <Button onClick={() => openDocumentReview(document)} className="admin-apartment-detail-view-full-document"><ExternalLink className="admin-apartment-detail-external-link-icon-2"/>View Full Document</Button>
                         </> : <div className="admin-apartment-detail-not-provided">Not provided</div>}
                       </div>))}
                   </div>
@@ -1211,7 +1291,7 @@ export function AdminApartmentDetail() {
                       </div>
                       {document ? (<>
                           {document.mimeType === "application/pdf" ? (<div className="admin-apartment-detail-card-22"><FileText className="admin-apartment-detail-file-text-icon-3"/></div>) : (<img src={document.previewUrl} alt={label} className="admin-apartment-detail-image-3"/>)}
-                          <Button onClick={() => window.open(document.previewUrl, "_blank", "noopener,noreferrer")} className="admin-apartment-detail-view-full-document-2">
+                          <Button onClick={() => openDocumentReview(document)} className="admin-apartment-detail-view-full-document-2">
                             View Full Document
                           </Button>
                         </>) : (<div className="admin-apartment-detail-not-provided-2">Not provided</div>)}

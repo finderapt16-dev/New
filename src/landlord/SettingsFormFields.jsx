@@ -13,9 +13,7 @@ export const SettingsToggle = ({ checked, onChange, disabled }) => (<button type
     <span className={`settings-fields-span ${checked ? "settings-fields-span-2" : "settings-fields-span-3"}`}/>
   </button>);
 export const SettingsSectionTitle = ({ icon, title, subtitle }) => (<div className="settings-fields-row">
-    <div className="settings-fields-card">
-      {icon}
-    </div>
+    {icon && <div className="settings-fields-card">{icon}</div>}
     <div>
       <h3 className="settings-fields-heading">{title}</h3>
       {subtitle && <p className="settings-fields-text-2">{subtitle}</p>}

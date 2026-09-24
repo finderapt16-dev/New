@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger, } from
 import { useAuth } from "@/contexts/AuthContext";
 import { useApartmentsContext } from "@/contexts/ApartmentsContext";
 import { isTenantVisibleApartment } from "@/utils/listingVisibility";
-import { BedDouble, Building2, CalendarCheck, CheckCircle2, DollarSign, Heart, Mail, MapPin, Menu, Search, SlidersHorizontal, UserCheck } from "lucide-react";
+import { BedDouble, Building2, CalendarCheck, CheckCircle2, PhilippinePeso, Mail, MapPin, Menu, Search, SlidersHorizontal, UserCheck } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./landing.css";
@@ -124,7 +124,6 @@ export function Landing() {
             <nav className="landing-header-nav">
               {[
             { to: "/browse", label: "Browse", protected: true },
-            { to: "/favorites", label: "Favorites", protected: true, icon: <Heart className="landing-small-icon"/> },
         ].map(({ to, label, protected: isProtected, icon }) => (<Link key={to} to={to} onClick={isProtected ? handleProtectedAction : undefined} className="landing-nav-link">
                   {icon}{label}
                 </Link>))}
@@ -185,8 +184,7 @@ export function Landing() {
     </h1>
 
             <p className="landing-hero-description">
-              Browse apartments, compare rental options, view locations, and review room, amenity, and verification information.
-            </p>
+Browse verified apartment listings, compare rental options, explore locations, and review room details and amenities all in one place.</p>
 
             <div className="landing-search-box">
               <form className="landing-search-form" onSubmit={handleLandingSearch}>
@@ -195,67 +193,12 @@ export function Landing() {
                     <Search className="landing-search-icon"/>
                     <input value={landingSearch} onChange={(e) => setLandingSearch(e.target.value)} placeholder="Search by area, address, or apartment name..." className="landing-search-input"/>
                   </div>
-                  <button type="button" onClick={() => setShowFilters(!showFilters)} className={`landing-filter-button ${showFilters || activeFiltersCount > 0 ? "landing-filter-active" : "landing-filter-idle"}`}>
-                    <SlidersHorizontal className="landing-icon-small"/>
-                    Filters
-                    {activeFiltersCount > 0 && (<span className="landing-filter-count">
-                        {activeFiltersCount}
-                      </span>)}
-                  </button>
+  
                   <Button type="submit" className="landing-search-button">
                     Search
                   </Button>
                 </div>
-                  {showFilters && (<div className="landing-filter-panel">
-                      <div className="landing-filter-grid">
-                        <div>
-                          <label className="landing-filter-label">
-                            <DollarSign className="landing-filter-icon"/>Budget
-                          </label>
-                          <select value={budget} onChange={(e) => setBudget(e.target.value)} className="landing-filter-select">
-                            <option value="">Any budget</option>
-                            <option value="0-3000">Under ₱3,000</option>
-                            <option value="3000-5000">₱3,000–5,000</option>
-                            <option value="5000-8000">₱5,000–8,000</option>
-                            <option value="8000+">₱8,000+</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="landing-filter-label">
-                            <Building2 className="landing-filter-icon"/>Type
-                          </label>
-                          <select value={roomType} onChange={(e) => setRoomType(e.target.value)} className="landing-filter-select">
-                            <option value="">All types</option>
-                            <option value="apartment">Apartment</option>
-                            <option value="studio">Studio</option>
-                            <option value="family">Family Unit</option>
-                            <option value="furnished">Furnished Unit</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="landing-filter-label">
-                            <BedDouble className="landing-filter-icon"/>Rooms
-                          </label>
-                          <select value={rooms} onChange={(e) => setRooms(e.target.value)} className="landing-filter-select">
-                            <option value="">Any</option>
-                            <option value="1">1 Room</option>
-                            <option value="2">2 Rooms</option>
-                            <option value="3">3 Rooms</option>
-                            <option value="4+">4+ Rooms</option>
-                          </select>
-                        </div>
-                        <div>
-                          <label className="landing-filter-label">
-                            <CalendarCheck className="landing-filter-icon"/>Available
-                          </label>
-                          <select value={availability} onChange={(e) => setAvailability(e.target.value)} className="landing-filter-select">
-                            <option value="">Any time</option>
-                            <option value="now">Available now</option>
-                            <option value="soon">Available soon</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>)}
+          
               </form>
             </div>
 
@@ -269,36 +212,7 @@ export function Landing() {
       </div>
 
   
-      <section className="landing-process-section">
-        <div className="landing-section-container">
-          <div className="landing-process-heading">
-            <h2 className="landing-section-title">How AptFindr Works</h2>
-            <p className="landing-section-description">Create an account, review listings, and compare suitable options.</p>
-          </div>
-
-          <div className="landing-process-grid">
-            <div className="landing-process-connector"/>
-
-            {[
-            { icon: UserCheck, title: "Create your account", desc: "Register as a renter or landlord. Landlords can then submit verification information for review." },
-            { icon: Search, title: "Browse and compare", desc: "Filter apartments, review rooms and amenities, save favorites, and compare locations on the map." },
-            { icon: CheckCircle2, title: "Review your options", desc: "Use listing details, availability, verification status, and personalized suggestions to compare rentals." },
-        ].map(({ icon: Icon, title, desc }, i) => (<div key={title}>
-                <div className="landing-process-card">
-                  <div className="landing-process-icon">
-                    <Icon className="landing-icon-process"/>
-                  </div>
-                  <div className="landing-process-number">
-                    0{i + 1}
-                  </div>
-                  <h3 className="landing-card-title">{title}</h3>
-                  <p className="landing-card-description">{desc}</p>
-                </div>
-              </div>))}
-          </div>
-        </div>
-      </section>
-
+    
       <section className="landing-final-cta">
         <div className="landing-cta-decoration">
           <div className="landing-cta-glow-top"/>
@@ -307,26 +221,15 @@ export function Landing() {
         <div className="landing-cta-container">
           <div>
             
-            <h2 className="landing-cta-title">
-              Explore apartment<br />listings in La Paz
-            </h2>
-            <p className="landing-cta-description">
-              Create an account to browse listings, use the map view, save favorites, and receive suggestions based on your preferences.
-            </p>
+            
             <div className="landing-cta-actions">
-              <Link to="/signup">
+              <Link to="/login">
                 <Button size="lg" className="landing-create-button">
-                  <UserCheck className="landing-icon"/>
-                  Create Account
-                </Button>
-              </Link>
-              <Link to="/browse" onClick={handleProtectedAction}>
-                <Button size="lg" variant="outline" className="landing-browse-button">
-                  <Building2 className="landing-icon"/>
-                  Browse Listings
+                  Load More
                 </Button>
               </Link>
             </div>
+
           </div>
         </div>
       </section>
@@ -335,12 +238,11 @@ export function Landing() {
         <div className="landing-section-container">
           <div className="landing-footer-grid">
             <div className="landing-footer-about">
-              <div className="landing-footer-brand">
-                <AppLogo className="landing-footer-logo"/>
+              <div className="landing-footer-brand">                
                 <span className="landing-brand-name">AptFindr</span>
               </div>
               <p className="landing-footer-description">
-                A Progressive Web Application for apartment discovery and listing management in La Paz, Iloilo City. Academic thesis project.
+                Lapaz,Iloilo City
               </p>
               <div className="landing-footer-contact">
                 <a href="mailto:rentiloilo@example.com" className="landing-footer-email">
@@ -350,12 +252,12 @@ export function Landing() {
             </div>
 
             <div>
-              <h4 className="landing-footer-heading">About</h4>
+              <h4 className="landing-footer-heading">Support</h4>
               <ul className="landing-footer-links">
-                <li><span className="landing-footer-link">About Us</span></li>
-                <li><span className="landing-footer-link">Privacy Policy</span></li>
-                <li><span className="landing-footer-link">Terms & Conditions</span></li>
+                <li><span className="landing-footer-link">Help Desk</span></li>
                 <li><span className="landing-footer-link">Contact Us</span></li>
+                <li><span className="landing-footer-link">Terms of Service</span></li>
+           
               </ul>
               <div className="landing-footer-coverage">
                 <p className="landing-coverage-heading">Coverage Area</p>

@@ -135,6 +135,8 @@ export function Dashboard() {
             hasSavedPreferences: tenantPreferences.hasSavedPreferences,
             maxBudget: tenantPreferences.saveBudgetPreferences && Number.isFinite(parsedBudget) && parsedBudget > 0 ? parsedBudget : undefined,
             preferredArea: tenantPreferences.recommendationLocation && tenantPreferences.preferredArea.trim() ? tenantPreferences.preferredArea.trim() : undefined,
+            preferredLat: tenantPreferences.preferredLat,
+            preferredLng: tenantPreferences.preferredLng,
             minBedrooms: tenantPreferences.minBedrooms,
             minBudget: tenantPreferences.minBudget,
             ownBathroom: tenantPreferences.ownBathroom,
@@ -153,28 +155,10 @@ export function Dashboard() {
     // Personalized recommendations based on saved tenant preferences
     const suggestedApartments = useMemo(() => {
         if (isTenantRole(user?.role) && hasPersonalizationPreferences) {
-            const apartmentViewCounts = new Map();
-            dashboardViewRows.forEach((row) => {
-                const apartmentId = row.apartment_id ?? row.apartmentId ?? "";
-                if (apartmentId)
-                    apartmentViewCounts.set(apartmentId, (apartmentViewCounts.get(apartmentId) ?? 0) + (Number(row.view_count) || 1));
-            });
-            const apartmentFavoriteCounts = new Map();
-            dashboardFavoriteRows.forEach((row) => {
-                const apartmentId = row.apartment_id ?? row.apartmentId ?? "";
-                if (apartmentId)
-                    apartmentFavoriteCounts.set(apartmentId, (apartmentFavoriteCounts.get(apartmentId) ?? 0) + 1);
-            });
-            const ratingSummary = summarizeApartmentRatings(dashboardRatingRows);
-            return rankApartments(publishedApartments, tenantRankingPreferences, {
-                apartmentViewCounts,
-                apartmentFavoriteCounts,
-                apartmentRatingStats: ratingSummary.byApartment,
-                platformAverageRating: ratingSummary.platformAverage,
-            }).slice(0, 6);
+            return rankApartments(publishedApartments, tenantRankingPreferences).slice(0, 6);
         }
         return [];
-    }, [dashboardFavoriteRows, dashboardRatingRows, dashboardViewRows, hasPersonalizationPreferences, publishedApartments, tenantRankingPreferences, user?.role]);
+    }, [hasPersonalizationPreferences, publishedApartments, tenantRankingPreferences, user?.role]);
     // Popular apartments (most viewed, most favorited, highest engagement)
     const popularApartments = useMemo(() => {
         const getApartmentId = (row) => row.apartment_id ?? row.apartmentId ?? "";
@@ -190,13 +174,10 @@ export function Dashboard() {
             if (apartmentId)
                 engagementByApartment.set(apartmentId, (engagementByApartment.get(apartmentId) ?? 0) + getViewWeight(row));
         });
-        if (!hasPersonalizationPreferences)
-            return publishedApartments.slice(0, 6);
-        const relevance = new Map(rankApartments(publishedApartments, tenantRankingPreferences).map((apartment) => [apartment.id, apartment.rankingScore]));
         return [...publishedApartments]
             .filter((apartment) => (engagementByApartment.get(apartment.id) ?? 0) > 0)
             .sort((a, b) => {
-            return ((engagementByApartment.get(b.id) ?? 0) + (relevance.get(b.id) ?? 0)) - ((engagementByApartment.get(a.id) ?? 0) + (relevance.get(a.id) ?? 0));
+            return (engagementByApartment.get(b.id) ?? 0) - (engagementByApartment.get(a.id) ?? 0) || String(a.id).localeCompare(String(b.id));
         })
             .slice(0, 6);
     }, [dashboardFavoriteRows, dashboardViewRows, publishedApartments, hasPersonalizationPreferences, tenantRankingPreferences]);
@@ -243,10 +224,6 @@ export function Dashboard() {
         }
         if (!reportForm.details.trim()) {
             toast.error("Please describe the problem before submitting.");
-            return;
-        }
-        if (reportEvidenceFiles.length === 0) {
-            toast.error("Please upload at least one image or evidence file.");
             return;
         }
         if (!user?.id) {

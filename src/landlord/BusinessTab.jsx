@@ -7,7 +7,7 @@ import { Building2, MapPin, Plus, RotateCcw } from "lucide-react";
 import { Link } from "react-router-dom";
 export const BusinessTab = ({ business, setB, myApartments, allRooms, availableCount, setEditingApartment, setBusiness, savedBusiness, handleSaveBusiness, }) => (<div className="business-tab-panel">
     <div className="business-tab-card">
-      <SectionTitle icon="🏢" title="Business Information" subtitle="Information that applies to your landlord business"/>
+      <SectionTitle title="Business Information" subtitle="Information that applies to your landlord business"/>
       <Field label="Business / Trade Name" hint="Leave blank to use your personal name">
         <SettingsInput value={business.businessName} onChange={(e) => setB("businessName", e.target.value)} placeholder="e.g. Santos Apartments"/>
       </Field>
@@ -29,7 +29,7 @@ export const BusinessTab = ({ business, setB, myApartments, allRooms, availableC
     </div>
 
     <div className="business-tab-card">
-      <SectionTitle icon="🏘️" title="Property Portfolio" subtitle="Calculated automatically from your registered properties and rooms"/>
+      <SectionTitle title="Property Portfolio" subtitle="Calculated automatically from your registered properties and rooms"/>
       <div className="business-tab-grid-2">
         {[
         { label: "Properties", value: myApartments.length },
@@ -40,7 +40,7 @@ export const BusinessTab = ({ business, setB, myApartments, allRooms, availableC
     </div>
 
     <div className="business-tab-card">
-      <SectionTitle icon="📄" title="Property Verification & Permits" subtitle="Manage permit and verification information for each of your properties."/>
+      <SectionTitle title="Property Verification & Permits" subtitle="Manage permit and verification information for each of your properties."/>
       {myApartments.length === 0 ? (<div className="business-tab-card-3">
           <Building2 className="business-tab-building2-icon"/><h3 className="business-tab-no-properties-yet">No properties yet</h3><p className="business-tab-text-3">Add a property first to manage its permit and verification information.</p>
           <Link to="/add-apartment"><Button className="business-tab-add-property"><Plus className="business-tab-plus-icon"/>Add Property</Button></Link>

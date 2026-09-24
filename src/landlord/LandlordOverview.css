@@ -37,6 +37,37 @@
   margin-bottom: 24px;
 }
 
+.ld-performance-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.ld-performance-period {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 140px;
+  height: 36px;
+  padding: 0 10px;
+  color: #26384a;
+  background: #fff;
+  border: 1px solid #d5dce4;
+  border-radius: 7px;
+  box-sizing: border-box;
+}
+
+.ld-performance-period select {
+  width: 100%;
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
 .ld-section-title h2,
 .ld-properties-header h2 {
   font-size: 14px;
@@ -314,6 +345,125 @@
   font-size: 12px;
 }
 
+/* Compact analytics cards used by the landlord overview. */
+.ld-simple-dashboard {
+  max-width: 1280px;
+  padding-inline: 0;
+}
+
+.ld-performance-card {
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.ld-performance-grid-modern {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.ld-legacy-performance {
+  display: none;
+}
+
+.ld-performance-grid-modern .ld-metric {
+  min-height: 160px;
+  padding: 15px 14px 10px;
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+.ld-metric-topline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ld-performance-grid-modern .ld-metric-icon {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #72a8c2;
+  background: #eff8fc;
+  border-radius: 50%;
+}
+
+.ld-performance-grid-modern .ld-metric-label {
+  color: #8090a3;
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.ld-performance-grid-modern .ld-metric strong {
+  font-size: 20px;
+  margin: 8px 0 5px 42px;
+}
+
+.ld-metric-footer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-left: 42px;
+}
+
+.ld-metric-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: #51b77d;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.ld-metric-change.is-negative {
+  color: #dc2626;
+}
+
+.ld-metric-change.is-negative svg {
+  transform: rotate(90deg);
+}
+
+.ld-performance-grid-modern .ld-metric-footer small {
+  color: #a4afbc;
+  font-size: 9px;
+}
+
+.ld-metric-chart {
+  width: 100%;
+  height: 52px;
+  margin-top: 5px;
+  overflow: visible;
+}
+
+.ld-metric-chart polyline {
+  fill: none;
+  stroke: #24ace7;
+  stroke-width: 1.8;
+}
+
+.ld-performance-grid-modern .ld-trend-axis {
+  border-top: 1px solid #e6edf2;
+  padding-top: 4px;
+  font-size: 6px;
+}
+
+.ld-properties-card {
+  padding: 14px 8px 8px;
+}
+
+.ld-properties-header {
+  margin: 0 8px 14px;
+}
+
+.ld-properties-card .ld-empty {
+  min-height: 158px;
+  border: 1px solid #dce3ea;
+  border-radius: 6px;
+}
+
 /* Tablet */
 
 @media (max-width: 900px) {
@@ -323,6 +473,10 @@
 
   .ld-trend-card {
     grid-column: 1 / -1;
+  }
+
+  .ld-performance-grid-modern {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .ld-property-row {
@@ -344,12 +498,24 @@
 /* Mobile */
 
 @media (max-width: 600px) {
+  .ld-performance-heading {
+    flex-direction: column;
+  }
+
+  .ld-performance-period {
+    width: 100%;
+    flex-basis: 36px;
+  }
   .ld-performance-grid {
     grid-template-columns: 1fr;
   }
 
   .ld-trend-card {
     grid-column: auto;
+  }
+
+  .ld-performance-grid-modern {
+    grid-template-columns: 1fr;
   }
 
   .ld-property-row {
