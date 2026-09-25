@@ -1398,7 +1398,7 @@ export function AdminDashboard() {
           {PortalSidebarContent()}
         </aside>
         {sidebarOpen && <div className="app-sidebar-overlay" onClick={() => setSidebarOpen(false)}/>}
-        <aside className={`app-sidebar-drawer ${sidebarOpen ? "admin-dashboard-aside" : "admin-dashboard-aside-2"}`}>
+        <aside className={`app-sidebar-drawer ${sidebarOpen ? "is-open" : ""}`}>
           <button aria-label="Close navigation" onClick={() => setSidebarOpen(false)} className="app-sidebar-close">
             <X className="admin-dashboard-x-icon"/>
           </button>

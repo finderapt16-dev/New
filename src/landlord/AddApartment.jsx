@@ -643,7 +643,7 @@ export function AddApartment() {
           />
         )}
 
-        <aside className={`app-sidebar-drawer ${sidebarOpen ? "add-apartment-aside" : "add-apartment-aside-2"}`}>
+        <aside className={`app-sidebar-drawer ${sidebarOpen ? "is-open" : ""}`}>
           <LandlordSidebar
             user={user}
             verified={Boolean(user?.isVerified)}

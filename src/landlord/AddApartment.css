@@ -523,14 +523,6 @@
   }
 }
 
-.add-apartment-aside {
-  translate: 0;
-}
-
-.add-apartment-aside-2 {
-  translate: -100%;
-}
-
 .app-sidebar-2 {
   height: 100%;
   padding: calc(var(--spacing, .25rem) * 3);
