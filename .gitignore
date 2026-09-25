@@ -4,6 +4,7 @@ node_modules
 # Build output
 dist
 build
+.vercel
 .next
 out
 build_output.txt
