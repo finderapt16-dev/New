@@ -155,6 +155,11 @@ main.app-shell-content {
     width: min(18rem, 88vw) !important;
     padding-bottom: env(safe-area-inset-bottom);
   }
+
+  /* The drawer is wider on phones; let the menu inside fill it instead of leaving a gap. */
+  .app-sidebar-drawer > .app-sidebar {
+    width: 100% !important;
+  }
 }
 
 .app-sidebar {

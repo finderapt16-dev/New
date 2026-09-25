@@ -258,6 +258,8 @@
 }
 
 .landing-menu-panel {
+  padding: 1.5rem 1.25rem;
+  padding-top: max(1.5rem, env(safe-area-inset-top));
   background-color: #fff;
   border-color: #e2e8f0;
   border-color: lab(91.7353% -.998765 -4.76968);
