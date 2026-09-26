@@ -41,7 +41,7 @@ export function AdminLandlordVerification({ landlords, apartments = [], search, 
       <label><Search size={15}/><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search landlords"/></label>
       <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} aria-label="Listing review status"><option value="all">All Status</option><option value="pending">Pending Review</option><option value="verified">Published</option><option value="rejected">Needs Changes</option></select>
     </div>
-    <section className="admin-verification-metrics">{metrics.map(({ label, value, note, icon: Icon, tone }) => <article key={label}><span className={`is-${tone}`}><Icon size={17}/></span><strong>{value} {label}</strong><small>{note}</small></article>)}</section>
+    <section className="admin-verification-metrics">{metrics.map(({ label, value, note, icon: Icon, tone }) => <article key={label}><span className={`is-${tone}`}><Icon size={17}/></span><div><strong>{value}</strong><b>{label}</b><small>{note}</small></div></article>)}</section>
     <section className="admin-verification-list">
       {rows.map((landlord) => {
         const status = statusKey(landlord, apartments);
