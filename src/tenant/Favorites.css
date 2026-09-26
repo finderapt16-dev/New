@@ -1,35 +1,4 @@
-/* Favorites page styles. Loaded once by src/styles/index.css to keep navigation order stable. */
-.favorites-link {
-  color: #16a5e1;
-  background-color: #e8eef3;
-}
 
-.favorites-link-2 {
-  color: #111111;
-}
-
-@media (hover: hover) {
-  .favorites-link-2:hover {
-    background-color: #f2f6fa;
-  }
-}
-
-@media (hover: hover) {
-  .favorites-link-2:hover {
-    color: #16a5e1;
-  }
-}
-
-.favorites-icon-icon {
-  height: calc(var(--spacing, .25rem) * 4);
-  width: calc(var(--spacing, .25rem) * 4);
-  flex-shrink: 0;
-}
-
-.favorites-span {
-  flex: 1;
-  min-width: 0;
-}
 
 .favorites-article {
   border-radius: var(--radius-xl, .75rem);
@@ -387,96 +356,9 @@
   width: calc(var(--spacing, .25rem) * 4);
 }
 
-.favorites-row-3 {
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 2.5);
-  display: flex;
-}
-
-.favorites-card {
-  height: calc(var(--spacing, .25rem) * 11);
-  width: calc(var(--spacing, .25rem) * 11);
-  border-radius: var(--radius-xl, .75rem);
-  color: #16a5e1;
-  background-color: #f2f6fa;
-  border: 1px solid #d9d9d9;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-}
-
-.favorites-image-2 {
-  height: calc(var(--spacing, .25rem) * 9);
-  width: calc(var(--spacing, .25rem) * 9);
-  object-fit: contain;
-}
-
-.favorites-apt-findr {
-  font-size: var(--text-xl, 1.25rem);
-  line-height: var(--text-xl--line-height, calc(1.75 / 1.25));
-  font-weight: var(--font-weight-bold, 700);
-  letter-spacing: var(--tracking-tight, -.025em);
-  color: #111111;
-}
-
-.favorites-la-paz-iloilo-city {
-  margin-top: calc(var(--spacing, .25rem) * .5);
-  font-size: 10px;
-  font-weight: var(--font-weight-semibold, 600);
-  letter-spacing: .14em;
-  color: #666666;
-  text-transform: uppercase;
-}
-
-.favorites-panel-6 {
-  padding-inline: calc(var(--spacing, .25rem) * 4);
-  padding-bottom: calc(var(--spacing, .25rem) * 5);
-}
-
-.favorites-row-4 {
-  height: calc(var(--spacing, .25rem) * 11);
-  width: calc(var(--spacing, .25rem) * 11);
-  font-size: var(--text-sm, .875rem);
-  line-height: var(--text-sm--line-height, calc(1.25 / .875));
-  font-weight: var(--font-weight-bold, 700);
-  color: var(--color-white, #fff);
-  background-color: #16a5e1;
-  border-radius: 3.40282e38px;
-  flex-shrink: 0;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  overflow: hidden;
-}
-
 .favorites-panel-7 {
   flex: 1;
   min-width: 0;
-}
-
-.favorites-text-2 {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: var(--text-sm, .875rem);
-  line-height: var(--text-sm--line-height, calc(1.25 / .875));
-  font-weight: var(--font-weight-bold, 700);
-  color: #111111;
-  overflow: hidden;
-}
-
-.favorites-text-3 {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: var(--text-xs, .75rem);
-  line-height: var(--text-xs--line-height, calc(1 / .75));
-  color: #666666;
-  overflow: hidden;
-}
-
-.favorites-chevron-right-icon {
-  height: calc(var(--spacing, .25rem) * 4);
-  width: calc(var(--spacing, .25rem) * 4);
-  color: #666666;
 }
 
 :where(.favorites-nav > :not(:last-child)) {
@@ -484,58 +366,9 @@
   margin-block-end: calc(var(--spacing, .25rem) * calc(1 - 0));
 }
 
-.favorites-nav {
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  padding-block: calc(var(--spacing, .25rem) * 3);
-}
-
-.favorites-main {
-  margin-bottom: calc(var(--spacing, .25rem) * 2);
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-xs, .75rem);
-  line-height: var(--text-xs--line-height, calc(1 / .75));
-  font-weight: var(--font-weight-semibold, 600);
-  letter-spacing: .14em;
-  color: #666666;
-  text-transform: uppercase;
-}
-
 :where(.favorites-nav-2 > :not(:last-child)) {
   margin-block-start: calc(var(--spacing, .25rem) * 0);
   margin-block-end: calc(var(--spacing, .25rem) * calc(1 - 0));
-}
-
-.favorites-nav-2 {
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  padding-block: calc(var(--spacing, .25rem) * 4);
-  border-color: #d9d9d9;
-  border-top-style: solid;
-  border-top-width: 1px;
-}
-
-.favorites-account {
-  margin-bottom: calc(var(--spacing, .25rem) * 2);
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-xs, .75rem);
-  line-height: var(--text-xs--line-height, calc(1 / .75));
-  font-weight: var(--font-weight-semibold, 600);
-  letter-spacing: .14em;
-  color: #666666;
-  text-transform: uppercase;
-}
-
-.favorites-panel-8 {
-  padding-inline: calc(var(--spacing, .25rem) * 4);
-  padding-block: calc(var(--spacing, .25rem) * 4);
-  border-color: #d9d9d9;
-  border-top-style: solid;
-  border-top-width: 1px;
-  margin-top: auto;
-}
-
-.favorites-log-out-icon {
-  height: calc(var(--spacing, .25rem) * 4);
-  width: calc(var(--spacing, .25rem) * 4);
 }
 
 .tenant-favorites-hero {
@@ -568,30 +401,6 @@
   }
 }
 
-.favorites-saved-apartments {
-  margin-bottom: calc(var(--spacing, .25rem) * 4);
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 2);
-  background-color: var(--color-white, #fff);
-  padding-inline: calc(var(--spacing, .25rem) * 4);
-  padding-block: calc(var(--spacing, .25rem) * 2);
-  font-size: var(--text-xs, .75rem);
-  line-height: var(--text-xs--line-height, calc(1 / .75));
-  font-weight: var(--font-weight-semibold, 600);
-  letter-spacing: .12em;
-  color: #16a5e1;
-  text-transform: uppercase;
-  border: 1px solid #d9d9d9;
-  border-radius: 3.40282e38px;
-  display: inline-flex;
-  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
-}
-
-.favorites-heart-icon-2 {
-  height: calc(var(--spacing, .25rem) * 4);
-  width: calc(var(--spacing, .25rem) * 4);
-}
-
 .favorites-your-favorites {
   font-size: var(--text-3xl, 1.875rem);
   line-height: var(--text-3xl--line-height, calc(2.25 / 1.875));
@@ -612,22 +421,6 @@
   line-height: var(--text-base--line-height, calc(1.5 / 1));
   font-weight: var(--font-weight-medium, 500);
   color: #666666;
-}
-
-.favorites-panel-10 {
-  pointer-events: none;
-  right: calc(var(--spacing, .25rem) * 4);
-  color: #8a8a8a;
-  width: 42%;
-  display: none;
-  position: absolute;
-  bottom: 0;
-}
-
-@media (min-width: 48rem) {
-  .favorites-panel-10 {
-    display: block;
-  }
 }
 
 .favorites-loading-favorites {

@@ -2859,66 +2859,6 @@
   background: #fff7f7 !important;
   color: #9f3f46 !important;
 }
-
-.tenant-detail-colors .text-orange-500,
-.tenant-detail-colors .text-orange-600,
-.tenant-detail-colors .text-orange-700 {
-  color: #16a5e1 !important;
-}
-
-.tenant-detail-colors .bg-orange-50,
-.tenant-detail-colors .bg-orange-50\/40,
-.tenant-detail-colors .bg-orange-50\/60,
-.tenant-detail-colors .bg-orange-100 {
-  background-color: #f2f6fa !important;
-}
-
-.tenant-detail-colors .bg-orange-500,
-.tenant-detail-colors .bg-orange-600 {
-  background-color: #16a5e1 !important;
-}
-
-.tenant-detail-colors .border-orange-100,
-.tenant-detail-colors .border-orange-200,
-.tenant-detail-colors .border-orange-300,
-.tenant-detail-colors .border-orange-500 {
-  border-color: #d9d9d9 !important;
-}
-
-.tenant-detail-colors .hover\:bg-orange-100:hover,
-.tenant-detail-colors .hover\:bg-orange-50\/40:hover {
-  background-color: #f2f6fa !important;
-  color: #16a5e1 !important;
-}
-
-.tenant-detail-colors .hover\:bg-orange-600:hover {
-  background-color: #0e93ca !important;
-  color: #fff !important;
-}
-
-.tenant-detail-colors .focus\:ring-orange-100:focus,
-.tenant-detail-colors .focus\:ring-orange-200:focus {
-  --tw-ring-color: rgb(139 115 91 / 0.15) !important;
-}
-
-.tenant-detail-colors header > div:last-child.bg-gradient-to-br {
-  border: 1px solid #d9d9d9;
-  background: #fff !important;
-  color: #111111 !important;
-  box-shadow: 0 1px 3px rgb(48 40 32 / 0.08) !important;
-}
-
-.tenant-detail-colors header > div:last-child.bg-gradient-to-br > p:first-child {
-  color: #16a5e1 !important;
-}
-
-.tenant-detail-colors header > div:last-child.bg-gradient-to-br > p:nth-child(2) {
-  color: #666666 !important;
-}
-
-.tenant-detail-colors header > div:last-child.bg-gradient-to-br > div {
-  border-color: #d9d9d9 !important;
-}
 .property-inline-section { min-width: 0; position: relative; }
 .property-inline-heading { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin: .5rem 0; color: #62748e; font-size: .8rem; }
 .property-inline-pencil { display: inline-flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; flex-shrink: 0; border: 1px solid #d9d9d9; border-radius: .45rem; background: #fff; color: #62748e; cursor: pointer; vertical-align: middle; }

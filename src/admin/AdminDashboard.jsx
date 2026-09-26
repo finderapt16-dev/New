@@ -7,19 +7,18 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
-import { updateApartmentPublication } from "@/services/apartmentsService";
 import { archiveAppeal, archiveReport, createAuditLog, createViolation, deleteNotification, deleteViolation as deleteViolationRecord, fetchAdminActivityLogs, fetchAdminReports, fetchApartments, fetchArchivedAppeals, fetchArchivedReports, fetchLandlordWithDetails, fetchNotifications, fetchPendingAppeals, fetchReportWithDetails, fetchSupportTicketById, fetchUserById, fetchUsers, fetchViolations, markAllNotificationsRead, markNotificationRead, markNotificationUnread, notifyReportDismissed, notifyReportResolved, permanentlyDeleteAppeal, permanentlyDeleteNotification, permanentlyDeleteReport, restoreAppeal, restoreReport, unarchiveNotification, updateReportStatus, updateUserProfile } from "@/services/dashboardSupabaseService";
 import { getReportEvidence } from "@/services/reportEvidenceService";
 import { supabase } from "@/services/supabaseClient";
 import { formatAuditLogForDisplay, formatNotificationType, safeNotificationText } from "@/utils/auditLogDisplay";
-import { Activity, AlertOctagon, AlertTriangle, Archive, Bell, BellRing, Building2, Calendar, CheckCheck, CheckCircle2, ChevronRight, ClipboardList, Clock, Edit2, Eye, FileText, Flag, History, Lock, Mail, MailOpen, Menu, Phone, RefreshCw, RotateCcw, Save, Search, Settings, Shield, ShieldAlert, ShieldCheck, Smartphone, Trash2, User as UserIcon, Users, X, XCircle } from "lucide-react";
+import { Activity, AlertOctagon, AlertTriangle, Archive, Bell, BellRing, Calendar, CheckCheck, CheckCircle2, ChevronRight, ClipboardList, Clock, Edit2, Eye, FileText, Flag, History, Lock, Mail, MailOpen, Menu, RefreshCw, RotateCcw, Save, Search, Settings, Shield, ShieldAlert, Smartphone, Trash2, User as UserIcon, Users, X, XCircle } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { AdminApartments } from './AdminApartments';
 import { AdminAppeals } from './AdminAppeals';
 import { AdminLandlordVerification } from './AdminLandlordVerification';
-import { ArchiveEmpty, canPublishForLandlord, formatOptionalDate, getLandlordVerificationStatus, isAdminModule, NOTICE_TYPES, NotificationEmpty, SettingsField, SettingsSectionTitle, text, toAdminProfileState, toEvidenceItem, VIOLATION_TYPES } from './adminDashboardHelpers';
+import { ArchiveEmpty, formatOptionalDate, getLandlordVerificationStatus, isAdminModule, NOTICE_TYPES, NotificationEmpty, SettingsField, SettingsSectionTitle, text, toAdminProfileState, toEvidenceItem, VIOLATION_TYPES } from './adminDashboardHelpers';
 import { AdminReports } from './AdminReports';
 import { AdminSidebar } from './AdminSidebar';
 export function AdminDashboard() {
@@ -307,12 +306,10 @@ export function AdminDashboard() {
     }, [notifSearch, notifFilter, notifTypeFilter, notifActivityFilter]);
     // apartments
     const [aptSearch, setAptSearch] = useState("");
-    const [selectedApt, setSelectedApt] = useState(null);
-    const [aptFilter, setAptFilter] = useState("all");
+    const [aptFilter] = useState("all");
     const [aptStatusFilter, setAptStatusFilter] = useState("all");
-    const [aptPropertyTypeFilter, setAptPropertyTypeFilter] = useState("all");
+    const [aptPropertyTypeFilter] = useState("all");
     const [aptSort, setAptSort] = useState("newest");
-    const [publishingApartmentId, setPublishingApartmentId] = useState(null);
     // landlord details modal
     const [selectedLandlord, setSelectedLandlord] = useState(null);
     const [selectedLandlordDetails, setSelectedLandlordDetails] = useState(null);
@@ -402,39 +399,7 @@ export function AdminDashboard() {
             return 0;
         return reports.filter((r) => r.apartmentId === apartmentId && r.status === "pending").length;
     };
-    const handleApproveAndPublishApartment = async (apartment) => {
-        if (!apartment.id || !user?.id || publishingApartmentId)
-            return;
-        const landlord = getLandlordForApt(apartment);
-        if (!canPublishForLandlord(landlord)) {
-            toast.error("This apartment cannot be published because the landlord has not been verified.");
-            return;
-        }
-        setPublishingApartmentId(apartment.id);
-        try {
-            await updateApartmentPublication(apartment.id, true, user.id);
-            const updatedApartment = {
-                ...apartment,
-                isPublished: true,
-                is_published: true,
-                approvalStatus: "approved",
-                approval_status: "approved",
-                isArchived: false,
-                is_archived: false,
-                deletedAt: undefined,
-                deleted_at: null,
-            };
-            setAllApartments((current) => current.map((item) => item.id === apartment.id ? { ...item, ...updatedApartment } : item));
-            setSelectedApt((current) => current?.id === apartment.id ? { ...current, ...updatedApartment } : current);
-            toast.success("Property approved and published");
-        }
-        catch (error) {
-            toast.error(error instanceof Error ? error.message : "Unable to approve and publish this apartment.");
-        }
-        finally {
-            setPublishingApartmentId(null);
-        }
-    };
+
     const filteredApts = useMemo(() => {
         const query = aptSearch.trim().toLowerCase();
         let filtered = allApartments.filter((apartment) => {
@@ -911,11 +876,6 @@ export function AdminDashboard() {
         setViolationModal({ open: true, mode, landlordId, landlordName, apartmentTitle, reportId, apartmentId, sourceModule });
     };
     const getLandlordForApt = (apt) => landlords.find((l) => l.id === apt.landlordId) ?? null;
-    const violationsForLandlord = (lid) => violations.filter((v) => {
-        const violationLandlordId = text(v.landlordId ?? v.landlord_id);
-        return violationLandlordId === lid && v.active !== false;
-    });
-    const verifiedCount = landlords.filter((l) => l.isVerified ?? l.is_verified).length;
     const pendingReports = reports.filter((r) => r.status === "pending").length;
     const activeAppealsCount = appeals.filter((appeal) => appeal.status === "pending" || appeal.status === "under_review" || appeal.status === "needs_information").length;
     const unreadNotifsCount = adminNotifs.filter((n) => {
@@ -1129,7 +1089,7 @@ export function AdminDashboard() {
     // ── Section: Reports ──────────────────────────────────────────────────────
     const renderReports = () => (<AdminReports reports={reports} reportArchiveView={reportArchiveView} archivedReports={archivedReports} reportSearch={reportSearch} allApartments={allApartments} reportStatusFilter={reportStatusFilter} reportTypeFilter={reportTypeFilter} reportSort={reportSort} selectedReport={selectedReport} selectedReportDetails={selectedReportDetails} setSelectedReport={setSelectedReport} setActiveSection={setActiveSection} unreadNotifsCount={unreadNotifsCount} setViewingUserProfile={setViewingUserProfile} navigate={navigate} apartmentDetailBasePath={apartmentDetailBasePath} portalBasePath={portalBasePath} selectedReportEvidence={selectedReportEvidence} resolveReport={resolveReport} setDismissReportModal={setDismissReportModal} setCaseAction={setCaseAction} setReportSearch={setReportSearch} setReportStatusFilter={setReportStatusFilter} setReportTypeFilter={setReportTypeFilter} setReportSort={setReportSort} setReportArchiveView={setReportArchiveView} dismissReportModal={dismissReportModal} dismissReport={dismissReport} viewingUserProfile={viewingUserProfile}/>);
     // ── Section: Appeals Management ─────────────────────────────────────────
-    const renderAppeals = () => (<AdminAppeals landlords={landlords} reports={reports} archivedReports={archivedReports} violations={violations} allApartments={allApartments} appealSearch={appealSearch} appealArchiveView={appealArchiveView} archivedAppeals={archivedAppeals} appeals={appeals} appealTypeFilter={appealTypeFilter} appealSort={appealSort} selectedAppeal={selectedAppeal} user={user} appealStatus={appealStatus} appealResponse={appealResponse} setAppeals={setAppeals} setSelectedAppeal={setSelectedAppeal} setAppealResponse={setAppealResponse} setAppealStatus={setAppealStatus} setActiveSection={setActiveSection} unreadNotifsCount={unreadNotifsCount} setSelectedReport={setSelectedReport} navigate={navigate} apartmentDetailBasePath={apartmentDetailBasePath} portalBasePath={portalBasePath} setCaseAction={setCaseAction} setAppealSearch={setAppealSearch} setAppealTypeFilter={setAppealTypeFilter} setAppealSort={setAppealSort} setAppealArchiveView={setAppealArchiveView}/>);
+    const renderAppeals = () => (<AdminAppeals landlords={landlords} reports={reports} archivedReports={archivedReports} violations={violations} allApartments={allApartments} appealSearch={appealSearch} appealArchiveView={appealArchiveView} archivedAppeals={archivedAppeals} appeals={appeals} appealTypeFilter={appealTypeFilter} appealSort={appealSort} selectedAppeal={selectedAppeal} user={user} appealStatus={appealStatus} appealResponse={appealResponse} setAppeals={setAppeals} setSelectedAppeal={setSelectedAppeal} setAppealResponse={setAppealResponse} setAppealStatus={setAppealStatus} setActiveSection={setActiveSection} setSelectedReport={setSelectedReport} navigate={navigate} apartmentDetailBasePath={apartmentDetailBasePath} portalBasePath={portalBasePath} setCaseAction={setCaseAction} setAppealSearch={setAppealSearch} setAppealTypeFilter={setAppealTypeFilter} setAppealSort={setAppealSort} setAppealArchiveView={setAppealArchiveView}/>);
     const renderAdminInfo = () => {
         const inputClass = "admin-dashboard-input-3";
         const adminName = `${adminProfile.firstName} ${adminProfile.lastName}`.trim();

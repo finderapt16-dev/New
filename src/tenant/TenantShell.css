@@ -23,10 +23,10 @@
   border-right: 1px solid var(--tenant-border) !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  scrollbar-color: rgba(139,115,91,.28) transparent;
+  scrollbar-color: rgba(22, 165, 225, .28) transparent;
 }
 .tenant-browse .app-sidebar::before { display: none; }
-.tenant-browse .app-sidebar::-webkit-scrollbar-thumb { background: rgba(139,115,91,.24); }
+.tenant-browse .app-sidebar::-webkit-scrollbar-thumb { background: rgba(22, 165, 225, .24); }
 .tenant-browse .app-sidebar-brand svg { color: var(--tenant-accent) !important; }
 .tenant-browse .app-sidebar-brand span { color: var(--tenant-ink) !important; }
 .tenant-browse .app-sidebar-brand p { color: var(--tenant-muted) !important; }
@@ -132,9 +132,9 @@
   color: #fff !important;
   border-color: var(--tenant-accent) !important;
   background: var(--tenant-accent) !important;
-  box-shadow: 0 8px 20px rgba(48,40,32,.16) !important;
+  box-shadow: 0 8px 20px rgba(17, 17, 17, .16) !important;
 }
-.tenant-browse .app-sidebar-trigger:hover { background: #0e93ca !important; box-shadow: 0 10px 22px rgba(48,40,32,.2) !important; }
+.tenant-browse .app-sidebar-trigger:hover { background: #0e93ca !important; box-shadow: 0 10px 22px rgba(17, 17, 17, .2) !important; }
 .tenant-browse .app-sidebar-close {
   color: var(--tenant-muted) !important;
   border-color: var(--tenant-border) !important;
@@ -145,7 +145,7 @@
 .tenant-browse .app-shell-main { background: #fff; }
 .tenant-browse form:first-of-type { box-shadow: none !important; }
 .tenant-browse form:first-of-type input { border-color: var(--tenant-border) !important; color: var(--tenant-ink) !important; font-size: 16px; }
-.tenant-browse form:first-of-type input:focus { border-color: var(--tenant-accent) !important; box-shadow: 0 0 0 3px rgba(139,115,91,.12) !important; }
+.tenant-browse form:first-of-type input:focus { border-color: var(--tenant-accent) !important; box-shadow: 0 0 0 3px rgba(22, 165, 225, .12) !important; }
 .tenant-browse form:first-of-type button { border-color: var(--tenant-border) !important; color: var(--tenant-ink) !important; background: #fff !important; box-shadow: none !important; }
 .tenant-browse form:first-of-type button svg { color: var(--tenant-accent); }
 

@@ -20,23 +20,6 @@
   display: flex;
 }
 
-.settings-section-grid {
-  height: calc(var(--spacing, .25rem) * 12);
-  width: calc(var(--spacing, .25rem) * 12);
-  border-radius: var(--radius-lg, .5rem);
-  color: #16a5e1;
-  background-color: #f2f6fa;
-  border: 1px solid #d9d9d9;
-  place-items: center;
-  display: grid;
-  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
-}
-
-.settings-section-settings-icon {
-  height: calc(var(--spacing, .25rem) * 6);
-  width: calc(var(--spacing, .25rem) * 6);
-}
-
 .settings-section-settings {
   font-size: var(--text-2xl, 1.5rem);
   line-height: var(--text-2xl--line-height, calc(2 / 1.5));
@@ -115,12 +98,6 @@
   box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
 }
 
-.settings-section-user-icon {
-  margin-right: calc(var(--spacing, .25rem) * 1.5);
-  height: calc(var(--spacing, .25rem) * 3.5);
-  width: calc(var(--spacing, .25rem) * 3.5);
-}
-
 .settings-section-alerts {
   min-height: calc(var(--spacing, .25rem) * 11);
   border-radius: var(--radius-md, .375rem);
@@ -131,12 +108,6 @@
   color: #16a5e1;
   background-color: #f2f6fa;
   box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
-}
-
-.settings-section-bell-icon {
-  margin-right: calc(var(--spacing, .25rem) * 1.5);
-  height: calc(var(--spacing, .25rem) * 3.5);
-  width: calc(var(--spacing, .25rem) * 3.5);
 }
 
 .settings-section-business {
@@ -151,12 +122,6 @@
   box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
 }
 
-.settings-section-building2-icon {
-  margin-right: calc(var(--spacing, .25rem) * 1.5);
-  height: calc(var(--spacing, .25rem) * 3.5);
-  width: calc(var(--spacing, .25rem) * 3.5);
-}
-
 .settings-section-security {
   min-height: calc(var(--spacing, .25rem) * 11);
   border-radius: var(--radius-md, .375rem);
@@ -169,17 +134,6 @@
   box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
 }
 
-.settings-section-shield-icon {
-  margin-right: calc(var(--spacing, .25rem) * 1.5);
-  height: calc(var(--spacing, .25rem) * 3.5);
-  width: calc(var(--spacing, .25rem) * 3.5);
-}
-
 .settings-section-tabs-content {
   margin-top: 0;
-}@media (max-width: 767px) {
-  .landlord-settings [role="tabpanel"] .grid-cols-2,
-  .landlord-settings [role="tabpanel"] .grid-cols-3 {
-    grid-template-columns: minmax(0, 1fr);
-  }
 }

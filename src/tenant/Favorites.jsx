@@ -222,7 +222,7 @@ function InfoPill({ icon: Icon, value, label, tone, }) {
     </div>);
 }
 
-export const FavoritesOverview = ({ favoriteApartments, visibleFavoriteApartments, favoriteFilter, setFavoriteFilter, favoriteSort, setFavoriteSort, favoriteView, setFavoriteView, removingFavoriteId, removeFavorite, ratingSummary, ratingsLoading, navigate, }) => (<div className="favorites-section-container">
+export const FavoritesOverview = ({ favoriteApartments, visibleFavoriteApartments, setFavoriteFilter, favoriteView, removingFavoriteId, removeFavorite, ratingSummary, ratingsLoading, navigate, }) => (<div className="favorites-section-container">
     <section className="favorites-section-section">
       <div className="favorites-section-content">
         <div className="favorites-section-card">

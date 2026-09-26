@@ -39,30 +39,6 @@
   }
 }
 
-.report-section-support-amp-safety {
-  margin-bottom: calc(var(--spacing, .25rem) * 4);
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 2);
-  background-color: var(--color-white, #fff);
-  padding-inline: calc(var(--spacing, .25rem) * 4);
-  padding-block: calc(var(--spacing, .25rem) * 2);
-  font-size: var(--text-xs, .75rem);
-  line-height: var(--text-xs--line-height, calc(1 / .75));
-  font-weight: var(--font-weight-semibold, 600);
-  letter-spacing: .12em;
-  color: #16a5e1;
-  text-transform: uppercase;
-  border: 1px solid #d9d9d9;
-  border-radius: 3.40282e38px;
-  display: inline-flex;
-  box-shadow: 0 1px 3px #0000001a, 0 1px 2px -1px #0000001a;
-}
-
-.report-section-alert-triangle-icon {
-  height: calc(var(--spacing, .25rem) * 4);
-  width: calc(var(--spacing, .25rem) * 4);
-}
-
 .report-section-report-a-problem {
   font-size: var(--text-3xl, 1.875rem);
   line-height: var(--text-3xl--line-height, calc(2.25 / 1.875));
@@ -83,23 +59,6 @@
   line-height: var(--text-base--line-height, calc(1.5 / 1));
   font-weight: var(--font-weight-medium, 500);
   color: #666666;
-}
-
-.report-section-panel-2 {
-  pointer-events: none;
-  inset-block: 0;
-  right: calc(var(--spacing, .25rem) * 3);
-  color: #8a8a8a;
-  align-items: flex-end;
-  width: 43%;
-  display: none;
-  position: absolute;
-}
-
-@media (min-width: 48rem) {
-  .report-section-panel-2 {
-    display: flex;
-  }
 }
 
 .report-success {
@@ -508,38 +467,9 @@
 .report-page .report-success {
   border-color: #d9d9d9 !important;
 }
-.report-page .border-violet-500,
-.report-page .border-violet-300,
-.report-page .border-violet-200,
-.report-page .hover\:border-violet-200:hover,
-.report-page .hover\:border-violet-300:hover {
-  border-color: #16a5e1 !important;
-}
-.report-page .bg-violet-50,
-.report-page .bg-violet-50\/30,
-.report-page .bg-violet-50\/60,
-.report-page .hover\:bg-violet-50\/60:hover {
-  background: #f2f6fa !important;
-}
-.report-page .text-violet-600,
-.report-page .hover\:text-violet-600:hover {
-  color: #16a5e1 !important;
-}
-.report-page .ring-violet-200 {
-  --tw-ring-color: rgba(22,165,225,.18) !important;
-}
-.report-page .border-slate-200,
-.report-page .border-slate-100 {
+.report-page .border-slate-200 {
   border-color: #d9d9d9 !important;
 }
-.report-page .bg-slate-50 {
-  background: #f2f6fa !important;
-}
-.report-page .text-slate-950,
-.report-page .text-slate-900 {
-  color: #111111 !important;
-}
-.report-page .text-slate-500,
-.report-page .text-slate-600 {
+.report-page .text-slate-600  {
   color: #666666 !important;
 }

@@ -56,51 +56,6 @@
   padding-bottom: calc(var(--spacing, .25rem) * 5);
 }
 
-.add-apartment-row {
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 2.5);
-  display: flex;
-}
-
-.add-apartment-card {
-  height: calc(var(--spacing, .25rem) * 11);
-  width: calc(var(--spacing, .25rem) * 11);
-  border-radius: var(--radius-xl, .75rem);
-  color: #16a5e1;
-  background-color: #f2f6fa;
-  border: 1px solid #d9d9d9;
-  flex-shrink: 0;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-}
-
-.add-apartment-home-icon {
-  height: calc(var(--spacing, .25rem) * 6);
-  width: calc(var(--spacing, .25rem) * 6);
-}
-
-.add-apartment-apt-findr {
-  font-size: var(--text-xl, 1.25rem);
-  line-height: var(--text-xl--line-height, calc(1.75 / 1.25));
-  font-weight: var(--font-weight-bold, 700);
-  letter-spacing: var(--tracking-tight, -.025em);
-  color: #111111;
-  display: block;
-}
-
-.add-apartment-landlord-portal {
-  font-size: var(--text-xs, .75rem);
-  line-height: var(--text-xs--line-height, calc(1 / .75));
-  font-weight: var(--font-weight-medium, 500);
-  color: #666666;
-}
-
-.add-apartment-panel {
-  padding-inline: calc(var(--spacing, .25rem) * 4);
-  padding-bottom: calc(var(--spacing, .25rem) * 5);
-}
-
 .app-sidebar-profile {
   align-items: center;
   gap: calc(var(--spacing, .25rem) * 3);
@@ -112,204 +67,14 @@
   display: flex;
 }
 
-.add-apartment-row-2 {
-  height: calc(var(--spacing, .25rem) * 11);
-  width: calc(var(--spacing, .25rem) * 11);
-  font-size: var(--text-sm, .875rem);
-  line-height: var(--text-sm--line-height, calc(1.25 / .875));
-  font-weight: var(--font-weight-bold, 700);
-  color: var(--color-white, #fff);
-  background-color: #16a5e1;
-  border-radius: 3.40282e38px;
-  flex-shrink: 0;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  overflow: hidden;
-}
-
-.add-apartment-image {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-}
-
-.add-apartment-panel-2 {
-  flex: 1;
-  min-width: 0;
-}
-
-.add-apartment-text-2 {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: var(--text-sm, .875rem);
-  line-height: var(--text-sm--line-height, calc(1.25 / .875));
-  font-weight: var(--font-weight-bold, 700);
-  color: #111111;
-  overflow: hidden;
-}
-
-.add-apartment-text-3 {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: var(--text-xs, .75rem);
-  line-height: var(--text-xs--line-height, calc(1 / .75));
-  color: #666666;
-  overflow: hidden;
-}
-
 :where(.add-apartment-nav > :not(:last-child)) {
   margin-block-start: calc(var(--spacing, .25rem) * 0);
   margin-block-end: calc(var(--spacing, .25rem) * calc(1 - 0));
 }
 
-.add-apartment-nav {
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  padding-block: calc(var(--spacing, .25rem) * 3);
-}
-
-.add-apartment-main {
-  margin-bottom: calc(var(--spacing, .25rem) * 2);
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 3);
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-xs, .75rem);
-  line-height: var(--text-xs--line-height, calc(1 / .75));
-  font-weight: var(--font-weight-semibold, 600);
-  letter-spacing: .14em;
-  color: #666666;
-  text-transform: uppercase;
-  display: flex;
-}
-
-.add-apartment-main-2 {
-  height: 1px;
-  width: calc(var(--spacing, .25rem) * 5);
-  background-color: #16a5e173;
-  background-color: rgba(22, 165, 225, .45);
-}
-
-.add-apartment-button {
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 3);
-  border-radius: var(--radius-lg, .5rem);
-  width: 100%;
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  padding-block: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-sm, .875rem);
-  line-height: var(--text-sm--line-height, calc(1.25 / .875));
-  font-weight: var(--font-weight-semibold, 600);
-  color: #111111;
-  transition-property: all;
-  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
-  transition-duration: var(--default-transition-duration, .15s);
-  display: flex;
-}
-
-@media (hover: hover) {
-  .add-apartment-button:hover {
-    background-color: #f2f6fa;
-  }
-}
-
-@media (hover: hover) {
-  .add-apartment-button:hover {
-    color: #16a5e1;
-  }
-}
-
-.add-apartment-icon-icon {
-  height: calc(var(--spacing, .25rem) * 4);
-  width: calc(var(--spacing, .25rem) * 4);
-}
-
 :where(.add-apartment-nav-2 > :not(:last-child)) {
   margin-block-start: calc(var(--spacing, .25rem) * 0);
   margin-block-end: calc(var(--spacing, .25rem) * calc(1 - 0));
-}
-
-.add-apartment-nav-2 {
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  padding-block: calc(var(--spacing, .25rem) * 4);
-  border-color: #d9d9d9;
-  border-top-style: solid;
-  border-top-width: 1px;
-}
-
-.add-apartment-market {
-  margin-bottom: calc(var(--spacing, .25rem) * 2);
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 3);
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-xs, .75rem);
-  line-height: var(--text-xs--line-height, calc(1 / .75));
-  font-weight: var(--font-weight-semibold, 600);
-  letter-spacing: .14em;
-  color: #666666;
-  text-transform: uppercase;
-  display: flex;
-}
-
-.add-apartment-market-2 {
-  height: 1px;
-  width: calc(var(--spacing, .25rem) * 5);
-  background-color: #16a5e173;
-  background-color: rgba(22, 165, 225, .45);
-}
-
-.add-apartment-market-overview {
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 3);
-  border-radius: var(--radius-lg, .5rem);
-  width: 100%;
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  padding-block: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-sm, .875rem);
-  line-height: var(--text-sm--line-height, calc(1.25 / .875));
-  font-weight: var(--font-weight-semibold, 600);
-  color: #111111;
-  transition-property: all;
-  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
-  transition-duration: var(--default-transition-duration, .15s);
-  display: flex;
-}
-
-@media (hover: hover) {
-  .add-apartment-market-overview:hover {
-    background-color: #f2f6fa;
-  }
-}
-
-@media (hover: hover) {
-  .add-apartment-market-overview:hover {
-    color: #16a5e1;
-  }
-}
-
-.add-apartment-trending-up-icon {
-  height: calc(var(--spacing, .25rem) * 4);
-  width: calc(var(--spacing, .25rem) * 4);
-}
-
-.add-apartment-manage {
-  margin-bottom: calc(var(--spacing, .25rem) * 2);
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 3);
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-xs, .75rem);
-  line-height: var(--text-xs--line-height, calc(1 / .75));
-  font-weight: var(--font-weight-semibold, 600);
-  letter-spacing: .14em;
-  color: #666666;
-  text-transform: uppercase;
-  display: flex;
-}
-
-.add-apartment-manage-2 {
-  height: 1px;
-  width: calc(var(--spacing, .25rem) * 5);
-  background-color: #16a5e173;
-  background-color: rgba(22, 165, 225, .45);
 }
 
 .app-sidebar-nav-item {
@@ -334,104 +99,6 @@
 .add-apartment-plus-icon {
   height: calc(var(--spacing, .25rem) * 4);
   width: calc(var(--spacing, .25rem) * 4);
-}
-
-.add-apartment-account {
-  margin-bottom: calc(var(--spacing, .25rem) * 2);
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 3);
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-xs, .75rem);
-  line-height: var(--text-xs--line-height, calc(1 / .75));
-  font-weight: var(--font-weight-semibold, 600);
-  letter-spacing: .14em;
-  color: #666666;
-  text-transform: uppercase;
-  display: flex;
-}
-
-.add-apartment-account-2 {
-  height: 1px;
-  width: calc(var(--spacing, .25rem) * 5);
-  background-color: #16a5e173;
-  background-color: rgba(22, 165, 225, .45);
-}
-
-.add-apartment-settings {
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 3);
-  border-radius: var(--radius-lg, .5rem);
-  width: 100%;
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  padding-block: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-sm, .875rem);
-  line-height: var(--text-sm--line-height, calc(1.25 / .875));
-  font-weight: var(--font-weight-semibold, 600);
-  color: #111111;
-  transition-property: all;
-  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
-  transition-duration: var(--default-transition-duration, .15s);
-  display: flex;
-}
-
-@media (hover: hover) {
-  .add-apartment-settings:hover {
-    background-color: #f2f6fa;
-  }
-}
-
-@media (hover: hover) {
-  .add-apartment-settings:hover {
-    color: #16a5e1;
-  }
-}
-
-.add-apartment-settings-icon {
-  height: calc(var(--spacing, .25rem) * 4);
-  width: calc(var(--spacing, .25rem) * 4);
-}
-
-.add-apartment-help-amp-support {
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 3);
-  border-radius: var(--radius-lg, .5rem);
-  width: 100%;
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  padding-block: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-sm, .875rem);
-  line-height: var(--text-sm--line-height, calc(1.25 / .875));
-  font-weight: var(--font-weight-semibold, 600);
-  color: #111111;
-  transition-property: all;
-  transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
-  transition-duration: var(--default-transition-duration, .15s);
-  display: flex;
-}
-
-@media (hover: hover) {
-  .add-apartment-help-amp-support:hover {
-    background-color: #f2f6fa;
-  }
-}
-
-@media (hover: hover) {
-  .add-apartment-help-amp-support:hover {
-    color: #16a5e1;
-  }
-}
-
-.add-apartment-help-circle-icon {
-  height: calc(var(--spacing, .25rem) * 4);
-  width: calc(var(--spacing, .25rem) * 4);
-}
-
-.add-apartment-panel-3 {
-  padding-inline: calc(var(--spacing, .25rem) * 4);
-  padding-block: calc(var(--spacing, .25rem) * 4);
-  border-color: #d9d9d9;
-  border-top-style: solid;
-  border-top-width: 1px;
-  margin-top: auto;
 }
 
 .app-sidebar-logout {
@@ -469,11 +136,6 @@
   .app-sidebar-logout:hover {
     color: var(--color-red-700, #bf000f);
   }
-}
-
-.add-apartment-log-out-icon {
-  height: calc(var(--spacing, .25rem) * 4);
-  width: calc(var(--spacing, .25rem) * 4);
 }
 
 .app-sidebar-overlay {
@@ -523,148 +185,9 @@
   }
 }
 
-.app-sidebar-2 {
-  height: 100%;
-  padding: calc(var(--spacing, .25rem) * 3);
-  flex-direction: column;
-  display: flex;
-  overflow-y: auto;
-}
-
-.add-apartment-close-navigation {
-  height: calc(var(--spacing, .25rem) * 9);
-  width: calc(var(--spacing, .25rem) * 9);
-  border-radius: var(--radius-lg, .5rem);
-  color: #666666;
-  background-color: #f2f6fa;
-  justify-content: center;
-  align-items: center;
-  margin-left: auto;
-  display: flex;
-}
-
-.add-apartment-x-icon {
-  height: calc(var(--spacing, .25rem) * 4);
-  width: calc(var(--spacing, .25rem) * 4);
-}
-
-.app-sidebar-brand-2 {
-  padding-inline: calc(var(--spacing, .25rem) * 2);
-  padding-top: calc(var(--spacing, .25rem) * 2);
-  padding-bottom: calc(var(--spacing, .25rem) * 5);
-}
-
-.add-apartment-card-2 {
-  height: calc(var(--spacing, .25rem) * 11);
-  width: calc(var(--spacing, .25rem) * 11);
-  border-radius: var(--radius-xl, .75rem);
-  color: #16a5e1;
-  background-color: #f2f6fa;
-  border: 1px solid #d9d9d9;
-  justify-content: center;
-  align-items: center;
-  display: flex;
-}
-
-.add-apartment-apt-findr-2 {
-  font-size: var(--text-xl, 1.25rem);
-  line-height: var(--text-xl--line-height, calc(1.75 / 1.25));
-  font-weight: var(--font-weight-bold, 700);
-  color: #111111;
-  display: block;
-}
-
-.add-apartment-landlord-portal-2 {
-  font-size: var(--text-xs, .75rem);
-  line-height: var(--text-xs--line-height, calc(1 / .75));
-  color: #666666;
-}
-
 :where(.add-apartment-nav-3 > :not(:last-child)) {
   margin-block-start: calc(var(--spacing, .25rem) * 0);
   margin-block-end: calc(var(--spacing, .25rem) * calc(1 - 0));
-}
-
-.add-apartment-button-2 {
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 3);
-  border-radius: var(--radius-lg, .5rem);
-  width: 100%;
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  padding-block: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-sm, .875rem);
-  line-height: var(--text-sm--line-height, calc(1.25 / .875));
-  font-weight: var(--font-weight-semibold, 600);
-  color: #111111;
-  display: flex;
-}
-
-@media (hover: hover) {
-  .add-apartment-button-2:hover {
-    background-color: #f2f6fa;
-  }
-}
-
-@media (hover: hover) {
-  .add-apartment-button-2:hover {
-    color: #16a5e1;
-  }
-}
-
-.app-sidebar-nav-item-2 {
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 3);
-  border-radius: var(--radius-lg, .5rem);
-  width: 100%;
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  padding-block: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-sm, .875rem);
-  line-height: var(--text-sm--line-height, calc(1.25 / .875));
-  font-weight: var(--font-weight-semibold, 600);
-  color: #16a5e1;
-  background-color: #f2f6fa;
-  display: flex;
-  position: relative;
-}
-
-.add-apartment-settings-2 {
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 3);
-  border-radius: var(--radius-lg, .5rem);
-  width: 100%;
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  padding-block: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-sm, .875rem);
-  line-height: var(--text-sm--line-height, calc(1.25 / .875));
-  font-weight: var(--font-weight-semibold, 600);
-  color: #111111;
-  display: flex;
-}
-
-@media (hover: hover) {
-  .add-apartment-settings-2:hover {
-    background-color: #f2f6fa;
-  }
-}
-
-.add-apartment-help-amp-support-2 {
-  align-items: center;
-  gap: calc(var(--spacing, .25rem) * 3);
-  border-radius: var(--radius-lg, .5rem);
-  width: 100%;
-  padding-inline: calc(var(--spacing, .25rem) * 3);
-  padding-block: calc(var(--spacing, .25rem) * 3);
-  font-size: var(--text-sm, .875rem);
-  line-height: var(--text-sm--line-height, calc(1.25 / .875));
-  font-weight: var(--font-weight-semibold, 600);
-  color: #111111;
-  display: flex;
-}
-
-@media (hover: hover) {
-  .add-apartment-help-amp-support-2:hover {
-    background-color: #f2f6fa;
-  }
 }
 
 .app-sidebar-trigger {
@@ -2258,22 +1781,7 @@
   50% {
     opacity: .5;
   }
-}/* Add Property wizard uses the same landlord shell palette without changing its workflow. */
-.landlord-add-property .text-amber-600,
-.landlord-add-property .text-amber-700,
-.landlord-add-property .text-orange-600 { color: #16a5e1 !important; }
-.landlord-add-property .text-amber-800,
-.landlord-add-property .text-amber-900 { color: #666666 !important; }
-.landlord-add-property .bg-amber-50,
-.landlord-add-property .bg-orange-50 { background-color: #f2f6fa !important; }
-.landlord-add-property .border-amber-100,
-.landlord-add-property .border-amber-200,
-.landlord-add-property .border-orange-100 { border-color: #d9d9d9 !important; }
-.landlord-add-property .from-amber-500 { --tw-gradient-from: #16a5e1 !important; --tw-gradient-to: rgba(22, 165, 225, 0) !important; }
-.landlord-add-property .to-orange-500,
-.landlord-add-property .to-orange-600 { --tw-gradient-to: #666666 !important; }
-.landlord-add-property .focus-visible\:ring-orange-200:focus-visible,
-.landlord-add-property .focus-visible\:ring-orange-300:focus-visible { --tw-ring-color: rgba(22, 165, 225, 0.22) !important; }
+}
 .tenant-browse main .suggested-hero { min-height: 180px; margin-top: 0 !important; }
 .tenant-browse main .popular-hero { min-height: 175px; margin-top: 0 !important; }
 
@@ -2299,23 +1807,11 @@
 }
 .suggested-card [class*="from-white"], .popular-card [class*="from-white"] { background: #fff !important; }
 .suggested-card h3, .popular-card h3 { color: #111111 !important; }
-.suggested-card .text-orange-600,
-.suggested-card .text-amber-500,
-.suggested-card .text-purple-500,
-.suggested-card .text-pink-500,
-.popular-card .text-orange-600,
-.popular-card .text-amber-500,
-.popular-card .text-purple-500,
-.popular-card .text-pink-500 { color: #16a5e1 !important; }
 .suggested-card [class*="border-amber"], .popular-card [class*="border-amber"] { border-color: #d9d9d9 !important; }
 .tenant-browse main section:nth-of-type(2) { border-color: var(--tenant-border) !important; border-radius: 12px !important; box-shadow: 0 2px 12px rgba(17, 17, 17,.04) !important; }
 .tenant-browse main section:nth-of-type(2) button { transition: background-color 180ms ease, color 180ms ease; }
-.tenant-browse main section:nth-of-type(2) button.bg-orange-500 { background: var(--tenant-accent) !important; color: #fff !important; }
-.tenant-browse main section:nth-of-type(2) button.bg-orange-50 { background: var(--tenant-surface-strong) !important; color: var(--tenant-accent) !important; }
 .tenant-browse main section:nth-of-type(3) article { border-color: var(--tenant-border) !important; border-radius: 12px !important; box-shadow: 0 2px 12px rgba(17, 17, 17,.06) !important; }
 .tenant-browse main section:nth-of-type(3) article:hover { box-shadow: 0 8px 24px rgba(17, 17, 17,.10) !important; }
 .tenant-browse main section:nth-of-type(3) article h2 { color: var(--tenant-ink) !important; }
-.tenant-browse main section:nth-of-type(3) article .text-orange-500,
-.tenant-browse main section:nth-of-type(3) article .text-orange-600 { color: var(--tenant-accent) !important; }
 .tenant-browse main section:nth-of-type(3) article a { border-color: var(--tenant-border) !important; color: var(--tenant-accent) !important; }
 .tenant-browse main section:nth-of-type(3) article a:hover { background: var(--tenant-surface) !important; }

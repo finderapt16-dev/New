@@ -93,14 +93,3 @@ export async function fetchApartmentVerificationDocuments(apartmentId) {
         };
     }));
 }
-export async function removeVerificationDocument(document) {
-    const { error: deleteError } = await supabase
-        .from("apartment_verification_documents")
-        .delete()
-        .eq("id", document.id);
-    if (deleteError)
-        throw new Error(deleteError.message || "Unable to remove the document.");
-    const { error: storageError } = await supabase.storage.from("verification-documents").remove([document.storagePath]);
-    if (storageError)
-        throw new Error(storageError.message || "Unable to remove the stored file.");
-}

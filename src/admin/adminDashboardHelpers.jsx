@@ -78,9 +78,6 @@ export const getLandlordVerificationStatus = (landlord) => {
     return "Incomplete";
 };
 export const canPublishForLandlord = (landlord) => (landlord?.isVerified ?? landlord?.is_verified) === true && !["pending", "unverified", "rejected", "suspended", "disabled"].includes(String(landlord?.landlord_status ?? landlord?.verification_status ?? landlord?.status ?? "").trim().toLowerCase());
-export function activityTimestamp(value) {
-    return typeof value === "string" && value.length > 0 ? value : "";
-}
 export function toEvidenceItem(row) {
     const fileUrl = text(row?.file_url);
     if (!fileUrl)
@@ -96,15 +93,6 @@ export function toEvidenceItem(row) {
         uploadedBy: text(row?.uploaded_by),
         uploadedAt: text(row?.uploaded_at),
     };
-}
-export function SectionHeading({ title, description, action, actionLabel = "View all", }) {
-    return (<div className="admin-dashboard-helpers-row">
-      <div>
-        <h2 className="admin-dashboard-helpers-heading">{title}</h2>
-        <p className="admin-dashboard-helpers-text">{description}</p>
-      </div>
-      {action && <button onClick={action} className="admin-dashboard-helpers-button">{actionLabel}</button>}
-    </div>);
 }
 export function OverviewEmpty({ icon: Icon, text: message }) {
     return (<div className="admin-dashboard-helpers-card">

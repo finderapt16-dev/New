@@ -193,11 +193,6 @@ main.app-shell-content {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), transparent 34%);
 }
 
-/* Removes the previous admin-only dark ambient layer. */
-.app-sidebar > .pointer-events-none.absolute.inset-0 {
-  display: none;
-}
-
 .app-sidebar::-webkit-scrollbar { width: 5px; }
 .app-sidebar::-webkit-scrollbar-track { background: transparent; }
 .app-sidebar::-webkit-scrollbar-thumb { background: rgba(22, 165, 225, 0.24); border-radius: 999px; }
@@ -224,11 +219,6 @@ main.app-shell-content {
 .app-sidebar-brand p {
   color: var(--sidebar-ink) !important;
   -webkit-text-fill-color: currentColor;
-}
-
-.app-sidebar-brand .text-orange-500,
-.app-sidebar-brand .text-amber-400\/60 {
-  color: var(--sidebar-primary) !important;
 }
 
 .app-sidebar-brand p,
@@ -279,14 +269,6 @@ main.app-shell-content {
 
 .app-sidebar-profile > svg {
   color: #8a8a8a !important;
-}
-
-.app-sidebar-profile > svg.text-green-400 {
-  color: #22c55e !important;
-}
-
-.app-sidebar-profile .text-emerald-400 {
-  color: #16a34a !important;
 }
 
 .app-sidebar-profile [class*="bg-orange-500"],
@@ -536,7 +518,6 @@ main.app-shell-content {
   box-shadow: 0 4px 12px rgba(22, 165, 225, 0.25) !important;
   transition: background 200ms ease, box-shadow 200ms ease !important;
 }
-
 
 .app-sidebar-trigger:hover {
   background: #0e93ca !important;

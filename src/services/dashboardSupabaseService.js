@@ -310,48 +310,6 @@ export async function createViolation(violation) {
     writeCachedValue("violations", JSON.stringify(cached));
     return normalized;
 }
-export async function updateViolation(violationId, updates) {
-    const payload = {};
-    if (updates.mode !== undefined)
-        payload.mode = updates.mode;
-    if (updates.type !== undefined)
-        payload.type = updates.type;
-    if (updates.message !== undefined)
-        payload.message = updates.message;
-    if (updates.active !== undefined)
-        payload.active = updates.active;
-    if (updates.expires_at !== undefined)
-        payload.expires_at = updates.expires_at;
-    if (updates.expiresAt !== undefined)
-        payload.expires_at = updates.expiresAt;
-    if (updates.related_report_id !== undefined)
-        payload.related_report_id = updates.related_report_id;
-    if (updates.apartment_id !== undefined)
-        payload.apartment_id = updates.apartment_id;
-    if (updates.reportId !== undefined)
-        payload.related_report_id = updates.reportId;
-    if (updates.issued_at !== undefined)
-        payload.issued_at = updates.issued_at;
-    if (updates.issuedAt !== undefined)
-        payload.issued_at = updates.issuedAt;
-    const { data, error } = await supabase
-        .from("violations")
-        .update(payload)
-        .eq("id", violationId)
-        .select("*")
-        .single();
-    if (error || !data) {
-        return null;
-    }
-    const normalized = toViolationRow(data);
-    const cached = await fetchViolations();
-    const next = cached.map((item) => (item.id === violationId ? normalized : item));
-    writeCachedValue("violations", JSON.stringify(next));
-    return normalized;
-}
-export async function updateViolationStatus(violationId, active) {
-    return updateViolation(violationId, { active });
-}
 export async function deleteViolation(violationId) {
     const { error } = await supabase.from("violations").delete().eq("id", violationId);
     if (error) {
@@ -1114,20 +1072,6 @@ export async function fetchAdminActivityLogs(adminId) {
     }
     return (data ?? []);
 }
-export async function fetchRecentActivityLogs(limit = 50) {
-    const { data, error } = await supabase
-        .from("audit_logs")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(limit);
-    if (error) {
-        console.error("Error fetching recent activity logs:", error);
-        return safeJsonParse(readCachedValue("audit_logs:recent"), []);
-    }
-    const rows = (data ?? []);
-    writeCachedValue("audit_logs:recent", JSON.stringify(rows));
-    return rows;
-}
 export async function sendAdminMessageToLandlord(input) {
     const notification = await createNotification({
         user_id: input.landlordId,
@@ -1414,13 +1358,6 @@ export async function fetchFavorites() {
     }
     return safeJsonParse(readCachedValue("favorites"), []);
 }
-export async function fetchApartmentFavorites(apartmentId) {
-    const { data, error } = await supabase.from("favorites").select("*").eq("apartment_id", apartmentId);
-    if (error || !Array.isArray(data)) {
-        return [];
-    }
-    return data.map((row) => toFavoriteRow(row));
-}
 export async function fetchFavoritesForApartments(apartmentIds) {
     if (apartmentIds.length === 0)
         return [];
@@ -1452,68 +1389,6 @@ export async function fetchApartmentViews() {
     writeCachedValue("apartment_views", JSON.stringify(normalized));
     return normalized;
 }
-export async function getLandlordPropertyStats(landlordId) {
-    const apartments = await fetchRowsByColumn("apartments", "landlord_id", landlordId);
-    const normalizedApartments = apartments.map((row) => toApartmentRow(row));
-    const publishedApartmentCount = normalizedApartments.filter((apartment) => {
-        const value = apartment.isPublished ?? apartment.is_published;
-        return value === true;
-    }).length;
-    const favoriteRows = await fetchFavorites();
-    const favoriteCount = favoriteRows.filter((favorite) => {
-        const favoriteApartmentId = favorite.apartment_id ?? favorite.apartmentId;
-        return typeof favoriteApartmentId === "string"
-            ? normalizedApartments.some((apartment) => apartment.id === favoriteApartmentId)
-            : false;
-    }).length;
-    const averagePrice = normalizedApartments.length
-        ? normalizedApartments.reduce((sum, apartment) => sum + getNumberValue(apartment.price), 0) / normalizedApartments.length
-        : 0;
-    return {
-        apartmentCount: normalizedApartments.length,
-        publishedApartmentCount,
-        averagePrice: Number.isFinite(averagePrice) ? averagePrice : 0,
-        favoriteCount,
-    };
-}
-export async function getLandlordApartmentCounts(landlordId) {
-    const apartments = await fetchRowsByColumn("apartments", "landlord_id", landlordId);
-    const normalized = apartments.map((row) => toApartmentRow(row));
-    return {
-        apartmentCount: normalized.length,
-        publishedApartmentCount: normalized.filter((apartment) => {
-            const value = apartment.isPublished ?? apartment.is_published;
-            return value === true;
-        }).length,
-    };
-}
-export async function getDashboardSummary(userId, landlordId) {
-    const apartments = await fetchApartments();
-    const favorites = await fetchFavorites();
-    const reports = await fetchAdminReports();
-    const violations = await fetchViolations();
-    const notifications = await fetchNotifications(userId);
-    const filteredApartments = landlordId
-        ? apartments.filter((apartment) => {
-            const apartmentLandlordId = apartment.landlord_id ?? apartment.landlordId;
-            return apartmentLandlordId === landlordId;
-        })
-        : apartments;
-    return {
-        apartmentCount: filteredApartments.length,
-        publishedApartmentCount: filteredApartments.filter((apartment) => {
-            const value = apartment.isPublished ?? apartment.is_published;
-            return value === true;
-        }).length,
-        favoriteCount: favorites.length,
-        reportCount: reports.length,
-        violationCount: violations.length,
-        unreadNotificationCount: notifications.filter((notification) => {
-            const isRead = notification.read ?? notification.is_read;
-            return isRead !== true;
-        }).length,
-    };
-}
 export async function updateReportStatus(reportId, status) {
     const { data, error } = await supabase
         .from("reports")
@@ -1533,6 +1408,7 @@ export async function updateReportStatus(reportId, status) {
     writeCachedValue("reports", JSON.stringify(next));
     return normalized;
 }
+
 /**
  * Notify landlord and reporter after an admin verifies a report.
  * Creates notifications for both the landlord (apartment owner) and the reporting tenant
@@ -1570,6 +1446,7 @@ export async function notifyReportResolved(reportId, landlordId, reporterId, apa
         console.error("Error notifying report resolution:", err);
     }
 }
+
 /**
  * Notify reporter when a report is dismissed
  * Creates notification for the reporting tenant with dismissal details
@@ -1597,6 +1474,7 @@ export async function notifyReportDismissed(reportId, reporterId, apartmentTitle
         console.error("Error notifying report dismissal:", err);
     }
 }
+
 /**
  * Fetch complete report details with all relationships
  * Returns report data along with reporter info, apartment info, and landlord info
@@ -1618,6 +1496,7 @@ export async function fetchReportDetails(reportId) {
         return null;
     }
 }
+
 /**
  * Fetch all necessary information for a report detail view
  * Includes apartment and landlord info without exposing reporter identity.
@@ -1695,16 +1574,7 @@ export async function createReport(report) {
     writeCachedValue("reports", JSON.stringify(cached));
     return normalized;
 }
-export async function syncDashboardCache() {
-    await Promise.all([
-        fetchAdminReports(),
-        fetchViolations(),
-        fetchNotifications(),
-        fetchUsers(),
-        fetchApartments(),
-        fetchFavorites(),
-    ]);
-}
+
 /**
  * Fetch landlord profile information from landlord_profiles table
  */
@@ -1738,6 +1608,7 @@ export async function fetchLandlordProfile(landlordId) {
         return null;
     }
 }
+
 /**
  * Fetch complete landlord details with all relationships
  * Returns landlord info, profile, properties, violations, reports, and statistics
@@ -1797,88 +1668,5 @@ export async function fetchLandlordWithDetails(landlordId) {
     catch (err) {
         console.error("Error fetching landlord with details:", err);
         return null;
-    }
-}
-/**
- * Notify landlord when verification status changes
- */
-export async function notifyLandlordVerification(landlordId, verified, adminId) {
-    try {
-        if (verified) {
-            await createNotification({
-                user_id: landlordId,
-                type: "verification_approved",
-                title: "✅ Account Verified",
-                message: "Your landlord account has been verified by the Admin. You can now publish and manage apartment listings.",
-                payload: {
-                    action: "verification_approved",
-                    verified_at: new Date().toISOString(),
-                    admin_id: adminId || null,
-                },
-            });
-        }
-        else {
-            await createNotification({
-                user_id: landlordId,
-                type: "verification_rejected",
-                title: "⚠️ Verification Rejected",
-                message: "Your verification has been rejected. Please review your documents and resubmit for verification.",
-                payload: {
-                    action: "verification_rejected",
-                    rejected_at: new Date().toISOString(),
-                    admin_id: adminId || null,
-                },
-            });
-        }
-    }
-    catch (err) {
-        console.error("Error notifying landlord verification:", err);
-    }
-}
-/**
- * Notify landlord when a violation is issued
- */
-export async function notifyLandlordViolation(landlordId, violationType, violationMessage, apartmentTitle) {
-    try {
-        const notification = await createNotification({
-            user_id: landlordId,
-            type: "violation_issued",
-            title: "⚠️ Violation Issued",
-            message: `A ${violationType} has been issued${apartmentTitle ? ` for "${apartmentTitle}"` : ""}. ${violationMessage}`,
-            payload: {
-                violation_type: violationType,
-                apartment_title: apartmentTitle || null,
-                message: violationMessage,
-                issued_at: new Date().toISOString(),
-            },
-        });
-        return Boolean(notification);
-    }
-    catch (err) {
-        console.error("Error notifying landlord violation:", err);
-        return false;
-    }
-}
-/**
- * Notify landlord when a notice is sent
- */
-export async function notifyLandlordNotice(landlordId, noticeType, noticeMessage) {
-    try {
-        const notification = await createNotification({
-            user_id: landlordId,
-            type: "notice_issued",
-            title: "📋 Official Notice",
-            message: `${noticeType}: ${noticeMessage}`,
-            payload: {
-                notice_type: noticeType,
-                message: noticeMessage,
-                issued_at: new Date().toISOString(),
-            },
-        });
-        return Boolean(notification);
-    }
-    catch (err) {
-        console.error("Error notifying landlord notice:", err);
-        return false;
     }
 }

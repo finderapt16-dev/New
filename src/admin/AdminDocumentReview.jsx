@@ -1,5 +1,5 @@
 import "./AdminDocumentReview.css";
-import { ArrowLeft, FileText, Minus, Plus } from "lucide-react";
+import { ArrowLeft, Minus, Plus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";

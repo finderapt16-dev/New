@@ -91,11 +91,6 @@
   }
 }
 
-.login-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
 .login-brand-name {
   background-image: linear-gradient(to right in oklab, #16a5e1 0%, #0e93ca 100%);
   color: #0000;
@@ -133,52 +128,6 @@
 .login-introduction {
   margin-top: 4rem;
   margin-bottom: 2.5rem;
-}
-
-.login-visual-badge {
-  border: 1px solid #16a5e14d;
-  border-radius: 3.40282e38px;
-  align-items: center;
-  gap: .5rem;
-  margin-bottom: 1.25rem;
-  display: inline-flex;
-}
-
-@supports (color: color-mix(in lab, red, red)) {
-  .login-visual-badge {
-    border-color: lab(80.1641% 16.6016 99.2089 / .3);
-  }
-}
-
-.login-visual-badge {
-  background-color: #16a5e133;
-}
-
-@supports (color: color-mix(in lab, red, red)) {
-  .login-visual-badge {
-    background-color: lab(72.7183% 31.8672 97.9407 / .2);
-  }
-}
-
-.login-visual-badge {
-  padding-block: .375rem;
-  padding-inline: .75rem;
-}
-
-.login-badge-icon {
-  color: #16a5e1;
-  color: lab(80.1641% 16.6016 99.2089);
-  width: .875rem;
-  height: .875rem;
-}
-
-.login-badge-text {
-  letter-spacing: .025em;
-  color: #16a5e1;
-  color: lab(86.4156% 6.13147 78.3961);
-  font-size: .75rem;
-  font-weight: 700;
-  line-height: 1.33333;
 }
 
 .login-visual-title {
@@ -624,26 +573,15 @@
 
 /* Authentication palette — matches Landing page. */
 
-.auth-palette {
-  --auth-primary: #ffffff;
-  --auth-secondary: #f2f6fa;
-  --auth-border: #d9d9d9;
-  --auth-accent: #16a5e1;
-  --auth-accent-hover: #0e93ca;
-  --auth-text: #111111;
-  --auth-subtext: #666666;
-  --auth-muted: #8a8a8a;
-}
-
-
 .auth-palette .login-title { color: var(--auth-text) !important; }
 .auth-palette :is(.login-signup-link, .login-password-toggle, .login-signup-prompt, .login-home-link) { color: var(--auth-subtext) !important; }
 .auth-palette .login-mobile-header { border-color: #d9d9d9 !important; }
 .auth-palette .login-page { background-color: var(--auth-secondary) !important; }
-.auth-palette .login-badge-text,
 .auth-palette :is(.login-badge-icon, .login-benefit-icon),
+
 .auth-palette :is(.login-mobile-brand-name, .login-recovery-link, .login-create-link),
-.auth-palette .login-resend-link { color: var(--auth-accent) !important; }
+
+.auth-palette .login-resend-link  { color: var(--auth-accent) !important; }
 .auth-palette :is(.login-visual-badge, .login-benefit-symbol) { background-color: rgba(22, 165, 225, 0.10) !important; }
 .auth-palette button:is(.login-brand-name, .login-visual-accent):hover { background-color: var(--auth-accent-hover) !important; }
 .auth-palette :is(.login-brand-name, .login-visual-accent) {
@@ -662,7 +600,6 @@
 .auth-palette .auth-visual-panel .login-brand-location { color: var(--auth-subtext) !important; }
 .login-spinner { animation: login-spin .7s linear infinite; }
 @keyframes login-spin { to { transform: rotate(360deg); } }
-
 
 /* Final login color normalization — keep layout/functionality unchanged. */
 .auth-palette .login-page { background-color: #ffffff !important; }

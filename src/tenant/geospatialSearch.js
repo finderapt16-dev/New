@@ -70,11 +70,7 @@ export function normalizeCoordinates(value) {
 }
 /**
  * Checks if the provided coordinates are valid.
- */
-export function hasValidCoordinates(value) {
-    return normalizeCoordinates(value) !== null;
-}
-/**
+ *//**
  * Calculates straight-line geographic distance
  * between two coordinates using Haversine.
  *

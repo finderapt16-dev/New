@@ -5,7 +5,6 @@ import { useApartmentsContext } from "@/contexts/ApartmentsContext";
 import { getApartmentImageUrl } from "@/utils/images";
 import { isTenantVisibleApartment } from "@/utils/listingVisibility";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
-import { Button } from "@/components/ui/button";
 import {fetchApartmentViews,} from "@/services/dashboardSupabaseService";
 
 

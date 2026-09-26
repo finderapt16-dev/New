@@ -32,22 +32,6 @@
   width: calc(var(--spacing, .25rem) * 4);
 }
 
-.tenant-preferences {
-  border-radius: var(--radius-2xl, 1rem);
-  background-color: var(--color-white, #fff);
-  border-color: #d9d9d9;
-  max-height: 92vh;
-  padding: 0;
-  overflow-y: auto;
-  box-shadow: 0 20px 50px #1111111a;
-}
-
-@media (min-width: 40rem) {
-  .tenant-preferences {
-    max-width: var(--container-2xl, 42rem);
-  }
-}
-
 .apartment-browse-dialog-header {
   padding-inline: calc(var(--spacing, .25rem) * 6);
   padding-block: calc(var(--spacing, .25rem) * 5);
@@ -1609,29 +1593,6 @@
     border-color: var(--color-slate-200, lab(91.7353% -.998765 -4.76968));
     color: var(--color-slate-700, lab(26.9569% -1.47018 -15.6993));
   }
-}
-
-.tenant-preferences [data-slot="switch"] {
-  width: 2.5rem;
-  height: 1.5rem;
-}
-
-.tenant-preferences [data-slot="switch"][data-state="checked"] {
-  background: #16a5e1 !important;
-}
-
-.tenant-preferences [data-slot="switch"][data-state="unchecked"] {
-  background: #d9d9d9 !important;
-}
-
-.tenant-preferences [data-slot="switch-thumb"] {
-  width: 1.15rem;
-  height: 1.15rem;
-  background: #fff !important;
-}
-
-.tenant-preferences [data-slot="switch"]:focus-visible {
-  box-shadow: 0 0 0 3px rgba(139,115,91,.14) !important;
 }
 
 /* =========================================================

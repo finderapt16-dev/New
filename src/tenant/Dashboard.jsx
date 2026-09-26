@@ -32,8 +32,8 @@ export function Dashboard() {
     const [activeSection, setActiveSection] = useState("suggested");
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [favoriteFilter, setFavoriteFilter] = useState("all");
-    const [favoriteSort, setFavoriteSort] = useState("newest");
-    const [favoriteView, setFavoriteView] = useState("grid");
+    const [favoriteSort] = useState("newest");
+    const [favoriteView] = useState("grid");
     const [removingFavoriteId, setRemovingFavoriteId] = useState(null);
     const [reportSubmitted, setReportSubmitted] = useState(false);
     const [reportForm, setReportForm] = useState({
@@ -309,7 +309,7 @@ export function Dashboard() {
     const renderSettings = () => <AccountSettings embedded/>;
     const sectionMap = {
         overview: () => (<DashboardOverview tenantGreeting={tenantGreeting} dashboardSubtitle={dashboardSubtitle} favoriteIds={favoriteIds} availableApartments={availableApartments} availableRoomsCount={availableRoomsCount} hasPersonalizationPreferences={hasPersonalizationPreferences} suggestedApartments={suggestedApartments} popularApartments={popularApartments} setActiveSection={setActiveSection} navigate={navigate}/>),
-        favorites: () => (<FavoritesOverview favoriteApartments={favoriteApartments} visibleFavoriteApartments={visibleFavoriteApartments} favoriteFilter={favoriteFilter} setFavoriteFilter={setFavoriteFilter} favoriteSort={favoriteSort} setFavoriteSort={setFavoriteSort} favoriteView={favoriteView} setFavoriteView={setFavoriteView} removingFavoriteId={removingFavoriteId} removeFavorite={removeFavorite} ratingSummary={ratingSummary} ratingsLoading={ratingsLoading} navigate={navigate}/>),
+        favorites: () => (<FavoritesOverview favoriteApartments={favoriteApartments} visibleFavoriteApartments={visibleFavoriteApartments} setFavoriteFilter={setFavoriteFilter} favoriteView={favoriteView} removingFavoriteId={removingFavoriteId} removeFavorite={removeFavorite} ratingSummary={ratingSummary} ratingsLoading={ratingsLoading} navigate={navigate}/>),
         suggested: () => (<SuggestedSection hasPersonalizationPreferences={hasPersonalizationPreferences} preferencesLoading={preferencesLoading} suggestedApartments={suggestedApartments} ratingSummary={ratingSummary} ratingsLoading={ratingsLoading} navigate={navigate}/>),
         popular: () => (<PopularSection popularApartments={popularApartments} ratingSummary={ratingSummary} ratingsLoading={ratingsLoading} navigate={navigate}/>),
         notifications: () => <Notifications state={tenantNotifications}/>,

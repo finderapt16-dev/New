@@ -5,7 +5,7 @@ import { AppLogo } from "@/components/AppLogo";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { AlertCircle, BadgeCheck, Building2, Check, CheckCircle2, ChevronDown, ChevronRight, ClipboardList, Eye, EyeOff, Home, Key, Lock, Mail, MapPin, Phone, ShieldCheck, Upload, User, Users } from "lucide-react";
+import { AlertCircle, BadgeCheck, Building2, Check, CheckCircle2, ChevronRight, ClipboardList, Eye, EyeOff, Home, Key, Lock, Mail, MapPin, Phone, ShieldCheck, Upload, User, Users } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 /* ─── Password strength ────────────────────────────────────── */
@@ -26,28 +26,6 @@ function getStrength(p) {
 const strengthLabel = ["", "Weak", "Fair", "Good", "Strong", "Very strong"];
 const strengthColor = ["", "signup-strength-fill-weak", "signup-strength-fill-fair", "signup-strength-fill-good", "signup-strength-fill-strong", "signup-strength-fill-very-strong"];
 const strengthText = ["", "signup-strength-text-weak", "signup-strength-text-fair", "signup-strength-text-good", "signup-strength-text-strong", "signup-strength-text-very-strong"];
-/* ─── Accordion section ────────────────────────────────────── */
-function AccordionSection({ title, icon, open, onToggle, done, children, }) {
-    return (<div className={`signup-section ${open ? "signup-section-active" : done ? "signup-section-idle-complete" : "signup-section-idle-pending"}`}>
-      <button type="button" onClick={onToggle} className={`signup-section-button ${open ? "signup-section-button-active" : "signup-section-button-idle"}`}>
-        <div className={`signup-section-symbol ${open ? "signup-section-symbol-active" : done ? "signup-section-symbol-idle-complete" : "signup-section-symbol-idle-pending"}`}>
-          {done && !open ? <Check className="signup-icon-small"/> : icon}
-        </div>
-        <div className="signup-section-heading">
-          <p className={`signup-section-title ${open ? "signup-section-title-active" : done ? "signup-section-title-idle-complete" : "signup-section-title-idle-pending"}`}>{title}</p>
-          {done && !open && <p className="signup-section-completed">Completed</p>}
-        </div>
-        <div>
-          <ChevronDown className={`signup-section-chevron ${open ? "signup-section-chevron-active" : "signup-section-chevron-idle"}`}/>
-        </div>
-      </button>
-      <>
-        {open && (<div>
-            <div className="signup-section-content">{children}</div>
-          </div>)}
-      </>
-    </div>);
-}
 export function Signup() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -63,7 +41,6 @@ export function Signup() {
     const [showPass, setShowPass] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [landlordStep, setLandlordStep] = useState(1);
-    const [openSection, setOpenSection] = useState("personal");
     const permitRef = useRef(null);
     const idRef = useRef(null);
     const [permitFile, setPermitFile] = useState(null);
@@ -80,18 +57,6 @@ export function Signup() {
     const set = (key, value) => setFormData((p) => ({ ...p, [key]: value }));
     const strength = getStrength(formData.password);
     /* ── Section completion checks ─────────────────────────── */
-    const donePersonal = formData.role === "landlord" &&
-        !!formData.firstName &&
-        !!formData.lastName &&
-        !!formData.address;
-    const doneContact = formData.role === "landlord" && !!formData.mobileNumber;
-    const doneRole = formData.role === "landlord" && !!formData.permitNumber;
-    const doneSecurity = /^[A-Za-z0-9_]{4,30}$/.test(formData.username) &&
-        /^\S+@\S+\.\S+$/.test(formData.email.trim()) &&
-        !!formData.password &&
-        formData.password.length >= 6 &&
-        formData.password === formData.confirmPassword;
-    /* ── Submit ─────────────────────────────────────────────── */
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (submissionInFlightRef.current)
@@ -237,7 +202,6 @@ export function Signup() {
         setError("");
         setLandlordStep((step) => Math.max(step - 1, 1));
     };
-    const toggle = (id) => setOpenSection((o) => o === id ? "" : id);
     return (<div className="auth-palette signup-page">
 
       <div className="auth-visual-panel signup-visual-panel">
@@ -687,7 +651,6 @@ export function Signup() {
                   <input type="checkbox" checked={tenantTermsAccepted} onChange={(event) => setTenantTermsAccepted(event.target.checked)} className="signup-checkbox"/>
                   <span><strong>I agree to AptFindr&apos;s Terms of Use and Privacy Policy.</strong> I understand that the information I provide will be used to manage my AptFindr account and that I am responsible for using the platform appropriately.</span>
                 </label>)}
-
 
               {formData.role === "tenant" && (<Button type="submit" disabled={loading} className="signup-submit-button">
                   {loading ? (<>
