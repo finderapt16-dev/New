@@ -3,6 +3,8 @@ import { apartmentFormValuesToInsertRow, apartmentFormValuesToUpdateRow, apartme
 import { isTenantRole } from './authService';
 import { optimizeImageForUpload } from '../utils/imageUpload';
 import { isTenantVisibleApartment } from '../utils/listingVisibility';
+import { roomWithFeatures } from '../utils/roomFeatures';
+import { saveRoomFeatures } from './roomFeaturesService';
 const APARTMENT_SELECT = '*, apartment_images(url, is_primary, sort_order), apartment_rooms(id, name, room_type, sqft, max_occupants, rent, has_private_bath, bathroom_type, shared_bath_location, has_ac, is_occupied, status, description, images, created_at)';
 const APARTMENT_INSPECTION_SELECT = '*, apartment_images(*), apartment_rooms(*)';
 const isRecord = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -248,14 +250,23 @@ export const createApartment = async (apartment, landlord) => {
 export const updateApartment = async (id, apartment, landlord) => {
     const resolvedLandlordId = await resolveAppUserId(landlord);
     const payload = apartmentFormValuesToUpdateRow(apartment);
-    const { data: beforeData } = await supabase
-        .from('apartments')
-        .select(APARTMENT_SELECT)
-        .eq('id', id)
-        .maybeSingle();
-    const { error } = await supabase.from('apartments').update(payload).eq('id', id);
-    if (error) {
-        throw new Error(unwrapErrorMessage(error, 'Unable to update apartment.'));
+    let beforeData;
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+        const { data: current, error: beforeError } = await supabase.from('apartments')
+            .select(APARTMENT_SELECT).eq('id', id).maybeSingle();
+        if (beforeError || !current) {
+            throw new Error(unwrapErrorMessage(beforeError, 'Unable to load this property before saving.'));
+        }
+        beforeData = current;
+        // Property editors never own room metadata. Preserve the newest selections,
+        // including writes from another device between this read and update.
+        payload.features = { ...payload.features, roomDetails: current.features?.roomDetails ?? {} };
+        let query = supabase.from('apartments').update(payload).eq('id', id);
+        query = current.features == null ? query.is('features', null) : query.eq('features', JSON.stringify(current.features));
+        const { data: updated, error } = await query.select('id').maybeSingle();
+        if (error) throw new Error(unwrapErrorMessage(error, 'Unable to update apartment.'));
+        if (updated) break;
+        if (attempt === 2) throw new Error('This property changed while saving. Please try again.');
     }
     const { data, error: reloadError } = await supabase
         .from('apartments')
@@ -564,14 +575,12 @@ const syncApartmentRoomSummary = async (apartmentId) => {
     const rows = (data ?? []);
     const rents = rows
         .map((row) => Number(row.rent))
-        .filter((rent) => Number.isFinite(rent) && rent > 0);
+        .filter((rent) => Number.isFinite(rent) && rent >= 0);
     const updatePayload = {
+        price: rents.length > 0 ? Math.min(...rents) : 0,
         bedrooms: rows.length,
         bathrooms: rows.filter((row) => row.has_private_bath === true).length,
     };
-    if (rents.length > 0) {
-        updatePayload.price = Math.min(...rents);
-    }
     const { error: updateError } = await supabase
         .from('apartments')
         .update(updatePayload)
@@ -580,26 +589,41 @@ const syncApartmentRoomSummary = async (apartmentId) => {
         throw new Error(unwrapErrorMessage(updateError, 'Unable to update property room summary.'));
     }
 };
-export const fetchApartmentRooms = async (apartmentId) => {
-    const { data, error } = await supabase
-        .from('apartment_rooms')
-        .select('id, name, room_type, sqft, max_occupants, rent, has_private_bath, bathroom_type, shared_bath_location, has_ac, is_occupied, status, description, images, created_at')
-        .eq('apartment_id', apartmentId);
-    if (error) {
-        throw new Error(unwrapErrorMessage(error, 'Unable to load rooms.'));
+// Summary/audit refreshes happen after a committed room write. Never report them
+// as a failed insert/delete, which would encourage duplicate-room retries.
+const refreshRoomSummaryAfterWrite = async (apartmentId) => {
+    try {
+        await syncApartmentRoomSummary(apartmentId);
+        return undefined;
+    } catch (error) {
+        console.warn('Room saved, but property totals could not be refreshed:', error);
+        return 'The room was saved, but property totals could not be refreshed. Please refresh the property later.';
     }
-    return (data ?? []).map(apartmentRoomRowToRoom);
+};
+const persistRoomExtras = async (apartmentId, roomId, room) => {
+    if (!Array.isArray(room.amenities) && !Array.isArray(room.utilities)) return undefined;
+    try {
+        return await saveRoomFeatures(apartmentId, roomId, room);
+    } catch (error) {
+        throw new Error(`The room details were saved, but amenities and utilities could not be saved. Please retry Save Changes. ${error.message || ''}`.trim());
+    }
+};
+export const fetchApartmentRooms = async (apartmentId) => {
+    const [{ data, error }, { data: apartment, error: propertyError }] = await Promise.all([
+        supabase.from('apartment_rooms').select('*').eq('apartment_id', apartmentId),
+        supabase.from('apartments').select('features').eq('id', apartmentId).maybeSingle(),
+    ]);
+    if (error || propertyError) {
+        throw new Error(unwrapErrorMessage(error || propertyError, 'Unable to load rooms.'));
+    }
+    return (data ?? []).map((row) => roomWithFeatures(apartmentRoomRowToRoom(row), apartment?.features));
 };
 export const createApartmentRoom = async (apartmentId, room, actorUserId) => {
-    const { data, error } = await supabase
-        .from('apartment_rooms')
-        .insert(apartmentRoomToPayload(apartmentId, room))
-        .select('id, name, room_type, sqft, max_occupants, rent, has_private_bath, bathroom_type, shared_bath_location, has_ac, is_occupied, status, description, images, created_at')
-        .single();
-    if (error) {
-        throw new Error(unwrapErrorMessage(error, 'Unable to add room.'));
-    }
-    await syncApartmentRoomSummary(apartmentId);
+    const { data, error } = await supabase.from('apartment_rooms')
+        .insert(apartmentRoomToPayload(apartmentId, room)).select('*').single();
+    if (error) throw new Error(unwrapErrorMessage(error, 'Unable to add room.'));
+    const features = await persistRoomExtras(apartmentId, data.id, room);
+    const syncWarning = await refreshRoomSummaryAfterWrite(apartmentId);
     await writeApartmentAudit(apartmentId, actorUserId, 'apartment_room_created', {
         room: { old: null, new: data },
     }, {
@@ -607,66 +631,57 @@ export const createApartmentRoom = async (apartmentId, room, actorUserId) => {
         status: data.status ?? 'available',
         image_count: Array.isArray(data.images) ? data.images.length : 0,
     });
-    return apartmentRoomRowToRoom(data);
+    return { ...roomWithFeatures(apartmentRoomRowToRoom(data), features), syncWarning };
 };
 export const updateApartmentRoom = async (apartmentId, roomId, room, actorUserId) => {
     const { data: before } = await supabase.from('apartment_rooms').select('*').eq('id', roomId).eq('apartment_id', apartmentId).maybeSingle();
-    const { data, error } = await supabase
-        .from('apartment_rooms')
-        .update(apartmentRoomToPayload(apartmentId, room))
-        .eq('id', roomId)
-        .eq('apartment_id', apartmentId)
-        .select('id, name, room_type, sqft, max_occupants, rent, has_private_bath, bathroom_type, shared_bath_location, has_ac, is_occupied, status, description, images, created_at')
-        .single();
-    if (error) {
-        throw new Error(unwrapErrorMessage(error, 'Unable to update room.'));
-    }
-    await syncApartmentRoomSummary(apartmentId);
+    const { data, error } = await supabase.from('apartment_rooms')
+        .update(apartmentRoomToPayload(apartmentId, room)).eq('id', roomId).eq('apartment_id', apartmentId).select('*').single();
+    if (error) throw new Error(unwrapErrorMessage(error, 'Unable to update room.'));
+    const features = await persistRoomExtras(apartmentId, roomId, room);
+    const syncWarning = await refreshRoomSummaryAfterWrite(apartmentId);
     const trackedRoomFields = [
         'name', 'room_type', 'sqft', 'max_occupants', 'rent', 'has_private_bath',
         'bathroom_type', 'shared_bath_location', 'has_ac', 'status', 'description', 'images',
     ];
     const changedFields = trackedRoomFields.filter((field) => valuesDiffer(before?.[field], data[field]));
+    if (features) changedFields.push('amenities', 'utilities');
     if (changedFields.length > 0) {
         await writeApartmentAudit(apartmentId, actorUserId, 'apartment_room_updated', {
             room: { old: before ?? null, new: data },
         }, {
-            room_id: roomId,
-            changed_fields: changedFields,
-            status: data.status ?? 'available',
+            room_id: roomId, changed_fields: changedFields, status: data.status ?? 'available',
             image_count: Array.isArray(data.images) ? data.images.length : 0,
+            ...(features ? { amenities: room.amenities, utilities: room.utilities } : {}),
         });
     }
-    return apartmentRoomRowToRoom(data);
+    return { ...roomWithFeatures(apartmentRoomRowToRoom(data), features), syncWarning };
 };
 export const updateApartmentRoomStatus = async (apartmentId, roomId, status, actorUserId) => {
     const nextStatus = status ?? 'available';
     const { data: before } = await supabase.from('apartment_rooms').select('status').eq('id', roomId).eq('apartment_id', apartmentId).maybeSingle();
-    const { error } = await supabase
-        .from('apartment_rooms')
-        .update({
-        status: nextStatus,
-        is_occupied: nextStatus === 'occupied',
-    })
-        .eq('id', roomId)
-        .eq('apartment_id', apartmentId);
-    if (error) {
-        throw new Error(unwrapErrorMessage(error, 'Unable to update room status.'));
-    }
-    await syncApartmentRoomSummary(apartmentId);
+    const { error } = await supabase.from('apartment_rooms')
+        .update({ status: nextStatus, is_occupied: nextStatus === 'occupied' })
+        .eq('id', roomId).eq('apartment_id', apartmentId).select('id').single();
+    if (error) throw new Error(unwrapErrorMessage(error, 'Unable to update room status.'));
+    await refreshRoomSummaryAfterWrite(apartmentId);
     const statusChanges = buildAuditChanges({ room_status: before?.status ?? null }, { room_status: nextStatus }, ['room_status']);
     await writeApartmentAudit(apartmentId, actorUserId, 'apartment_room_status_updated', statusChanges, { room_id: roomId, status: nextStatus, changed_fields: ['status'] });
 };
 export const deleteApartmentRoom = async (apartmentId, roomId, actorUserId) => {
     const { data: before } = await supabase.from('apartment_rooms').select('*').eq('id', roomId).eq('apartment_id', apartmentId).maybeSingle();
-    const { error } = await supabase.from('apartment_rooms').delete().eq('id', roomId).eq('apartment_id', apartmentId);
-    if (error) {
-        throw new Error(unwrapErrorMessage(error, 'Unable to delete room.'));
-    }
-    await syncApartmentRoomSummary(apartmentId);
+    const { data: deleted, error } = await supabase.from('apartment_rooms').delete()
+        .eq('id', roomId).eq('apartment_id', apartmentId).select('id').maybeSingle();
+    if (error || !deleted) throw new Error(unwrapErrorMessage(error, 'This room could not be deleted. It may have already been removed. Please refresh the list.'));
+    // Orphaned metadata is harmless if cleanup is temporarily unavailable. Do not
+    // tell the landlord to retry deleting a room that has already been deleted.
+    try { await saveRoomFeatures(apartmentId, roomId, null); }
+    catch (cleanupError) { console.warn('Unable to clean up deleted room metadata:', cleanupError); }
+    const syncWarning = await refreshRoomSummaryAfterWrite(apartmentId);
     await writeApartmentAudit(apartmentId, actorUserId, 'apartment_room_deleted', {
         room: { old: before ?? null, new: null },
     }, { room_id: roomId, status: before?.status ?? null });
+    return { syncWarning: syncWarning ? 'The room was deleted, but property totals could not be refreshed. Please refresh the property later.' : undefined };
 };
 export const uploadApartmentImage = async (apartmentId, file, fileName = 'apartment-image.jpg') => {
     const uploadFile = await optimizeImageForUpload(file);

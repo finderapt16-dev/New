@@ -1,3 +1,5 @@
+import { roomWithFeatures } from "../utils/roomFeatures";
+
 function utilitiesToFormFlag(utilities) {
     return Array.isArray(utilities) ? utilities.length > 0 : utilities;
 }
@@ -101,7 +103,7 @@ export const apartmentRowToApartment = (row) => {
             .map((image) => toString(image.url))
             .filter(Boolean)
         : [];
-    const rooms = row.apartment_rooms?.map((room) => ({
+    const rooms = row.apartment_rooms?.map((room) => roomWithFeatures({
         id: room.id ?? undefined,
         name: toString(room.room_name ?? room.name ?? room.room_type),
         type: toString(room.type ?? room.room_type),
@@ -121,7 +123,7 @@ export const apartmentRowToApartment = (row) => {
         description: toString(room.description),
         images: parseStringList(room.images ?? room.image_url),
         createdAt: room.created_at ?? undefined,
-    }));
+    }, row.features));
     const roomImages = rooms?.flatMap((room) => room.images ?? []) ?? [];
     const displayImages = images.length > 0 ? images : roomImages;
     const primaryImage = getPrimaryImage(displayImages);
@@ -199,6 +201,7 @@ export const apartmentFormValuesFromApartment = (apartment) => {
         utilityItems: Array.isArray(apartment.utilities) ? apartment.utilities : [],
         customFeatures,
         verification,
+        featureMetadata: apartment.features && !Array.isArray(apartment.features) ? apartment.features : {},
         lat: String(apartment.lat),
         lng: String(apartment.lng),
         isPublished: apartment.isPublished ?? true,
