@@ -177,3 +177,34 @@
   .landlord-property-review-document-preview { width: 92px; height: 112px; }
   .landlord-property-review-document-link, .landlord-property-review-no-document { margin-left: 0; }
 }
+
+/* =============================================================================
+   MOBILE — match the touch scale of Notifications / Appeals / Reports
+   ============================================================================= */
+@container (max-width: 600px) {
+  .admin-verification-page { gap: 14px; }
+  .admin-verification-header h1 { font-size: 24px; }
+  .admin-verification-header p { font-size: 13px; }
+
+  .admin-verification-metrics { grid-template-columns: 1fr; gap: 12px; }
+  .admin-verification-metrics article { min-height: 0; gap: 16px; padding: 16px 18px; border-radius: 10px; }
+  .admin-verification-metrics article > span { flex-basis: 42px; width: 42px; height: 42px; }
+  .admin-verification-metrics article > span svg { width: 20px; height: 20px; }
+  .admin-verification-metrics strong { font-size: 26px; }
+  .admin-verification-metrics b { margin-top: 4px; font-size: 14px; }
+  .admin-verification-metrics small { font-size: 12px; }
+
+  .admin-verification-filters label, .admin-verification-filters select { height: 50px; border-radius: 10px; font-size: 14px; }
+  .admin-verification-filters input { font-size: 14px; }
+  .admin-verification-filters select { font-size: 14px; }
+
+  .admin-verification-row { border-radius: 10px; padding: 16px; gap: 12px; }
+  .admin-verification-person > span { flex-basis: 42px; width: 42px; height: 42px; font-size: 15px; }
+  .admin-verification-person strong { font-size: 15px; }
+  .admin-verification-person small { font-size: 12px; }
+  .admin-verification-field, .admin-verification-state { font-size: 13px; }
+  .admin-verification-field > span, .admin-verification-state > span { font-size: 11px; }
+  .admin-verification-status { padding: 6px 12px; font-size: 12px; }
+  .admin-verification-row > button { height: 46px; border-radius: 8px; font-size: 14px; }
+  .admin-verification-empty { font-size: 14px; }
+}

@@ -137,3 +137,40 @@
 @media (max-width: 800px) {
   .admin-listings-page { padding: 0 0 32px; }
 }
+
+/* =============================================================================
+   MOBILE — match the touch scale of Notifications / Appeals / Reports
+   ============================================================================= */
+@container (max-width: 600px) {
+  .admin-listings-page { gap: 14px; }
+  .admin-listings-header h1 { font-size: 24px; }
+  .admin-listings-header p { font-size: 13px; }
+
+  .admin-listings-stats { grid-template-columns: 1fr; gap: 12px; }
+  .admin-listings-stats article { min-height: 0; gap: 16px; padding: 16px 18px; border-radius: 10px; }
+  .admin-listings-stats article > span { flex-basis: 42px; width: 42px; height: 42px; }
+  .admin-listings-stats article > span svg { width: 20px; height: 20px; }
+  .admin-listings-stats strong { font-size: 26px; }
+  .admin-listings-stats b { margin-top: 4px; font-size: 14px; }
+  .admin-listings-stats small { font-size: 12px; }
+
+  .admin-listings-controls { grid-template-columns: 1fr; gap: 12px; }
+  .admin-listings-controls label, .admin-listings-controls select { height: 50px; border-radius: 10px; font-size: 14px; }
+  .admin-listings-controls input, .admin-listings-controls select { font-size: 14px; }
+
+  .admin-listing-row { grid-template-columns: 1fr; gap: 14px; padding: 16px; border-radius: 10px; }
+  .admin-listing-image, .admin-listing-placeholder { width: 100%; height: 170px; border-radius: 10px; }
+  .admin-listing-info { gap: 7px; }
+  .admin-listing-info > strong { font-size: 17px; white-space: normal; }
+  .admin-listing-info p { font-size: 13px; }
+  .admin-listing-info p svg { width: 15px; height: 15px; }
+  .admin-listing-info > b { font-size: 15px; }
+  .admin-listing-info > small { font-size: 13px; }
+  .admin-listing-info footer { font-size: 12px; }
+  .admin-listing-status { display: flex; align-items: center; gap: 10px; }
+  .admin-listing-status > small { font-size: 11px; }
+  .admin-listing-status > span { padding: 6px 12px; font-size: 12px; }
+  .admin-listing-row > button { width: 100%; height: 48px; border-radius: 8px; font-size: 15px; }
+  .admin-listing-row > button svg { width: 16px; height: 16px; }
+  .admin-listings-empty { font-size: 14px; }
+}
