@@ -3,71 +3,15 @@ import { LandingListingsSection } from "./LandingApartmentPreview";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger, } from "@/components/ui/sheet";
 import { useAuth } from "@/contexts/AuthContext";
-import { useApartmentsContext } from "@/contexts/ApartmentsContext";
-import { isTenantVisibleApartment } from "@/utils/listingVisibility";
-import { BedDouble, Building2, CalendarCheck, CheckCircle2, PhilippinePeso, Mail, MapPin, Menu, Search, SlidersHorizontal, UserCheck } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Mail, MapPin, Menu, Search } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./landing.css";
-/* ─── Barangay data ─────────────────────────────────────── */
-const normalizeLocationKey = (value) => value
-    .toLocaleLowerCase("en-PH")
-    .replace(/\b(?:barangay|brgy)\.?\s*/g, "")
-    .replace(/\b(?:sto|santo)\.?\s+/g, "sto ")
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
-const getLocationSearchTerm = (value) => normalizeLocationKey(value).replace(/^sto\s+/, "");
-const formatLocationName = (value) => value
-    .replace(/\b(?:barangay|brgy)\.?\s*/gi, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .toLocaleLowerCase("en-PH")
-    .replace(/(^|\s)\p{L}/gu, (letter) => letter.toLocaleUpperCase("en-PH"))
-    .replace(/^Sto\s+/i, "Sto. ");
-const genericLocationKey = /^(?:la paz|lapaz|iloilo|iloilo city|iloilo province|western visayas|philippines|5000)$/;
-const streetAddressPattern = /^\d|\b(?:street|st\.?|road|rd\.?|avenue|ave\.?|block|blk\.?|lot|house|unit)\b/i;
-const getInventoryLocation = (apartment) => {
-    const scopeText = [apartment.city, apartment.state, apartment.address, apartment.location].filter(Boolean).join(" ");
-    if (!/\bla\s*paz\b/i.test(scopeText) || !/\biloilo\b/i.test(scopeText))
-        return null;
-    const candidates = [apartment.location, apartment.city]
-        .filter((value) => Boolean(value?.trim()))
-        .flatMap((value) => value.split(","))
-        .concat((apartment.address || "").split(",").reverse());
-    for (const candidate of candidates) {
-        const displayName = formatLocationName(candidate);
-        const key = normalizeLocationKey(displayName);
-        if (!key || genericLocationKey.test(key) || streetAddressPattern.test(displayName))
-            continue;
-        return displayName;
-    }
-    return null;
-};
 export function Landing() {
     const { user } = useAuth();
-    const { apartments, isLoading: apartmentsLoading } = useApartmentsContext();
     const navigate = useNavigate();
     const [landingSearch, setLandingSearch] = useState("");
-    const [showFilters, setShowFilters] = useState(false);
-    const [budget, setBudget] = useState("");
-    const [roomType, setRoomType] = useState("");
-    const [rooms, setRooms] = useState("");
-    const [availability, setAvailability] = useState("");
     const [scrolled, setScrolled] = useState(false);
-    const inventoryLocations = useMemo(() => {
-        const grouped = new Map();
-        apartments.filter(isTenantVisibleApartment).forEach((apartment) => {
-            const name = getInventoryLocation(apartment);
-            if (!name)
-                return;
-            const key = normalizeLocationKey(name);
-            const existing = grouped.get(key);
-            grouped.set(key, existing ? { ...existing, count: existing.count + 1 } : { name, count: 1 });
-        });
-        return [...grouped.values()]
-            .sort((left, right) => right.count - left.count || left.name.localeCompare(right.name, "en-PH"))
-            .slice(0, 6);
-    }, [apartments]);
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener("scroll", onScroll);
@@ -85,18 +29,9 @@ export function Landing() {
     };
     const handleLandingSearch = (e) => {
         e.preventDefault();
-        const params = new URLSearchParams();
-        if (landingSearch.trim())
-            params.set("search", landingSearch.trim());
-        if (budget)
-            params.set("budget", budget);
-        if (roomType)
-            params.set("type", roomType);
-        if (rooms)
-            params.set("rooms", rooms);
-        if (availability)
-            params.set("availability", availability);
-        const destination = params.toString() ? `/browse?${params}` : "/browse";
+        const destination = landingSearch.trim()
+            ? `/browse?search=${encodeURIComponent(landingSearch.trim())}`
+            : "/browse";
         if (!user) {
             navigate(`/login?redirect=${encodeURIComponent(destination)}`, {
                 state: { message: "Please sign in or create an account to view apartment details." },
@@ -105,7 +40,6 @@ export function Landing() {
         }
         navigate(destination);
     };
-    const activeFiltersCount = [budget, roomType, rooms, availability].filter(Boolean).length;
     return (<div className="landing-palette landing-page">
 
       <header className={`landing-header ${scrolled ? "landing-header-scrolled" : "landing-header-top"}`}>

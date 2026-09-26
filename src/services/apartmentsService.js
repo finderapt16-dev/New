@@ -236,20 +236,6 @@ export const fetchApartments = async () => {
     }
     return attachLandlordVerification(normalizeApartmentRows((data ?? [])), landlordRows);
 };
-export const getApartmentById = async (id) => {
-    const { data, error } = await supabase
-        .from('apartments')
-        .select(APARTMENT_SELECT)
-        .eq('id', id)
-        .maybeSingle();
-    if (error) {
-        throw new Error(unwrapErrorMessage(error, 'Unable to load apartment.'));
-    }
-    if (!data) {
-        return null;
-    }
-    return apartmentRowToApartment(data);
-};
 export const createApartment = async (apartment, landlord) => {
     const resolvedLandlordId = await resolveAppUserId(landlord);
     const payload = apartmentFormValuesToInsertRow(apartment, resolvedLandlordId);
@@ -337,14 +323,6 @@ export const updateApartmentPublication = async (id, isPublished, actorUserId) =
         throw new Error('The requested property did not reach the expected publication state. Please refresh and try again.');
     }
     await writeApartmentAudit(id, actorUserId, 'apartment_publication_updated', buildAuditChanges(before, after, ['is_published', 'approval_status', 'is_archived', 'deleted_at', 'status', 'published_at', 'published_by']));
-};
-export const updateApartmentStatus = async (id, status = 'available', actorUserId) => {
-    const { data: before } = await supabase.from('apartments').select('status').eq('id', id).maybeSingle();
-    const { error } = await supabase.from('apartments').update({ status }).eq('id', id);
-    if (error) {
-        throw new Error(unwrapErrorMessage(error, 'Unable to update apartment status.'));
-    }
-    await writeApartmentAudit(id, actorUserId, 'apartment_status_updated', buildAuditChanges(before, { status: status ?? 'available' }, ['status']));
 };
 export const getFavoriteApartmentIds = async (userId) => {
     const resolvedUserId = await resolveAppUserId(userId);
@@ -521,49 +499,6 @@ export const fetchApartmentsForLandlord = async (landlordId) => {
         throw new Error(unwrapErrorMessage(error, 'Unable to load landlord apartments.'));
     }
     return normalizeApartmentRows((data ?? []));
-};
-export const insertApartmentImages = async (apartmentId, images) => {
-    const urls = images.filter((url) => typeof url === 'string' && url.trim().length > 0);
-    if (urls.length === 0) {
-        return;
-    }
-    const payload = urls.map((url, index) => ({
-        apartment_id: apartmentId,
-        url: url.trim(),
-        is_primary: index === 0,
-        sort_order: index,
-    }));
-    const { error } = await supabase.from('apartment_images').insert(payload);
-    if (error) {
-        throw new Error(unwrapErrorMessage(error, 'Unable to save apartment images.'));
-    }
-};
-export const insertApartmentRooms = async (apartmentId, rooms) => {
-    const payload = rooms
-        .filter((room) => room && typeof room === 'object')
-        .map((room) => ({
-        apartment_id: apartmentId,
-        name: room.name?.trim() || room.type?.trim() || 'Room',
-        room_type: room.type?.trim() || 'Bedroom',
-        sqft: Math.max(0, Number(room.sqft) || 0),
-        max_occupants: Math.max(1, Number(room.maxOccupants) || 1),
-        rent: Math.max(0, Number(room.price) || 0),
-        has_private_bath: room.hasPrivateBath === true,
-        bathroom_type: room.hasPrivateBath ? room.bathroomType?.trim() || null : null,
-        shared_bath_location: room.hasPrivateBath ? null : room.sharedBathLocation?.trim() || null,
-        has_ac: room.hasAC === true,
-        status: room.status ?? (room.isOccupied ? 'occupied' : 'available'),
-        is_occupied: (room.status ?? (room.isOccupied ? 'occupied' : 'available')) === 'occupied',
-        description: room.description?.trim() || null,
-        images: room.images ?? [],
-    }));
-    if (payload.length === 0) {
-        return;
-    }
-    const { error } = await supabase.from('apartment_rooms').insert(payload);
-    if (error) {
-        throw new Error(unwrapErrorMessage(error, 'Unable to save apartment rooms.'));
-    }
 };
 const apartmentRoomToPayload = (apartmentId, room) => {
     const status = room.status ?? (room.isOccupied ? 'occupied' : 'available');

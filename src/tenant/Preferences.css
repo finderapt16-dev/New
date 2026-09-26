@@ -15,7 +15,7 @@
 .tenant-search-filters [data-slot="dialog-description"] { margin: 0 0 15px; color: #74869f; font-size: 11px; line-height: 1.4; }
 .tenant-search-filters fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
 .tenant-search-filters .tenant-filter-fields { display: grid; gap: 10px; }
-.tenant-search-filters legend, .tenant-search-filters .tenant-filter-location { font-size: 13px; line-height: 1.4; font-weight: 700; }
+.tenant-search-filters legend { font-size: 13px; line-height: 1.4; font-weight: 700; }
 .tenant-search-filters legend { margin-bottom: 5px; }
 .tenant-search-filters :is(input, select) { display: block; width: 100%; min-width: 0; height: 36px; margin-top: 4px; padding: 0 9px; border: 1px solid #cfd3d9; border-radius: 8px; background: #f9fbfd; color: inherit; font-size: 12px; font-weight: 400; }
 .tenant-search-filters select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, #64748b 50%), linear-gradient(135deg, #64748b 50%, transparent 50%); background-position: calc(100% - 13px) 15px, calc(100% - 9px) 15px; background-size: 4px 4px, 4px 4px; background-repeat: no-repeat; padding-right: 28px; }

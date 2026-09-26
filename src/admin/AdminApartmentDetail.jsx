@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { getLandlordVerification, updateApartmentPublication, } from "@/data/apartments";
 import { fetchApartmentInspectionDetails, } from "@/services/apartmentsService";
-import { createViolation, fetchPendingAppeals, fetchAdminReports, fetchApartmentChangeLogs, fetchLandlordProfile, fetchUserById, sendAdminMessageToLandlord, updateReportStatus, } from "@/services/dashboardSupabaseService";
+import { fetchPendingAppeals, fetchAdminReports, fetchApartmentChangeLogs, fetchLandlordProfile, fetchUserById, sendAdminMessageToLandlord, } from "@/services/dashboardSupabaseService";
 import { VERIFICATION_DOCUMENT_TYPES, fetchApartmentVerificationDocuments, } from "@/services/verificationDocumentsService";
 import { formatAuditLogForDisplay } from "@/utils/auditLogDisplay";
 import { fetchApartmentRatings, subscribeToApartmentRatings } from "@/services/apartmentRatingsService";
@@ -15,7 +15,7 @@ import { supabase } from "@/services/supabaseClient";
 import { clearAdminNavigationMemory, getAdminModulePath, rememberAdminModuleLocation } from "@/admin/adminNavigationMemory";
 import { AdminSidebar } from "@/admin/AdminSidebar";
 import { getAdminAvailabilityLabel, getAdminListingLabel, getAdminRoomState, getLowestRoomRent } from "@/admin/adminListingState";
-import { AlertTriangle, ArrowLeft, Building2, CalendarCheck, Check, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, ExternalLink, Eye, EyeOff, Expand, FileSearch, FileText, Flag, Home, Image as ImageIcon, Lock, Mail, Menu, MapPin, MessageSquare, Phone, Send, ShieldCheck, Star, Users, X } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Building2, CalendarCheck, Check, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, ExternalLink, Eye, EyeOff, Expand, FileSearch, FileText, Flag, Home, Image as ImageIcon, Mail, Menu, MapPin, MessageSquare, Phone, Send, ShieldCheck, Star, Users, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -150,10 +150,6 @@ export function AdminApartmentDetail() {
     const [appeals, setAppeals] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [selectedReport, setSelectedReport] = useState(null);
-    const [moderationMode, setModerationMode] = useState("view");
-    const [violationType, setViolationType] = useState("Misleading information");
-    const [violationMessage, setViolationMessage] = useState("");
-    const [isIssuingViolation, setIsIssuingViolation] = useState(false);
     const [messageModalOpen, setMessageModalOpen] = useState(false);
     const [messageText, setMessageText] = useState("");
     const [isSendingMessage, setIsSendingMessage] = useState(false);
@@ -304,29 +300,7 @@ export function AdminApartmentDetail() {
         const timer = window.setTimeout(() => scrollToSection(sectionId), 100);
         return () => window.clearTimeout(timer);
     }, [isLoading, routeLocation.hash]);
-    const handleResolveReport = async (reportId) => {
-        if (!reportId) {
-            toast.error("Cannot resolve report - missing ID");
-            return;
-        }
-        try {
-            const updated = await updateReportStatus(reportId, "resolved");
-            if (updated) {
-                setReports((prev) => prev.map((r) => (r.id === reportId ? updated : r)));
-                if (selectedReport?.id === reportId) {
-                    setSelectedReport(updated);
-                }
-                toast.success("Report marked as resolved");
-            }
-            else {
-                toast.error("Failed to resolve report");
-            }
-        }
-        catch (error) {
-            console.error("Error resolving report:", error);
-            toast.error("Error resolving report");
-        }
-    };
+
     const handleRefreshData = async () => {
         if (!id)
             return;
@@ -388,48 +362,7 @@ export function AdminApartmentDetail() {
             setIsUpdatingPublication(false);
         }
     };
-    const handleCreateViolation = async () => {
-        if (isIssuingViolation)
-            return;
-        if (!apartment?.landlordId || !user?.id) {
-            toast.error("Missing required information");
-            return;
-        }
-        if (!violationMessage.trim()) {
-            toast.error("Please enter a violation message");
-            return;
-        }
-        setIsIssuingViolation(true);
-        try {
-            const violation = await createViolation({
-                landlord_id: apartment.landlordId,
-                admin_id: user.id,
-                mode: "violation",
-                type: violationType,
-                message: violationMessage,
-                issued_at: new Date().toISOString(),
-                expires_at: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
-                related_report_id: selectedReport?.id,
-                apartment_id: apartment.id,
-            });
-            if (violation) {
-                toast.success("Violation issued and landlord notified");
-                setModerationMode("view");
-                setViolationMessage("");
-                setSelectedReport(null);
-            }
-            else {
-                toast.error("Failed to create violation");
-            }
-        }
-        catch (error) {
-            console.error("Error creating violation:", error);
-            toast.error("Error creating violation");
-        }
-        finally {
-            setIsIssuingViolation(false);
-        }
-    };
+
     const handleViewListingDetails = () => {
         if (!apartment?.id) {
             toast.error("Apartment information is unavailable");
@@ -821,7 +754,6 @@ export function AdminApartmentDetail() {
 
             {relatedAppeals.length > 0 && <Card className="admin-apartment-detail-card-8"><CardContent className="admin-apartment-detail-card-content-3"><div className="admin-apartment-detail-row-12"><div><h2 className="admin-apartment-detail-related-appeals">Related Appeals</h2><p className="admin-apartment-detail-text-11">Landlord appeals connected to this apartment or its reports.</p></div><Badge className="admin-apartment-detail-badge">{relatedAppeals.length}</Badge></div><div className="admin-apartment-detail-panel-9">{relatedAppeals.map((appeal) => <div key={appeal.id} className="admin-apartment-detail-row-13"><FileText className="admin-apartment-detail-file-text-icon"/><div className="admin-apartment-detail-panel-10"><p className="admin-apartment-detail-text-12">{appeal.reason || "Appeal"}</p><p className="admin-apartment-detail-text-13">{appeal.description || "No explanation provided."}</p></div><Badge className="admin-apartment-detail-badge-2">{String(appeal.status || "pending").replace(/_/g, " ")}</Badge></div>)}</div><Button variant="outline" onClick={() => navigate(`${portalBasePath}?section=appeals`)} className="admin-apartment-detail-open-appeal-management">Open Appeal Management</Button></CardContent></Card>}
 
-
             <Card id="admin-property-details" className="admin-apartment-detail-admin-property-details">
               <CardContent className="admin-apartment-detail-card-content-2">
                 <div className="admin-apartment-detail-row-14">
@@ -1209,40 +1141,6 @@ export function AdminApartmentDetail() {
                     <Eye className="admin-apartment-detail-eye-icon-2"/>
                     Preview Tenant View
                   </Button>
-
-                  {false && selectedReport && (<>
-                      <div className="admin-apartment-detail-panel-25">
-                        <Button onClick={() => setModerationMode(moderationMode === "view" ? "takeAction" : "view")} className="admin-apartment-detail-button-14">
-                          <AlertTriangle className="admin-apartment-detail-alert-triangle-icon-3"/>
-                          {moderationMode === "view" ? "Take Action" : "Cancel"}
-                        </Button>
-
-                        {moderationMode === "takeAction" && (<>
-                            <Button onClick={() => handleResolveReport(selectedReport?.id)} className="admin-apartment-detail-resolve-report">
-                              <CheckCircle2 className="admin-apartment-detail-check-circle2-icon"/>
-                              Resolve Report
-                            </Button>
-
-                            <div className="admin-apartment-detail-panel-26">
-                              <p className="admin-apartment-detail-issue-violation">Issue Violation</p>
-                              <select value={violationType} onChange={(e) => setViolationType(e.target.value)} className="admin-apartment-detail-select">
-                                <option>Misleading information</option>
-                                <option>Policy violation</option>
-                                <option>Fraudulent listing</option>
-                                <option>Safety concern</option>
-                                <option>Permit non-compliance</option>
-                              </select>
-
-                              <textarea value={violationMessage} onChange={(e) => setViolationMessage(e.target.value)} placeholder="Enter violation details..." rows={4} className="admin-apartment-detail-textarea"/>
-
-                              <Button onClick={handleCreateViolation} disabled={isIssuingViolation} className="admin-apartment-detail-button-15">
-                                {isIssuingViolation ? <span className="admin-apartment-detail-8635">&#8635;</span> : <Lock className="admin-apartment-detail-lock-icon"/>}
-                                {isIssuingViolation ? "Saving..." : "Issue Violation"}
-                              </Button>
-                            </div>
-                          </>)}
-                      </div>
-                    </>)}
 
                   <Button onClick={() => setMessageModalOpen(true)} disabled={!apartment.landlordId} variant="outline" className="admin-apartment-detail-send-message-to-landlord">
                     <MessageSquare className="admin-apartment-detail-message-square-icon"/>

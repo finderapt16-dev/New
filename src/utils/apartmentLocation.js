@@ -25,6 +25,3 @@ export function formatApartmentLocation(apartment, fallback = "Location not prov
     const legacyLocation = cleanPart(apartment.location);
     return legacyLocation || fallback;
 }
-export function hasReadableApartmentLocation(apartment) {
-    return formatApartmentLocation(apartment, "") !== "";
-}

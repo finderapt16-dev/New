@@ -45,7 +45,7 @@ const describeContact = (value) => {
     return { kind: "phone", label: raw, href: "" };
 };
 
-export function AdminAppeals({ landlords, reports, archivedReports, violations, allApartments, appealSearch, appealArchiveView, archivedAppeals, appeals, appealTypeFilter, appealSort, selectedAppeal, user, appealStatus, appealResponse, setAppeals, setSelectedAppeal, setAppealResponse, setAppealStatus, setActiveSection, unreadNotifsCount, setSelectedReport, navigate, apartmentDetailBasePath, portalBasePath, setCaseAction, setAppealSearch, setAppealTypeFilter, setAppealSort, setAppealArchiveView, }) {
+export function AdminAppeals({ landlords, reports, archivedReports, violations, allApartments, appealSearch, appealArchiveView, archivedAppeals, appeals, appealTypeFilter, appealSort, selectedAppeal, user, appealStatus, appealResponse, setAppeals, setSelectedAppeal, setAppealResponse, setAppealStatus, setActiveSection, setSelectedReport, navigate, apartmentDetailBasePath, portalBasePath, setCaseAction, setAppealSearch, setAppealTypeFilter, setAppealSort, setAppealArchiveView, }) {
     const landlordMap = new Map();
     landlords.forEach((l) => {
         if (l.id)

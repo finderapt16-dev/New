@@ -225,19 +225,3 @@ export function rankApartments(apartments = [], preferences = {}, context = {}) 
 
     return ranked;
 }
-
-export function getRecommendationExplanation(breakdown) {
-    const factors = [
-        ["Location", "location", breakdown.locationScore],
-        ["Budget fit", "budget", breakdown.budgetScore],
-        ["Availability", "availability", breakdown.availabilityScore],
-        ["Amenities", "amenities", breakdown.amenitiesScore],
-        ["Verification", "verification", breakdown.verificationScore],
-        ["Listing recency", "recency", breakdown.recencyScore],
-    ]
-        .filter(([, , score]) => score > 0)
-        .sort((a, b) => RANKING_WEIGHTS[b[1]] - RANKING_WEIGHTS[a[1]])
-        .slice(0, 3)
-        .map(([label]) => label);
-    return `Recommended based on your preferences: ${factors.join(", ") || "available listings"}.`;
-}

@@ -26,10 +26,12 @@
 }
 
 .property-review-status-pending,
+
 .property-review-status-published,
-.property-review-count,
+
 .property-review-tags span,
-.property-review-rooms em {
+
+.property-review-rooms em  {
   display: inline-flex;
   align-items: center;
   border-radius: 999px;
@@ -73,8 +75,7 @@
 .property-review-panel-heading svg { width: 16px; height: 16px; }
 .property-review-panel-heading h2 { margin: 0; color: #111827; font-size: 15px; font-weight: 700; }
 .property-review-panel-heading p { margin: 3px 0 0; color: #718096; font-size: 11px; }
-.property-review-panel-heading > .property-review-count,
-.property-review-panel-heading > button { margin-left: auto; }
+.property-review-panel-heading > button  { margin-left: auto; }
 .property-review-outline-action { display: inline-flex; align-items: center; gap: 4px; min-height: 28px; border: 1px solid #77cff2; border-radius: 6px; padding: 0 12px; color: #168dc8; background: #ffffff; font-size: 10px; font-weight: 600; cursor: pointer; }.property-review-outline-action svg { width: 11px; height: 11px; }
 
 .property-review-details { display: grid; gap: 10px; margin: 0; }

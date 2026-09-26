@@ -189,9 +189,6 @@ async function uploadLandlordSignupDocuments(userId, input) {
     if (error)
         throw new Error(`Unable to link verification documents: ${error.message}`);
 }
-export function readCurrentUserFromStorage() {
-    return null;
-}
 export function persistCurrentUser(_user) {
     // Compatibility no-op. Supabase Auth and the database profile are authoritative.
 }
