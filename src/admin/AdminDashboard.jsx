@@ -21,6 +21,7 @@ import { AdminLandlordVerification } from './AdminLandlordVerification';
 import { ArchiveEmpty, formatOptionalDate, getLandlordVerificationStatus, isAdminModule, NOTICE_TYPES, NotificationEmpty, SettingsField, SettingsSectionTitle, text, toAdminProfileState, toEvidenceItem, VIOLATION_TYPES } from './adminDashboardHelpers';
 import { AdminReports } from './AdminReports';
 import { AdminSidebar } from './AdminSidebar';
+import "./admin-theme.css";
 export function AdminDashboard() {
     const { user, verifyLandlord, updateUser, refreshUsers, logout } = useAuth();
     const navigate = useNavigate();

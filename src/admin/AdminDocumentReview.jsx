@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { fetchApartmentInspectionDetails } from "@/services/apartmentsService";
+import "./admin-theme.css";
 import { fetchUserById } from "@/services/dashboardSupabaseService";
 import { fetchApartmentVerificationDocuments, VERIFICATION_DOCUMENT_TYPES } from "@/services/verificationDocumentsService";
 

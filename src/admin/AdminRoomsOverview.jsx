@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { fetchApartmentInspectionDetails } from "@/services/apartmentsService";
+import "./admin-theme.css";
 
 const asNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 const roomName = (room, index) => room.name || room.room_name || room.room_type || `Room ${index + 1}`;

@@ -1,0 +1,680 @@
+/* =============================================================================
+   admin-theme.css — one soft-theme layer for EVERY admin surface
+   =============================================================================
+   Why this file exists
+   --------------------
+   The dashboard overview (Landlord Verification) is the reference design: white
+   cards on the app canvas, thin #d9d9d9 borders, 7px radii, the AptFindr blue
+   (#16a5e1 / #0e93ca) as the only accent, calm 18px headings and 40px controls.
+   The other admin pages (Notifications, Apartments, Reports, Appeals, Admin
+   Settings, Apartment Review) were generated with a different palette — brown
+   "stone" text, brown active pills, cream/amber panels, violet icon chips and
+   loud orange/red gradients — and they lock the page into a fixed-height
+   viewport with its own inner scrollbar, so nothing feels like the overview.
+
+   This file is imported LAST by every admin entry module, so the rules below
+   re-tune the generated styles without touching behaviour or markup:
+
+     1. Layout   — pages flow with the document like the overview does; the
+                   sidebar sticks; every section shares one 1180px content width.
+     2. Palette  — browns/creams/violets/loud gradients are remapped onto the
+                   soft blue system (blue accent, soft amber warning, soft green
+                   success, soft red danger — the exact tones the overview uses).
+     3. Type     — section headings and controls adopt the overview scale.
+
+   Nothing here changes class names, markup or logic — it is pure CSS repair.
+   ============================================================================= */
+
+
+/* ==========================================================================
+   1. LAYOUT — let admin pages own the whole document, like the overview
+   ========================================================================== */
+
+/* The dashboard shell was position:fixed with an internal scroll region,
+   which "trapped" every section inside a viewport-sized box. Flow with the
+   document instead so long pages scroll naturally. */
+.admin-portal-shell.app-shell {
+  position: static;
+  inset: auto;
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+  z-index: auto;
+}
+
+.admin-portal-shell .app-shell-frame {
+  height: auto;
+  min-height: 100dvh;
+}
+
+/* The sidebar sticks while the page scrolls, exactly like a normal portal. */
+.admin-portal-shell .app-shell-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+}
+
+.admin-portal-shell .app-shell-main {
+  height: auto;
+  overflow: visible;
+  padding-bottom: 40px;
+}
+
+@media (min-width: 64rem) {
+  .admin-portal-shell .app-shell-main {
+    padding-bottom: 56px;
+  }
+}
+
+/* The standalone Apartment Review page has its own copy of the same trapped
+   viewport — give it the same flow treatment. */
+.admin-apartment-detail {
+  position: static;
+  inset: auto;
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+  z-index: auto;
+  background: transparent;
+}
+
+.admin-apartment-detail .admin-apartment-detail-aside {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+}
+
+.admin-apartment-detail .admin-apartment-detail-main-2 {
+  height: auto;
+  overflow: visible;
+  padding-bottom: 48px;
+}
+
+/* One shared content width — the overview's 1180px — so every admin section
+   breathes and centers identically instead of hugging one edge. */
+.admin-portal-shell .admin-dashboard-container-3,
+.admin-portal-shell .admin-dashboard-container-5,
+.admin-portal-shell .admin-reports-container,
+.admin-portal-shell .admin-reports-panel-11 {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
+.admin-apartment-detail .admin-apartment-detail-container {
+  max-width: 1180px;
+}
+
+/* Standalone rooms/document pages blend into the same canvas. */
+.admin-rooms-overview-page {
+  background: transparent;
+}
+
+.admin-rooms-overview-header,
+.admin-rooms-overview-summary,
+.admin-rooms-overview-grid,
+.admin-rooms-overview-footer,
+.admin-rooms-overview-loading,
+.admin-rooms-overview-empty {
+  max-width: 1180px;
+}
+
+.admin-rooms-overview-grid article {
+  border-radius: 7px;
+}
+
+.admin-rooms-overview-placeholder {
+  color: #90a1b9;
+  background: #eef3f8;
+}
+
+.admin-document-page {
+  background: transparent;
+}
+
+@media (max-width: 640px) {
+  .admin-rooms-overview-page {
+    padding: 24px 16px 48px;
+  }
+}
+
+
+/* ==========================================================================
+   2. TYPE — section headers adopt the overview's calm scale
+   ========================================================================== */
+
+/* The Notifications/Admin Settings titles were 1.875rem/900-weight stones.
+   The overview uses 18px/700 with an 11px muted subtitle — match it. */
+.admin-portal-shell .admin-dashboard-notifications,
+.admin-portal-shell .admin-dashboard-admin-settings {
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: #111111;
+}
+
+@media (min-width: 40rem) {
+  .admin-portal-shell .admin-dashboard-notifications,
+  .admin-portal-shell .admin-dashboard-admin-settings {
+    font-size: 18px;
+  }
+}
+
+.admin-portal-shell .admin-dashboard-text-6,
+.admin-portal-shell .admin-dashboard-text-16 {
+  margin-top: 5px;
+  font-size: 11px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: #666666;
+}
+
+/* Generated stone text → the cool slate the overview uses. */
+.admin-portal-shell .admin-dashboard-heading {
+  color: #111827;
+}
+
+.admin-portal-shell .admin-dashboard-text-8 {
+  color: #52606d;
+}
+
+.admin-portal-shell .admin-dashboard-text-9 {
+  color: #90a1b9;
+}
+
+.admin-portal-shell .admin-dashboard-button-9 {
+  color: #52606d;
+}
+
+.admin-portal-shell .admin-dashboard-select {
+  color: #334155;
+  border-color: #d9d9d9;
+}
+
+.admin-portal-shell .admin-dashboard-input {
+  color: #1e293b;
+}
+
+
+/* ==========================================================================
+   3. CONTROLS — 40px search/select/refresh, like the overview filters
+   ========================================================================== */
+
+.admin-portal-shell .admin-dashboard-label {
+  height: 40px;
+  border: 1px solid #d9d9d9;
+  border-radius: 7px;
+  box-sizing: border-box;
+}
+
+.admin-portal-shell .admin-dashboard-refresh-notifications {
+  height: 40px;
+  width: 40px;
+  box-sizing: border-box;
+  border-radius: 7px;
+  color: #0e93ca;
+}
+
+.admin-portal-shell .admin-dashboard-input:focus {
+  border-color: #16a5e1;
+  box-shadow: 0 0 0 3px rgb(22 165 225 / 14%);
+  outline: none;
+}
+
+/* Filter tab strip: active pill was brown #76502f → AptFindr blue. */
+.admin-portal-shell .admin-dashboard-button-8 {
+  color: #ffffff;
+  background-color: #16a5e1;
+}
+
+.admin-portal-shell .admin-dashboard-button-7 {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.admin-portal-shell .admin-dashboard-button-9:hover {
+  color: #0e93ca;
+}
+
+/* Pagination reuses the same pills — active page blue, idle pages calm. */
+.admin-portal-shell .admin-dashboard-button-13 {
+  color: #52606d;
+  border: 1px solid #d9d9d9;
+  background: #ffffff;
+}
+
+
+/* ==========================================================================
+   4. NOTIFICATIONS — unread tint, unread dot and category chips
+   ========================================================================== */
+
+/* Unread rows were tinted warm cream #fcf8f3 → the overview's cool highlight. */
+.admin-portal-shell .admin-dashboard-article-3 {
+  background-color: #f7fbfe;
+}
+
+.admin-portal-shell .admin-dashboard-unread {
+  background-color: #16a5e1;
+}
+
+/* Activity chip (violet) → brand blue. */
+.admin-portal-shell .admin-dashboard-span-10 {
+  background-color: #e8f6fc;
+}
+
+.admin-portal-shell .admin-dashboard-span-13 {
+  color: #0e93ca;
+}
+
+/* Landlord chip (amber) → the overview's soft amber. */
+.admin-portal-shell .admin-dashboard-span-11 {
+  background-color: #fff4db;
+}
+
+.admin-portal-shell .admin-dashboard-span-14 {
+  color: #b56d00;
+}
+
+/* System chip (stone) → neutral fill. */
+.admin-portal-shell .admin-dashboard-span-12 {
+  background-color: #f2f6fa;
+}
+
+.admin-portal-shell .admin-dashboard-span-15 {
+  color: #52606d;
+}
+
+.admin-portal-shell .admin-dashboard-button-11 {
+  color: #52606d;
+}
+
+
+/* ==========================================================================
+   5. DIALOGS & ACTIONS — flat soft colours instead of loud gradients
+   ========================================================================== */
+
+/* Confirm chips in alert dialogs: green/red solids, softened. */
+.admin-portal-shell .admin-dashboard-alert-dialog-action-2 {
+  background-color: #15935c;
+}
+
+.admin-portal-shell .admin-dashboard-alert-dialog-action-3,
+.admin-portal-shell .admin-dashboard-alert-dialog-action-4 {
+  background-color: #dc3545;
+}
+
+.admin-portal-shell .admin-dashboard-alert-dialog-action-4:hover {
+  background-color: #c73343;
+}
+
+.admin-portal-shell .admin-dashboard-alert-dialog-action-5 {
+  background-color: #0e93ca;
+}
+
+/* Gradient CTAs → flat brand blue. */
+.admin-portal-shell .admin-dashboard-change-password-3,
+.admin-portal-shell .admin-dashboard-save-changes {
+  background-image: none;
+  background-color: #16a5e1;
+}
+
+/* Icon chips that used red/orange gradients → blue brand gradient. */
+.admin-portal-shell .admin-dashboard-row-44,
+.admin-portal-shell .admin-dashboard-row-47 {
+  background-image: linear-gradient(135deg, #16a5e1 0%, #0e93ca 100%);
+}
+
+.admin-portal-shell .admin-dashboard-alert-triangle-icon-3 {
+  color: #b56d00;
+}
+
+/* Cream-edited modal internals → calm borders, white inputs. */
+.admin-portal-shell .admin-dashboard-card-12,
+.admin-portal-shell .admin-dashboard-card-19 {
+  border-color: #d9e3e8;
+}
+
+.admin-portal-shell .admin-dashboard-row-46 {
+  border-color: #d9e3e8;
+  background-color: #f7fbfe;
+}
+
+.admin-portal-shell .admin-dashboard-textarea-2,
+.admin-portal-shell .admin-dashboard-input-7 {
+  border-color: #d9e3e8;
+  background-color: #ffffff;
+}
+
+/* The "credentials may be incomplete" warning → soft amber, on-system. */
+.admin-portal-shell .admin-dashboard-card-13 {
+  border-color: #f0dfae;
+  background-color: #fff9ec;
+}
+
+
+/* ==========================================================================
+   6. SHARED TONE / STATUS UTILITIES (used across admin modules)
+   ========================================================================== */
+
+.admin-tone-warning-icon {
+  background: #fff4db;
+  color: #b56d00;
+}
+
+.admin-tone-orange-icon {
+  background: #e8f6fc;
+  color: #0e93ca;
+}
+
+.admin-tone-violet-icon {
+  background: #e8f6fc;
+  color: #0e93ca;
+}
+
+.admin-text-warning {
+  color: #b56d00;
+}
+
+.admin-text-muted {
+  color: #64748b;
+}
+
+.admin-text-danger {
+  color: #c73343;
+}
+
+.admin-text-brand {
+  color: #0e93ca;
+}
+
+.admin-status-approved {
+  background: #ddf8ea;
+  color: #15935c;
+  border-color: #b5ecd2;
+}
+
+.admin-status-review {
+  background: #fff4db;
+  color: #b56d00;
+  border-color: #f0dfae;
+}
+
+.admin-status-rejected {
+  background: #ffe5e7;
+  color: #c73343;
+  border-color: #f5c2c7;
+}
+
+.admin-status-border-success {
+  border-color: #b5ecd2;
+}
+
+/* Helper-row browns in the dashboard helpers block → brand blue. */
+.admin-dashboard-helpers-row-2,
+.admin-dashboard-helpers-row-3 {
+  color: #0e93ca;
+}
+
+.admin-dashboard-helpers-button {
+  color: #0e93ca;
+}
+
+
+/* ==========================================================================
+   7. REPORTS — brown hovers, orange chips, amber banners, red gradients
+   ========================================================================== */
+
+.admin-reports-resolve-report:hover,
+.admin-reports-review-report:hover {
+  background-color: #0b82b5;
+}
+
+/* Flag chip in the Reports header was orange → brand blue. */
+.admin-reports-row-18 {
+  background-color: #e8f6fc;
+  color: #0e93ca;
+}
+
+/* Dismiss-modal icon chip kept its accent but on-brand. */
+.admin-reports-row-26 {
+  background-image: linear-gradient(135deg, #16a5e1 0%, #0e93ca 100%);
+}
+
+/* Amber banner → the soft cream used for advisory panels. */
+.admin-reports-row-27 {
+  background-image: none;
+  background-color: #fff9ec;
+}
+
+/* Confirm dismissal was an orange gradient → flat soft red (destructive). */
+.admin-reports-confirm-dismissal {
+  background-image: none;
+  background-color: #dc3545;
+}
+
+.admin-reports-confirm-dismissal:hover {
+  background-color: #c73343;
+}
+
+.admin-reports-panel-18 {
+  border-color: #f0dfae;
+}
+
+.admin-reports-card-12,
+.admin-reports-card-13 {
+  border-color: #d9e3e8;
+}
+
+.admin-reports-textarea {
+  border-color: #f0dfae;
+}
+
+.admin-reports-badge-3 {
+  background-color: #fff4db;
+  color: #b56d00;
+}
+
+.admin-reports-delete {
+  border-color: #f5c2c7;
+  color: #c73343;
+}
+
+/* Evidence viewer: brown focus ring → soft blue ring. */
+.evidence-viewer-button-5 {
+  box-shadow: 0 0 0 3px rgb(22 165 225 / 14%);
+}
+
+.evidence-viewer-button-6:hover {
+  border-color: #b9dfee;
+}
+
+/* Red gradient tile in the evidence viewer → flat soft red. */
+.evidence-viewer-panel-6 {
+  background-image: none;
+  background-color: #dc3545;
+}
+
+
+/* ==========================================================================
+   8. APARTMENT REVIEW — oranges/amber panels, neon greens, harsh reds
+   ========================================================================== */
+
+.admin-apartment-detail-row {
+  background-image: none;
+  background-color: #f8fbfe;
+}
+
+.admin-apartment-detail-alert-triangle-icon,
+.admin-apartment-detail-image-icon-icon,
+.admin-apartment-detail-map-pin-icon-3,
+.admin-apartment-detail-alert-triangle-icon-2,
+.admin-apartment-detail-text-17,
+.admin-apartment-detail-row-30 {
+  color: #b56d00;
+}
+
+.admin-apartment-detail-row-10,
+.admin-apartment-detail-row-15,
+.admin-apartment-detail-row-29 {
+  background-color: #fff4db;
+  color: #b56d00;
+}
+
+.admin-apartment-detail-go-back {
+  background-color: #16a5e1;
+}
+
+.admin-apartment-detail-arrow-left-icon {
+  color: #ffffff;
+}
+
+.admin-apartment-detail-file-text-icon,
+.admin-apartment-detail-a,
+.admin-apartment-detail-a-2 {
+  color: #0e93ca;
+}
+
+.admin-apartment-detail-verified-landlord {
+  background-color: #16a5e1;
+}
+
+.admin-apartment-detail-row-22 {
+  background-image: linear-gradient(135deg, #16a5e1 0%, #0e93ca 100%);
+}
+
+.admin-apartment-detail-check-icon,
+.admin-apartment-detail-external-link-icon,
+.admin-apartment-detail-shield-check-icon-3,
+.admin-apartment-detail-text-21 {
+  color: #15935c;
+}
+
+.admin-apartment-detail-badge-3,
+.admin-apartment-detail-resolve-report {
+  background-color: #15935c;
+}
+
+.admin-apartment-detail-view-full-document,
+.admin-apartment-detail-button-12 {
+  background-color: #15935c;
+}
+
+.admin-apartment-detail-admin-verification {
+  border-color: #b5ecd2;
+  background-color: rgb(221 248 234 / 50%);
+}
+
+.admin-apartment-detail-button-11,
+.admin-apartment-detail-panel-21,
+.admin-apartment-detail-panel-24 {
+  border-color: #b5ecd2;
+}
+
+.admin-apartment-detail-row-24 {
+  background-image: linear-gradient(135deg, #15935c 0%, #0f7d4d 100%);
+}
+
+.admin-apartment-detail-panel-22,
+.admin-apartment-detail-panel-23,
+.admin-apartment-detail-card-18 {
+  border-color: #f0dfae;
+  background-color: #fff9ec;
+}
+
+.admin-apartment-detail-card-19 {
+  background-color: #fff9ec;
+}
+
+.admin-apartment-detail-select,
+.admin-apartment-detail-textarea {
+  border-color: #f0dfae;
+}
+
+.admin-apartment-detail-row-26 {
+  background-image: linear-gradient(135deg, #dc3545 0%, #c73343 100%);
+}
+
+.admin-apartment-detail-badge-4,
+.admin-apartment-detail-button-15 {
+  background-color: #dc3545;
+}
+
+.admin-apartment-detail-button-13 {
+  color: #c73343;
+}
+
+.admin-apartment-detail-button-14 {
+  background-color: #0e93ca;
+}
+
+.admin-apartment-detail-flag-icon-2 {
+  color: #dc3545;
+}
+
+.admin-apartment-detail-view-reports {
+  border-color: #f5c2c7;
+}
+
+
+/* ==========================================================================
+   9. SIDEBAR — soften the logout hover (dark red → muted soft red)
+   ========================================================================== */
+
+.admin-portal-shell .app-sidebar-logout:hover {
+  background: #fff5f6 !important;
+  border-color: #ffe5e7 !important;
+  color: #c73343 !important;
+}
+
+.admin-portal-shell .app-sidebar-logout:hover svg {
+  color: #c73343 !important;
+}
+
+
+/* ==========================================================================
+   10. ROOMS & APPEALS — align the last custom palettes to the same tokens
+   ========================================================================== */
+
+/* Rooms overview: the pending pill was orange (#ead2ac/#a86200/#fff7ed). */
+.admin-rooms-overview-summary > span {
+  border-color: #f0dfae;
+  color: #b56d00;
+  background: #fff4db;
+}
+
+/* Appeals: status pills already soft — nudge them onto the shared tones. */
+.apl-status--pending {
+  background: #fff4db;
+  color: #b56d00;
+}
+
+.apl-status--review {
+  background: #e8f6fc;
+  color: #0e93ca;
+}
+
+.apl-status--info {
+  background: #fff4db;
+  color: #b56d00;
+}
+
+.apl-status--approved {
+  background: #ddf8ea;
+  color: #15935c;
+}
+
+.apl-status--rejected {
+  background: #ffe5e7;
+  color: #c73343;
+}
+
+.apl-btn--danger {
+  border-color: #f5c2c7;
+  color: #c73343;
+}
+
+.apl-btn--danger:hover {
+  background: #fff5f6;
+}
