@@ -50,3 +50,12 @@
   .market-property-row { grid-template-columns: 130px minmax(180px, 1fr) repeat(3, 85px) 100px; }
   .market-property-photo { width: 115px; height: 96px; }
 }
+
+/*
+ * Tablet widths still show the fixed menu button (it only hides from 64rem), so
+ * the page needs the same top offset phones already get. Without it the header
+ * card slides underneath the menu.
+ */
+@media (min-width: 701px) and (max-width: 1023px) {
+  .market-trends-page { padding-top: 4.5rem; }
+}

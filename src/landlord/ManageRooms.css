@@ -649,7 +649,12 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 14px;
+    /*
+     * Spacer for the fixed menu button (40px tall, pinned 16px from the top edge).
+     * It has to be taller than that button, otherwise the page title underneath
+     * renders behind the menu.
+     */
+    min-height: 4.5rem;
     margin-bottom: 14px;
   }
   .manage-rooms-row .manage-rooms-room-management {
