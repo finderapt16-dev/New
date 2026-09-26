@@ -21,6 +21,7 @@ Never commit `.env`, service-role keys, passwords, or other secrets.
 - `src/App.jsx` — public, authentication, tenant, landlord, and admin routes
 - `src/landing` and `src/auth` — public pages and shared authentication
 - `src/tenant`, `src/landlord`, `src/admin` — flat role folders containing pages and their components
+- `src/admin/admin-theme.css` — shared soft-theme layer imported last by every admin entry module; it keeps Notifications, Apartments, Reports, Appeals, Admin Settings, and the review pages on the same palette and flowing layout as the dashboard overview
 - `src/components` — shared controls, layouts, and account settings; `ui` contains the common UI primitives
 - `src/services` — Supabase client and existing data-access services
 - `src/contexts`, `src/data`, `src/utils` — shared state, data-access barrels, and helpers

@@ -19,6 +19,7 @@ import { AlertTriangle, ArrowLeft, Building2, CalendarCheck, Check, CheckCircle2
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import "./admin-theme.css";
 const toFiniteNumber = (value, fallback = 0) => {
     if (typeof value === "number" && Number.isFinite(value)) {
         return value;
