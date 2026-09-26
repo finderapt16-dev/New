@@ -1,5 +1,5 @@
 import "./ManageRooms.css";
-import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, DoorOpen, LoaderCircle, Pencil, Plus } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, DoorOpen, LoaderCircle, Menu, Pencil, Plus, X } from "lucide-react";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { Link, Navigate, useBlocker, useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -11,16 +11,52 @@ import { MultiImageUploader } from "@/components/MultiImageUploader";
 import { useApartmentsContext } from "@/contexts/ApartmentsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { createApartmentRoom, deleteApartmentRoom, fetchApartmentWithImages, updateApartmentRoom, uploadApartmentRoomImage } from "@/data/apartments";
+import { LandlordSidebar } from "@/landlord/LandlordSidebar";
 import { supabase } from "@/services/supabaseClient";
 import { getRoomAmenities, normalizeRoomList } from "@/utils/roomFeatures";
 
 /*
  * Room management stays in this existing JSX/CSS pair.
- * File sections: list page, edit page, editor, add dialog, shared fields,
- * preview, loading/error states, property loading, unsaved-change guard,
- * and room constants/validation/photo helpers.
+ * File sections: landlord shell, list page, edit page, editor, add dialog,
+ * shared fields, preview, loading/error states, property loading,
+ * unsaved-change guard, and room constants/validation/photo helpers.
  * Components and helpers below are defined once and reused by both routes.
  */
+
+// ---------------------------------------------------------------------------
+// 0. Shared landlord shell — sidebar on desktop, menu drawer on phones
+// ---------------------------------------------------------------------------
+
+function RoomsShell({ user, children }) {
+    const navigate = useNavigate();
+    const { logout } = useAuth();
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const sidebarProps = {
+        user,
+        verified: Boolean(user?.isVerified),
+        activeSection: "overview",
+        onSectionChange: (section) => navigate(`/dashboard?section=${section}`),
+        onClose: () => setSidebarOpen(false),
+        onLogout: () => {
+            logout?.();
+            navigate("/");
+        },
+    };
+    return <div className="app-shell landlord-shell landlord-manage-rooms">
+        <div className="app-shell-frame">
+            <aside className="app-shell-sidebar"><LandlordSidebar {...sidebarProps} /></aside>
+            {sidebarOpen && <div className="app-sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
+            <aside className={`app-sidebar-drawer ${sidebarOpen ? "is-open" : ""}`}>
+                <button type="button" onClick={() => setSidebarOpen(false)} aria-label="Close navigation" className="app-sidebar-close"><X className="rm-menu-icon" /></button>
+                <LandlordSidebar {...sidebarProps} />
+            </aside>
+            <button type="button" aria-label="Open navigation" onClick={() => setSidebarOpen(true)} className="app-sidebar-trigger"><Menu className="rm-menu-icon" /></button>
+            <main className="app-shell-main">
+                <div className="app-shell-content app-shell-content-mobile-nav">{children}</div>
+            </main>
+        </div>
+    </div>;
+}
 
 // ---------------------------------------------------------------------------
 // 1. Manage Rooms — empty state, paginated list, and deletion
@@ -88,14 +124,14 @@ export function ManageRooms() {
     };
 
     if (user?.role !== "landlord") return <Navigate to="/dashboard" replace />;
-    if (isLoading) return <RoomPageState loading />;
-    if (error) return <RoomPageState title="Unable to load rooms" message={error} onRetry={() => void refresh()} />;
-    if (!property || !canManage) return <RoomPageState />;
+    if (isLoading) return <RoomsShell user={user}><RoomPageState loading /></RoomsShell>;
+    if (error) return <RoomsShell user={user}><RoomPageState title="Unable to load rooms" message={error} onRetry={() => void refresh()} /></RoomsShell>;
+    if (!property || !canManage) return <RoomsShell user={user}><RoomPageState /></RoomsShell>;
 
-    return <div className="room-management">
+    return <RoomsShell user={user}><div className="room-management">
         <div className="rm-page rm-page--list">
-            <Link className="rm-back-link" to={`/apartment/${id}`} state={{ returnTo: "/dashboard?section=properties", backLabel: "Back to My Properties" }}>
-                <ArrowLeft aria-hidden="true" />Back to View Property
+            <Link className="rm-back-link" to="/dashboard?section=overview">
+                <ArrowLeft aria-hidden="true" />Back to My Properties
             </Link>
             <header className="rm-page-heading">
                 <h1>Manage Rooms — {property.title || "Untitled property"}</h1>
@@ -156,7 +192,7 @@ export function ManageRooms() {
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
-    </div>;
+    </div></RoomsShell>;
 }
 
 // ---------------------------------------------------------------------------
@@ -168,12 +204,12 @@ export function EditRoom() {
     const { user } = useAuth();
     const { property, rooms, isLoading, error, refreshError, refresh } = useManagedProperty(id);
     if (user?.role !== "landlord") return <Navigate to="/dashboard" replace />;
-    if (isLoading) return <RoomPageState loading />;
-    if (error) return <RoomPageState title="Unable to load room" message={error} onRetry={() => void refresh()} />;
-    if (!property || property.landlordId !== user.id) return <RoomPageState />;
+    if (isLoading) return <RoomsShell user={user}><RoomPageState loading /></RoomsShell>;
+    if (error) return <RoomsShell user={user}><RoomPageState title="Unable to load room" message={error} onRetry={() => void refresh()} /></RoomsShell>;
+    if (!property || property.landlordId !== user.id) return <RoomsShell user={user}><RoomPageState /></RoomsShell>;
     const room = rooms.find((item) => item.id === roomId);
-    if (!room) return <RoomPageState title="Room not available" message="This room may have been removed. Return to the room list to continue." backTo={`/landlord/properties/${id}/rooms`} backLabel="Back to Manage Rooms" />;
-    return <RoomEditor key={roomId} property={property} room={room} rooms={rooms} refreshError={refreshError} />;
+    if (!room) return <RoomsShell user={user}><RoomPageState title="Room not available" message="This room may have been removed. Return to the room list to continue." backTo={`/landlord/properties/${id}/rooms`} backLabel="Back to Manage Rooms" /></RoomsShell>;
+    return <RoomsShell user={user}><RoomEditor key={roomId} property={property} room={room} rooms={rooms} refreshError={refreshError} /></RoomsShell>;
 }
 
 // ---------------------------------------------------------------------------
@@ -515,7 +551,7 @@ function RoomPreview({ form, images }) {
 // 7. Loading, error, and unavailable-room states
 // ---------------------------------------------------------------------------
 
-function RoomPageState({ loading = false, title = "Property not available", message, onRetry, backTo = "/dashboard?section=properties", backLabel = "Back to My Properties" }) {
+function RoomPageState({ loading = false, title = "Property not available", message, onRetry, backTo = "/dashboard?section=overview", backLabel = "Back to My Properties" }) {
     return <div className="room-management rm-state">
         <div className="rm-state-content" role={loading ? "status" : undefined}>
             {loading ? <LoaderCircle className="rm-spinner" aria-hidden="true" /> : <DoorOpen aria-hidden="true" />}
