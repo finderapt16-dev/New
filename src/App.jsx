@@ -66,7 +66,7 @@ export const router = createBrowserRouter([
             { path: "settings", element: <ProtectedRoute><PageLoader><Settings /></PageLoader></ProtectedRoute> },
             // Role dashboards: sections remain query parameters, not new URLs.
             // Tenant: overview, suggested, popular, favorites, notifications, report, help, settings.
-            // Landlord: overview, properties, activity, notifications, settings, help.
+            // Landlord: overview, activity, notifications, settings, help.
             // Admin: overview, notifications, landlords, apartments, reports, appeals, admininfo.
             { path: "dashboard", element: <ProtectedRoute><PageLoader>{roleDashboard}</PageLoader></ProtectedRoute> },
             { path: "admin", element: <ProtectedRoute allowedRoles={["admin"]}><PageLoader>{roleDashboard}</PageLoader></ProtectedRoute> },

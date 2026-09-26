@@ -193,13 +193,27 @@ for (const width of [390, 1280]) {
 
         await page.goto("/dashboard?section=activity");
         await expect(page.getByRole("heading", { name: "Property Activity", exact: true })).toBeVisible();
+        // The old "Your Listings" layout is gone from the code; its legacy URL falls back
+        // to the default dashboard.
         await page.goto("/dashboard?section=properties");
-        await expect(page.getByRole("heading", { name: "Your Listings", exact: true })).toBeVisible();
+        await expect(page.getByRole("heading", { name: "Your Properties", exact: true })).toBeVisible();
         await page.getByRole("link", { name: "Manage Rooms", exact: true }).click();
         await expect(page).toHaveURL(listPath);
         await expect(page.getByRole("rowheader", { name: "Room 101" })).toBeVisible();
-        await page.getByRole("link", { name: "Back to View Property" }).click();
-        await expect(page.getByRole("heading", { name: "Luna Apartment", exact: true })).toBeVisible();
+        // Manage Rooms stays inside the landlord shell: sidebar on desktop,
+        // menu bar trigger on phones.
+        if (width < 1024) {
+            await expect(page.getByRole("button", { name: "Open navigation", exact: true })).toBeVisible();
+            await page.getByRole("button", { name: "Open navigation", exact: true }).click();
+            await expect(page.locator(".app-sidebar-drawer.is-open")).toBeVisible();
+            await page.getByRole("button", { name: "Close navigation", exact: true }).click();
+        } else {
+            await expect(page.locator(".app-shell-sidebar")).toBeVisible();
+            await expect(page.locator(".app-shell-sidebar").getByRole("button", { name: "My Properties", exact: true })).toBeVisible();
+        }
+        await page.getByRole("link", { name: "Back to My Properties" }).click();
+        await expect(page).toHaveURL(/\/dashboard\?section=overview$/);
+        await expect(page.getByRole("heading", { name: "Your Properties", exact: true })).toBeVisible();
         await page.goto("/add-apartment");
         await expect(page.getByRole("heading", { name: "Add Property", exact: true })).toBeVisible();
         expect(errors).toEqual([]);

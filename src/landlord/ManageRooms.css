@@ -12,7 +12,8 @@
   font-size: 14px;
   line-height: 1.5;
 }
-.room-management { min-height: 100vh; min-height: 100dvh; background: #fff; }
+.room-management { min-height: 100%; background: transparent; }
+.rm-menu-icon { width: 20px; height: 20px; }
 .rm-page { width: 100%; max-width: 1240px; margin: 0 auto; padding: 32px 36px 64px; }
 .rm-page--list { max-width: 1180px; padding-top: 38px; }
 .rm-page--edit { padding-top: 24px; }
@@ -191,7 +192,7 @@
 .rm-photos .multi-image-compact-tools svg { width: 15px; height: 15px; }
 .rm-photos .multi-image-uploader-style-46 { margin-top: 8px; background: #f7fafc; font-size: 10px; }
 .rm-spinner { animation: spin 1s linear infinite; }
-.rm-state { display: grid; place-items: center; padding: 24px; text-align: center; }
+.rm-state { display: grid; place-items: center; min-height: 60vh; padding: 24px; text-align: center; }
 .rm-state-content { max-width: 560px; }
 .rm-state-content > svg { width: 36px; height: 36px; margin: 0 auto 16px; color: var(--rm-accent); }
 .rm-state h1 { margin: 0 0 10px; font-size: 22px; font-weight: 600; }

@@ -6,7 +6,6 @@ import { LandlordActivity } from "@/landlord/LandlordActivity";
 import { LandlordHelpSupport } from "@/landlord/LandlordHelpSupport";
 import { LandlordNotifications } from "@/landlord/LandlordNotifications";
 import { LandlordOverview } from "@/landlord/LandlordOverview";
-import { MyProperties } from "@/landlord/MyProperties";
 import { LandlordSettings } from "@/landlord/LandlordSettings";
 import { LandlordSidebar } from "@/landlord/LandlordSidebar";
 import { AlertsTab } from "@/landlord/AlertsTab";
@@ -26,7 +25,7 @@ import { Eye, Heart, Menu, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
-const LANDLORD_DASHBOARD_SECTIONS = new Set(["overview", "properties", "activity", "notifications", "settings", "help"]);
+const LANDLORD_DASHBOARD_SECTIONS = new Set(["overview", "activity", "notifications", "settings", "help"]);
 export function LandlordDashboard() {
     const { user, updateUser, logout } = useAuth();
     const navigate = useNavigate();
@@ -42,11 +41,6 @@ export function LandlordDashboard() {
         message: "",
         contact: user?.email || "",
     });
-    const [propertyFilter, setPropertyFilter] = useState("all");
-    const [propertySort, setPropertySort] = useState("newest");
-    const [propertyViewMode, setPropertyViewMode] = useState("grid");
-    const [propertyPage, setPropertyPage] = useState(1);
-    const [propertiesPerPage, setPropertiesPerPage] = useState(6);
     const [activityRange, setActivityRange] = useState("all");
     const [favoriteRows, setFavoriteRows] = useState([]);
     const [viewRows, setViewRows] = useState([]);
@@ -517,28 +511,6 @@ export function LandlordDashboard() {
     const aptFavs = (aptId) => {
         return favoriteRows.filter((favorite) => (favorite.apartment_id ?? favorite.apartmentId) === aptId).length;
     };
-    const filteredApartments = useMemo(() => {
-        const filtered = propertyFilter === "all"
-            ? [...myApartments]
-            : myApartments.filter((apartment) => getApartmentStatus(apartment) === propertyFilter);
-        return filtered.sort((left, right) => {
-            if (propertySort === "name")
-                return String(left.title ?? "").localeCompare(String(right.title ?? ""));
-            if (propertySort === "price-high")
-                return Number(right.price ?? 0) - Number(left.price ?? 0);
-            if (propertySort === "price-low")
-                return Number(left.price ?? 0) - Number(right.price ?? 0);
-            const leftTime = new Date(left.createdAt ?? 0).getTime();
-            const rightTime = new Date(right.createdAt ?? 0).getTime();
-            return propertySort === "oldest" ? leftTime - rightTime : rightTime - leftTime;
-        });
-    }, [myApartments, propertyFilter, propertySort]);
-    const propertyPageCount = Math.max(1, Math.ceil(filteredApartments.length / propertiesPerPage));
-    const safePropertyPage = Math.min(propertyPage, propertyPageCount);
-    const paginatedApartments = filteredApartments.slice((safePropertyPage - 1) * propertiesPerPage, safePropertyPage * propertiesPerPage);
-    useEffect(() => {
-        setPropertyPage(1);
-    }, [propertyFilter, propertySort, propertiesPerPage]);
     const handleTogglePublication = async (apartmentId, nextValue) => {
         try {
             await updateApartmentPublication(apartmentId, nextValue, user?.id);
@@ -1143,7 +1115,6 @@ export function LandlordDashboard() {
     };
     const sectionMap = {
         overview: () => (<LandlordOverview myApartments={myApartments} user={user} availableCount={availableCount} landlordVerified={landlordVerified} landlordPermit={landlordPermit} setSettingsTab={setSettingsTab} setActiveSection={setActiveSection} isLoadingApartments={isLoadingApartments} ratingSummary={ratingSummary} viewRows={landlordViewRows} favoriteRows={landlordFavoriteRows} ratingRows={ratingRows} ratingsLoading={ratingsLoading} openViewers={openViewers} aptViews={aptViews} openFavoriters={openFavoriters} aptFavs={aptFavs} setEditingApartment={setEditingApartment} editingApartment={editingApartment} handleSaveApartment={handleSaveEditedApartment} handleTogglePublication={handleTogglePublication} deletingApartmentId={deletingApartmentId} handleDeleteApartment={handleDeleteApartment}/>),
-        properties: () => (<MyProperties myApartments={myApartments} setPropertyFilter={setPropertyFilter} propertyFilter={propertyFilter} propertySort={propertySort} setPropertySort={setPropertySort} setPropertyViewMode={setPropertyViewMode} propertyViewMode={propertyViewMode} isLoadingApartments={isLoadingApartments} paginatedApartments={paginatedApartments} ratingSummary={ratingSummary} ratingsLoading={ratingsLoading} openViewers={openViewers} aptViews={aptViews} openFavoriters={openFavoriters} aptFavs={aptFavs} setEditingApartment={setEditingApartment} handleTogglePublication={handleTogglePublication} deletingApartmentId={deletingApartmentId} handleDeleteApartment={handleDeleteApartment} filteredApartments={filteredApartments} safePropertyPage={safePropertyPage} propertiesPerPage={propertiesPerPage} setPropertyPage={setPropertyPage} propertyPageCount={propertyPageCount} setPropertiesPerPage={setPropertiesPerPage}/>),
         activity: () => (<LandlordActivity activityRange={activityRange} landlordViewRows={landlordViewRows} landlordFavoriteRows={landlordFavoriteRows} ratingRows={ratingRows} propertyIds={propertyIds} myApartments={myApartments} getViewWeight={getViewWeight} setActivityRange={setActivityRange} isLoadingApartments={isLoadingApartments} isLoadingActivityData={isLoadingActivityData}/>),
         notifications: () => (<LandlordNotifications notifications={notifications} notifSearch={notifSearch} notifCategory={notifCategory} notifSort={notifSort} isMarkingAllNotifs={isMarkingAllNotifs} markAllLandlordNotificationsRead={markAllLandlordNotificationsRead} setNotifCategory={setNotifCategory} setNotifSearch={setNotifSearch} setNotifSort={setNotifSort} isLoadingNotifications={isLoadingNotifications} handleNotificationClick={handleNotificationClick} setOpenNotifMenuId={setOpenNotifMenuId} openNotifMenuId={openNotifMenuId} toggleNotifReadStatus={toggleNotifReadStatus} deletingNotifId={deletingNotifId} deleteNotif={deleteNotif} landlordAppeals={landlordAppeals} getAppealMetadata={getAppealMetadata}/>),
         settings: () => (<LandlordSettings settingsTab={settingsTab} setSettingsTab={setSettingsTab} profileTab={<ProfileTab profile={profile} isUploadingProfilePhoto={isUploadingProfilePhoto} profilePhotoInputRef={profilePhotoInputRef} handleRemoveProfilePhoto={handleRemoveProfilePhoto} handleProfilePhoto={handleProfilePhoto} updateProfile={updateProfile} setProfile={setProfile} savedProfile={savedProfile} handleUpdateProfile={handleUpdateProfile} isUpdatingProfile={isUpdatingProfile}/>} alertsTab={<AlertsTab alerts={alerts} setA={setA} handleSaveAlerts={handleSaveAlerts}/>} businessTab={<BusinessTab business={business} setB={setB} myApartments={myApartments} allRooms={allRooms} availableCount={availableCount} setEditingApartment={setEditingApartment} setBusiness={setBusiness} savedBusiness={savedBusiness} handleSaveBusiness={handleSaveBusiness}/>} securityTab={<SecurityTab security={security} passwordState={passwordState} setPasswordState={setPasswordState} handlePasswordChange={handlePasswordChange} twoFAState={twoFAState} handleSetup2FA={handleSetup2FA} updateSecurity={updateSecurity} setTwoFAState={setTwoFAState} handleCancel2FASetup={handleCancel2FASetup} handleVerify2FA={handleVerify2FA} handleSaveSecurity={handleSaveSecurity} handleDeleteAccount={handleDeleteAccount}/>}/>),
@@ -1153,7 +1124,7 @@ export function LandlordDashboard() {
       <div className="app-shell-frame">
 
         <aside className="app-shell-sidebar">
-          <LandlordSidebar user={user} verified={landlordVerified} activeSection={activeSection === "properties" ? "overview" : activeSection} unreadNotifications={unreadNotificationCount} onSectionChange={setActiveSection} onClose={() => setSidebarOpen(false)} onLogout={handleLogout}/>
+          <LandlordSidebar user={user} verified={landlordVerified} activeSection={activeSection} unreadNotifications={unreadNotificationCount} onSectionChange={setActiveSection} onClose={() => setSidebarOpen(false)} onLogout={handleLogout}/>
         </aside>
 
         {sidebarOpen && (<div className="app-sidebar-overlay" onClick={() => setSidebarOpen(false)}/>)}
@@ -1162,7 +1133,7 @@ export function LandlordDashboard() {
           <button onClick={() => setSidebarOpen(false)} aria-label="Close navigation" className="app-sidebar-close">
             <X className="landlord-dashboard-x-icon"/>
           </button>
-          <LandlordSidebar user={user} verified={landlordVerified} activeSection={activeSection === "properties" ? "overview" : activeSection} unreadNotifications={unreadNotificationCount} onSectionChange={setActiveSection} onClose={() => setSidebarOpen(false)} onLogout={handleLogout}/>
+          <LandlordSidebar user={user} verified={landlordVerified} activeSection={activeSection} unreadNotifications={unreadNotificationCount} onSectionChange={setActiveSection} onClose={() => setSidebarOpen(false)} onLogout={handleLogout}/>
         </aside>
 
         <button onClick={() => setSidebarOpen(true)} aria-label="Open navigation" className="app-sidebar-trigger">

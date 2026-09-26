@@ -139,11 +139,15 @@ describe("Manage Rooms list and quick add", () => {
         await user.click(screen.getByRole("button", { name: "Try again" }));
         expect(await screen.findByText("No rooms added yet")).toBeVisible();
     });
-    it("returns to the correct property", async () => {
+    it("keeps the landlord sidebar and returns to My Properties on the default dashboard", async () => {
         const user = userEvent.setup();
         const router = renderPage();
-        await user.click(await screen.findByRole("link", { name: "Back to View Property" }));
-        expect(router.state.location.pathname).toBe("/apartment/p");
+        // The page stays inside the landlord shell instead of looking like a separate page.
+        expect(document.querySelector(".app-shell-sidebar")).toBeTruthy();
+        expect(within(document.querySelector(".app-shell-sidebar")).getByRole("button", { name: "My Properties" })).toBeVisible();
+        await user.click(await screen.findByRole("link", { name: "Back to My Properties" }));
+        expect(router.state.location.pathname).toBe("/dashboard");
+        expect(router.state.location.search).toBe("?section=overview");
     });
 });
 
