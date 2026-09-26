@@ -15,6 +15,7 @@ export default defineConfig({
     assetsInclude: ['**/*.svg', '**/*.csv'],
     server: {
         open: false,
+        allowedHosts: ['.e2b.app'],
     },
     build: {
         manifest: true,
