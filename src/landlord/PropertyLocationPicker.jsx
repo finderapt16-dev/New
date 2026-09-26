@@ -1,8 +1,8 @@
 import "./PropertyLocationPicker.css";
 import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
-import { Label } from "../components/ui/label";
-import { geocodeLocationWithinLaPaz, reverseGeocodeWithinLaPaz, GeocodingError } from "../services/geocodingService";
+import { Label } from "@/components/ui/label";
+import { geocodeLocationWithinLaPaz, reverseGeocodeWithinLaPaz, GeocodingError } from "@/services/geocodingService";
 // Fix for default marker icon in Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({

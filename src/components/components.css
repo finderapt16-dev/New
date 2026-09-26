@@ -166,3 +166,16 @@
 .room-image-gallery-thumb-active { border-color: #16a5e1; }
 .room-image-gallery-thumb-idle { border-color: transparent; }
 .room-image-gallery-thumb-idle:hover { opacity: 1; }
+
+/* Keyboard/touch-accessible browse and thumbnail controls in the shared uploader. */
+.multi-image-browse { display: block; width: 100%; cursor: pointer; text-align: center; }
+.multi-image-browse > span { display: block; }
+.multi-image-browse:focus-visible { outline: 2px solid #16a5e1; outline-offset: 4px; border-radius: 6px; }
+.multi-image-browse:disabled { cursor: not-allowed; opacity: .55; }
+.multi-image-thumbnail-preview { display: block; width: 100%; height: 100%; }
+.multi-image-thumbnail:focus-within .multi-image-uploader-style-39 { opacity: 1; }
+.multi-image-uploader-style-39 { pointer-events: none; }
+.multi-image-uploader-style-39 button { pointer-events: auto; }
+@media (hover: none) {
+  .multi-image-thumbnail .multi-image-uploader-style-39 { opacity: 1; align-items: flex-end; padding-bottom: 4px; background: transparent; }
+}

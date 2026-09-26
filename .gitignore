@@ -35,3 +35,7 @@ yarn-debug.log*
 
 # Local Supabase migration export
 supabase-master-migration.sql
+
+# Browser test artifacts
+playwright-report/
+test-results/

@@ -34,6 +34,7 @@ export function apartmentToFormValues(apartment) {
         utilityItems: Array.isArray(apartment.utilities) ? apartment.utilities : [],
         customFeatures,
         verification,
+        featureMetadata: apartment.features && !Array.isArray(apartment.features) ? apartment.features : {},
         lat: String(apartment.lat),
         lng: String(apartment.lng),
         isPublished: apartment.isPublished ?? true,

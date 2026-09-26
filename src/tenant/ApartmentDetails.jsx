@@ -28,6 +28,7 @@ import { EvidenceUploader } from "@/components/EvidenceUploader";
 import { LandlordSidebar } from "@/landlord/LandlordSidebar";
 import { RoomImageGallery } from "@/components/RoomImageGallery";
 import { RoomDetails } from "./RoomDetails";
+import { getRoomAmenities } from "@/utils/roomFeatures";
 import { uploadReportEvidence } from "@/services/reportEvidenceService";
 const STATUS_LABEL = { available: "Available", occupied: "Occupied", maintenance: "Under Maintenance" };
 const STATUS_STYLE = { available: "apartment-detail-badge-2", occupied: "apartment-detail-badge-3", maintenance: "apartment-detail-badge-4" };
@@ -518,7 +519,8 @@ export function ApartmentDetails() {
             <div className="apartment-detail-panel-25">
               <div className="apartment-detail-row-13"><Badge className={STATUS_STYLE[roomStatus(selectedRoom)]}>{STATUS_LABEL[roomStatus(selectedRoom)]}</Badge>{selectedRoom.sqft ? <Badge className="apartment-detail-sq-ft">{selectedRoom.sqft} sq ft</Badge> : null}</div>
               <div className="apartment-detail-grid-11"><div className="apartment-detail-card-3"><p className="apartment-detail-monthly-rent-2">Monthly rent</p><p className="apartment-detail-text-15">₱{Number(selectedRoom.price || 0).toLocaleString("en-PH")}</p></div><div className="apartment-detail-card-3"><p className="apartment-detail-capacity-2">Capacity</p><p className="apartment-detail-text-15">{selectedRoom.maxOccupants || "Not provided"}</p></div><div className="apartment-detail-card-3"><p className="apartment-detail-bathroom-2">Bathroom</p><p className="apartment-detail-text-15">{selectedRoom.hasPrivateBath ? "Private" : selectedRoom.bathroomType || "Shared"}</p></div><div className="apartment-detail-card-3"><p className="apartment-detail-air-conditioning-2">Air conditioning</p><p className="apartment-detail-text-15">{selectedRoom.hasAC ? "Yes" : "No"}</p></div></div>
-              <div><h3 className="apartment-detail-amenities">Amenities</h3><div className="apartment-detail-row-14"><Badge className="apartment-detail-badge-6">{selectedRoom.hasPrivateBath ? "Private bathroom" : "Shared bathroom"}</Badge>{selectedRoom.hasAC && <Badge className="apartment-detail-air-conditioning-3">Air conditioning</Badge>}</div></div>
+              <div><h3 className="apartment-detail-amenities">Amenities</h3><div className="apartment-detail-row-14">{!selectedRoom.hasPrivateBath && <Badge className="apartment-detail-badge-6">Shared bathroom</Badge>}{getRoomAmenities(selectedRoom).map((amenity) => <Badge key={amenity} className="apartment-detail-badge-6">{amenity}</Badge>)}</div></div>
+              <div><h3 className="apartment-detail-amenities">Utilities Included</h3><p className="apartment-detail-text-17">{Array.isArray(selectedRoom.utilities ?? apartment.utilities) && (selectedRoom.utilities ?? apartment.utilities).length ? (selectedRoom.utilities ?? apartment.utilities).join(", ") : "Not included"}</p></div>
               {selectedRoom.sharedBathLocation && <div className="apartment-detail-card-4"><p className="apartment-detail-shared-bathroom-location">Shared bathroom location</p><p className="apartment-detail-text-16">{selectedRoom.sharedBathLocation}</p></div>}
               <div><h3 className="apartment-detail-description">Description</h3><p className="apartment-detail-text-17">{selectedRoom.description || "No room description provided."}</p></div>
             </div>

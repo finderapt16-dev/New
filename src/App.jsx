@@ -25,6 +25,7 @@ const Favorites = lazy(() => import("./tenant/Favorites").then((module) => ({ de
 const LandlordDashboard = lazy(() => import("@/landlord/LandlordDashboard").then((module) => ({ default: module.LandlordDashboard })));
 const AddApartment = lazy(() => import("./landlord/AddApartment").then((module) => ({ default: module.AddApartment })));
 const ManageRooms = lazy(() => import("./landlord/ManageRooms").then((module) => ({ default: module.ManageRooms })));
+const EditRoom = lazy(() => import("./landlord/ManageRooms").then((module) => ({ default: module.EditRoom })));
 // Admin
 const AdminDashboard = lazy(() => import("@/admin/AdminDashboard").then((module) => ({ default: module.AdminDashboard })));
 const AdminApartmentDetail = lazy(() => import("./admin/AdminApartmentDetail").then((module) => ({ default: module.AdminApartmentDetail })));
@@ -59,6 +60,7 @@ export const router = createBrowserRouter([
             // Landlord property management.
             { path: "add-apartment", element: <ProtectedRoute allowedRoles={["landlord"]}><PageLoader><AddApartment /></PageLoader></ProtectedRoute> },
             { path: "landlord/properties/:id/rooms", element: <ProtectedRoute allowedRoles={["landlord"]}><PageLoader><ManageRooms /></PageLoader></ProtectedRoute> },
+            { path: "landlord/properties/:id/rooms/:roomId/edit", element: <ProtectedRoute allowedRoles={["landlord"]}><PageLoader><EditRoom /></PageLoader></ProtectedRoute> },
             // Tenant favorites and shared account settings.
             { path: "favorites", element: <ProtectedRoute allowedRoles={["tenant"]}><PageLoader><Favorites /></PageLoader></ProtectedRoute> },
             { path: "settings", element: <ProtectedRoute><PageLoader><Settings /></PageLoader></ProtectedRoute> },

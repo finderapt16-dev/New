@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { RoomImageGallery } from "@/components/RoomImageGallery";
+import { getRoomAmenities } from "@/utils/roomFeatures";
 
 const dateLabel = value => {
     if (!value) return "Not provided";
@@ -14,11 +15,8 @@ export function RoomDetails({ room, apartment, onClose }) {
     const statusLabel = { available: "Available", occupied: "Occupied", maintenance: "Under Maintenance" }[status] || "Not provided";
     const capacity = Number(safeRoom.maxOccupants);
     const rent = Number(safeRoom.price);
-    const amenities = [...new Set([
-        safeRoom.hasPrivateBath ? "Private bathroom" : "Shared bathroom",
-        ...(safeRoom.hasAC ? ["Air conditioning"] : []),
-        ...(Array.isArray(safeRoom.amenities) ? safeRoom.amenities : [])
-    ])];
+    const amenities = [...(safeRoom.hasPrivateBath ? [] : ["Shared Bathroom"]), ...getRoomAmenities(safeRoom)];
+    const utilities = safeRoom.utilities ?? safeApartment.utilities;
 
     return <Dialog open onOpenChange={open => { if (!open) onClose(); }}>
         <DialogContent className="tenant-room-details" aria-describedby={undefined}>
@@ -40,7 +38,7 @@ export function RoomDetails({ room, apartment, onClose }) {
                     <section><h3>Additional Information</h3><dl className="tenant-room-additional">
                         <div><dt>Property Type</dt><dd>{safeApartment.propertyType || safeRoom.type || "Not provided"}</dd></div>
                         <div><dt>Available Date</dt><dd>{dateLabel(safeApartment.availableDate)}</dd></div>
-                        <div><dt>Utilities</dt><dd>{Array.isArray(safeApartment.utilities) && safeApartment.utilities.length ? safeApartment.utilities.join(", ") : "Not included"}</dd></div>
+                        <div><dt>Utilities</dt><dd>{Array.isArray(utilities) && utilities.length ? utilities.join(", ") : "Not included"}</dd></div>
                         {safeRoom.sharedBathLocation && !safeRoom.hasPrivateBath && <div><dt>Shared Bathroom Location</dt><dd>{safeRoom.sharedBathLocation}</dd></div>}
                     </dl></section>
                 </div>
