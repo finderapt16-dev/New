@@ -1,11 +1,9 @@
 /*
- * Shared RentIloilo role-sidebar visual system.
+ * Shared AptFindr role-sidebar visual system.
  * Navigation, permissions, badges, and actions remain owned by each feature.
  */
 .app-shell {
   --shell-canvas: #f2f6fa;
-  --shell-card: #ffffff;
-  --shell-line: #e8eef3;
   --shell-shadow: 0 10px 28px rgba(15, 23, 42, 0.065);
   background:
     radial-gradient(circle at 8% 0%, rgba(22, 165, 225, 0.08), transparent 25rem),

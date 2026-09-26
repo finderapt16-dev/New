@@ -340,11 +340,9 @@
 .landlord-field-invalid { border-radius:.75rem; border-color:#f87171; }
 .landlord-field-invalid:focus-visible { border-color:#ef4444; box-shadow:0 0 0 3px #fee2e2; }
 .landlord-field-normal { border-radius:.75rem; border-color:#e2e8f0; }
-.landlord-field-normal:focus-visible { border-color:#16a5e1; box-shadow:0 0 0 3px #f2f6fa; }/* Landlord home aligned with the Tenant warm-neutral design system. */
+.landlord-field-normal:focus-visible { border-color:#16a5e1; box-shadow:0 0 0 3px #f2f6fa; }/* Landlord home aligned with the shared AptFindr design system. */
 .landlord-shell .app-shell-main { background: #f2f6fa; }
 .landlord-shell .app-sidebar {
-  --sidebar-orange: #16a5e1;
-  --sidebar-orange-deep: #666666;
   --sidebar-ink: #111111;
   --sidebar-muted: #666666;
   --sidebar-line: #d9d9d9;

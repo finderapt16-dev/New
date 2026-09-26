@@ -15,7 +15,6 @@
   --apl-muted: #718096;
   --apl-card-bg: #ffffff;
   --apl-border: #dfe4ea;        /* card / input borders            */
-  --apl-line: #c5ccd5;          /* table header + row separators   */
   /* type scale */
   --apl-fs-title: 20px;
   --apl-fs-subtitle: 12px;
@@ -23,7 +22,6 @@
   --apl-fs-stat-label: 12px;
   --apl-fs-stat-note: 10px;
   --apl-fs-control: 11px;
-  --apl-fs-th: 10px;
   --apl-fs-cell: 12px;
   --apl-fs-small: 11px;
   --apl-fs-pill: 10px;
