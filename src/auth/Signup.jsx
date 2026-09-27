@@ -133,17 +133,44 @@ export function Signup() {
                 termsAccepted: formData.role === "tenant" ? tenantTermsAccepted : landlordAgreementAccepted,
                 landlordVerificationAccepted: formData.role === "landlord" ? landlordAgreementAccepted : undefined,
             });
+            const confirmationState = result.signup?.emailConfirmation?.state;
             if (result.success && result.signup?.existingAccount) {
-                setError("An account may already exist for this email. Sign in, resend verification, or reset your password instead of registering again.");
+                // Supabase never resends on signup, so offer the manual resend form.
+                navigate(loginPath, {
+                    state: {
+                        message: result.signup.requiresEmailVerification
+                            ? `An account already exists for ${formData.email.trim()}. If it is still unverified, use "Resend verification email" below.`
+                            : "An account may already exist for this email. Sign in or reset your password instead of registering again.",
+                        verificationEmail: formData.email.trim(),
+                        verificationHelp: true,
+                    },
+                });
             }
             else if (result.success && result.signup?.profileSetupError) {
-                navigate(loginPath, { state: { message: result.signup.profileSetupError, verificationEmail: formData.email.trim() } });
+                navigate(loginPath, { state: { message: result.signup.profileSetupError, verificationEmail: formData.email.trim(), verificationHelp: true } });
             }
             else if (result.success && result.signup?.requiresEmailVerification) {
-                navigate(loginPath, { state: { message: `Account created. A verification link was requested for ${formData.email.trim()}. Check your inbox and spam folder before signing in.`, verificationEmail: formData.email.trim() } });
+                const emailSent = confirmationState === "sent";
+                navigate(loginPath, {
+                    state: {
+                        message: emailSent
+                            ? `Account created. A verification link was sent to ${formData.email.trim()}. Check your inbox and spam folder before signing in.`
+                            : `Account created, but we could not confirm that the verification email was sent to ${formData.email.trim()}. Check your inbox and spam folder, and use "Resend verification email" below if nothing arrives within a few minutes.`,
+                        verificationEmail: formData.email.trim(),
+                        verificationHelp: !emailSent,
+                    },
+                });
             }
             else if (result.success) {
-                navigate(loginPath, { state: { message: "Account created successfully. You can now sign in." } });
+                // No pending verification means either the address was already
+                // confirmed or "Confirm email" is off for the project.
+                navigate(loginPath, {
+                    state: {
+                        message: confirmationState === "disabled"
+                            ? "Account created. Email confirmation is turned off for this project, so no verification email was sent and you can sign in right away."
+                            : "Account created successfully. You can now sign in.",
+                    },
+                });
             }
             else {
                 setError(result.error || "Signup failed");
