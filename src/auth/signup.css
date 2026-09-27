@@ -909,6 +909,15 @@
   height: .5rem;
 }
 
+.signup-agreement-link {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.signup-agreement-link:hover {
+  text-decoration: underline;
+}
+
 .signup-agreement {
   cursor: pointer;
   color: #314158;
