@@ -9,7 +9,8 @@ import { AlertCircle, ArrowLeft, ArrowRight, BadgeCheck, CheckCircle2, Home, Loc
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-export function ForgotPassword() {
+export function ForgotPassword({ variant = "page", onSwitchToLogin, }) {
+    const isDialog = variant === "dialog";
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [sent, setSent] = useState(false);
@@ -105,9 +106,11 @@ export function ForgotPassword() {
               </h1>
               <p className="forgot-password-description">
                 Remember your password?{" "}
-                <Link to="/login" className="forgot-password-login-prompt-link">
-                  Sign in here
-                </Link>
+                {isDialog ? (<button type="button" onClick={() => onSwitchToLogin?.()} className="forgot-password-login-prompt-link auth-dialog-link">
+                    Sign in here
+                  </button>) : (<Link to="/login" className="forgot-password-login-prompt-link">
+                    Sign in here
+                  </Link>)}
               </p>
             </div>
 
@@ -150,10 +153,13 @@ export function ForgotPassword() {
                         </>)}
                     </Button>
 
-                    <Link to="/login" className="forgot-password-home-link">
+                    {isDialog ? (<button type="button" onClick={() => onSwitchToLogin?.()} className="forgot-password-home-link auth-dialog-link">
                       <ArrowLeft className="forgot-password-icon-small"/>
                       Back to Sign In
-                    </Link>
+                    </button>) : (<Link to="/login" className="forgot-password-home-link">
+                      <ArrowLeft className="forgot-password-icon-small"/>
+                      Back to Sign In
+                    </Link>)}
                   </form>
                 </div>)}
 
@@ -194,7 +200,7 @@ export function ForgotPassword() {
                     </div>
                   </div>
 
-                  <Button type="button" onClick={() => navigate("/login")} className="forgot-password-resend-button">
+                  <Button type="button" onClick={() => { if (isDialog) { onSwitchToLogin?.(); } else { navigate("/login"); } }} className="forgot-password-resend-button">
                     <Sparkles className="forgot-password-button-icon"/>
                     Back to Sign In
                     <ArrowRight className="forgot-password-icon-small"/>

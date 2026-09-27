@@ -9,7 +9,8 @@ import { AlertCircle, BadgeCheck, CheckCircle2, Eye, EyeOff, Home, Key, UserRoun
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./signin.css";
-export function Login() {
+export function Login({ variant = "page", initialMessage = null, onSwitchToSignup, onSwitchToForgot, }) {
+    const isDialog = variant === "dialog";
     const navigate = useNavigate();
     const location = useLocation();
     const { login } = useAuth();
@@ -32,6 +33,8 @@ export function Login() {
         ? `/signup?redirect=${encodeURIComponent(redirectTo)}`
         : "/signup";
     useEffect(() => {
+        if (isDialog)
+            return;
         if (location.state?.message) {
             setSuccessMessage(location.state.message);
             if (typeof location.state.verificationEmail === "string") {
@@ -44,7 +47,20 @@ export function Login() {
                 setVerificationHelpOpen(true);
             window.history.replaceState({}, document.title);
         }
-    }, [location]);
+    }, [location, isDialog]);
+    // Floating mode: the signup view hands its result state directly instead
+    // of navigating to /login, so surface it the same way here.
+    useEffect(() => {
+        if (!isDialog || !initialMessage?.message)
+            return;
+        setSuccessMessage(initialMessage.message);
+        if (typeof initialMessage.verificationEmail === "string") {
+            setVerificationEmail(initialMessage.verificationEmail);
+            setHelpEmail(initialMessage.verificationEmail);
+        }
+        if (initialMessage.verificationHelp === true)
+            setVerificationHelpOpen(true);
+    }, [isDialog, initialMessage]);
     useEffect(() => {
         if (resendCooldown <= 0)
             return;
@@ -217,9 +233,11 @@ export function Login() {
                           {showPass ? <EyeOff className="login-icon-small"/> : <Eye className="login-icon-small"/>}
                         </button>}/>
                     <div className="login-recovery-link-row">
-                      <Link to="/forgot-password" className="login-recovery-link">
-                        Forgot password?
-                      </Link>
+                      {isDialog ? (<button type="button" onClick={onSwitchToForgot} className="login-recovery-link auth-dialog-link">
+                          Forgot password?
+                        </button>) : (<Link to="/forgot-password" className="login-recovery-link">
+                          Forgot password?
+                        </Link>)}
                     </div>
                   </div>
                 </div>
@@ -234,7 +252,7 @@ export function Login() {
                   </>)}
               </Button>
 
-              <p className="login-signup-prompt">Don't have an account? <Link to={signupPath} className="login-create-link">Create account</Link></p>
+              <p className="login-signup-prompt">Don't have an account? {isDialog ? (<button type="button" onClick={onSwitchToSignup} className="login-create-link auth-dialog-link">Create account</button>) : (<Link to={signupPath} className="login-create-link">Create account</Link>)}</p>
 
               <Link to="/" className="login-home-link">
                 <Home className="login-icon-small"/>

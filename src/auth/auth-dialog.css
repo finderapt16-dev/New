@@ -1,0 +1,76 @@
+/* Single floating auth panel: sign-in, sign-up and forgot-password switch
+   views inside the same dialog instead of navigating between pages. */
+.auth-dialog-content {
+  width: min(560px, calc(100vw - 32px));
+  max-width: 560px;
+  max-height: min(88vh, 820px);
+  overflow-y: auto;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 28px 90px rgba(16, 35, 27, 0.3);
+}
+.auth-dialog-content--signup {
+  width: min(760px, calc(100vw - 32px));
+  max-width: 760px;
+  max-height: min(92vh, 900px);
+}
+.auth-dialog-content > .ui-dialog-close { z-index: 5; }
+.auth-dialog-accessible-title,
+.auth-dialog-accessible-description { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* The dialog shows only the form: hide the full-page panels/headers/footers. */
+.auth-dialog-content .login-page,
+.auth-dialog-content .signup-page,
+.auth-dialog-content .forgot-password-page {
+  min-height: 0;
+  display: block;
+  background: transparent;
+}
+.auth-dialog-content .login-visual-panel,
+.auth-dialog-content .signup-visual-panel,
+.auth-dialog-content .forgot-password-visual-panel,
+.auth-dialog-content .login-mobile-header,
+.auth-dialog-content .signup-mobile-header,
+.auth-dialog-content .forgot-password-mobile-header,
+.auth-dialog-content .login-home-link,
+.auth-dialog-content .signup-home-link { display: none; }
+.auth-dialog-content .login-content,
+.auth-dialog-content .signup-content,
+.auth-dialog-content .forgot-password-content {
+  min-height: 0;
+  width: 100%;
+  padding: 40px 36px 32px;
+  background: transparent;
+}
+.auth-dialog-content .login-form-container,
+.auth-dialog-content .signup-form-container,
+.auth-dialog-content .forgot-password-form-container { min-height: 0; padding: 0; }
+.auth-dialog-content .login-form-shell,
+.auth-dialog-content .signup-form-shell,
+.auth-dialog-content .forgot-password-form-shell { width: 100%; max-width: none; padding: 0; box-shadow: none; }
+.auth-dialog-content .login-form-heading,
+.auth-dialog-content .signup-form-heading,
+.auth-dialog-content .forgot-password-form-heading { margin-top: 0; }
+
+/* In-dialog view switches are buttons styled as links. */
+.auth-dialog-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Recovery success panel: single action in the dialog (no "Back to Home"). */
+.auth-dialog-content .forgot-password-navigation { grid-template-columns: 1fr; }
+.auth-dialog-content .forgot-password-navigation a { display: none; }
+
+@media (max-width: 560px) {
+  .auth-dialog-content { width: calc(100vw - 20px); max-height: 92vh; border-radius: 20px; }
+  .auth-dialog-content--signup { max-height: 94vh; }
+  .auth-dialog-content .login-content,
+  .auth-dialog-content .signup-content,
+  .auth-dialog-content .forgot-password-content { padding: 36px 22px 24px; }
+}

@@ -26,7 +26,8 @@ function getStrength(p) {
 const strengthLabel = ["", "Weak", "Fair", "Good", "Strong", "Very strong"];
 const strengthColor = ["", "signup-strength-fill-weak", "signup-strength-fill-fair", "signup-strength-fill-good", "signup-strength-fill-strong", "signup-strength-fill-very-strong"];
 const strengthText = ["", "signup-strength-text-weak", "signup-strength-text-fair", "signup-strength-text-good", "signup-strength-text-strong", "signup-strength-text-very-strong"];
-export function Signup() {
+export function Signup({ variant = "page", onSwitchToLogin, onSwitchToForgot, }) {
+    const isDialog = variant === "dialog";
     const navigate = useNavigate();
     const location = useLocation();
     const { signup } = useAuth();
@@ -35,6 +36,15 @@ export function Signup() {
         ? requestedRedirect
         : null;
     const loginPath = redirectTo ? `/login?redirect=${encodeURIComponent(redirectTo)}` : "/login";
+    // Floating mode: stay inside the dialog and switch to the sign-in view
+    // instead of navigating to the old full-page /login route.
+    const goToLogin = (path, options) => {
+        if (isDialog) {
+            onSwitchToLogin?.(options?.state);
+            return;
+        }
+        navigate(path, options);
+    };
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const submissionInFlightRef = useRef(false);
@@ -136,7 +146,7 @@ export function Signup() {
             const confirmationState = result.signup?.emailConfirmation?.state;
             if (result.success && result.signup?.existingAccount) {
                 // Supabase never resends on signup, so offer the manual resend form.
-                navigate(loginPath, {
+                goToLogin(loginPath, {
                     state: {
                         message: result.signup.requiresEmailVerification
                             ? `An account already exists for ${formData.email.trim()}. If it is still unverified, use "Resend verification email" below.`
@@ -147,11 +157,11 @@ export function Signup() {
                 });
             }
             else if (result.success && result.signup?.profileSetupError) {
-                navigate(loginPath, { state: { message: result.signup.profileSetupError, verificationEmail: formData.email.trim(), verificationHelp: true } });
+                goToLogin(loginPath, { state: { message: result.signup.profileSetupError, verificationEmail: formData.email.trim(), verificationHelp: true } });
             }
             else if (result.success && result.signup?.requiresEmailVerification) {
                 const emailSent = confirmationState === "sent";
-                navigate(loginPath, {
+                goToLogin(loginPath, {
                     state: {
                         message: emailSent
                             ? `Account created. A verification link was sent to ${formData.email.trim()}. Check your inbox and spam folder before signing in.`
@@ -164,7 +174,7 @@ export function Signup() {
             else if (result.success) {
                 // No pending verification means either the address was already
                 // confirmed or "Confirm email" is off for the project.
-                navigate(loginPath, {
+                goToLogin(loginPath, {
                     state: {
                         message: confirmationState === "disabled"
                             ? "Account created. Email confirmation is turned off for this project, so no verification email was sent and you can sign in right away."
@@ -294,7 +304,7 @@ export function Signup() {
               <h1 className="signup-title">Create your account</h1>
               <p className="signup-description">
                 Already registered?{" "}
-                <Link to={loginPath} className="signup-login-prompt-link">Sign in here</Link>
+                {isDialog ? (<button type="button" onClick={() => onSwitchToLogin?.()} className="signup-login-prompt-link auth-dialog-link">Sign in here</button>) : (<Link to={loginPath} className="signup-login-prompt-link">Sign in here</Link>)}
               </p>
             </div>
 
@@ -304,7 +314,17 @@ export function Signup() {
                     <AlertCircle className="signup-error-icon"/>
                     <AlertDescription className="signup-error-text">{error}</AlertDescription>
                   </Alert>
-                  {(error.includes("may already exist") || error.includes("couldn't send the confirmation email")) && <div className="signup-error-actions"><Link to={loginPath} className="signup-error-link">Sign in</Link><Link to="/forgot-password" className="signup-error-link">Forgot password</Link><Link to={loginPath} state={{ message: "Use Resend Verification Email for this account.", verificationEmail: formData.email.trim() }} className="signup-error-link">Resend verification</Link></div>}
+                  {(error.includes("may already exist") || error.includes("couldn't send the confirmation email")) && (<div className="signup-error-actions">
+                    {isDialog ? (<>
+                      <button type="button" onClick={() => onSwitchToLogin?.()} className="signup-error-link auth-dialog-link">Sign in</button>
+                      <button type="button" onClick={() => onSwitchToForgot?.()} className="signup-error-link auth-dialog-link">Forgot password</button>
+                      <button type="button" onClick={() => onSwitchToLogin?.({ message: "Use Resend Verification Email for this account.", verificationEmail: formData.email.trim(), verificationHelp: true })} className="signup-error-link auth-dialog-link">Resend verification</button>
+                    </>) : (<>
+                      <Link to={loginPath} className="signup-error-link">Sign in</Link>
+                      <Link to="/forgot-password" className="signup-error-link">Forgot password</Link>
+                      <Link to={loginPath} state={{ message: "Use Resend Verification Email for this account.", verificationEmail: formData.email.trim() }} className="signup-error-link">Resend verification</Link>
+                    </>)}
+                  </div>)}
                 </div>)}
             </>
 
