@@ -54,10 +54,10 @@ export function GoogleAuthButton({ intent = "signin", role = null, redirectTo = 
     </button>);
 }
 
-/** The Google button followed by an "or …" divider that leads into the form below. */
+/** An "or" divider and Google button shown below the primary form action. */
 export function GoogleAuthOption({ dividerLabel, ...buttonProps }) {
     return (<div className="auth-google-option">
-      <GoogleAuthButton {...buttonProps}/>
       <p className="auth-divider">{dividerLabel}</p>
+      <GoogleAuthButton {...buttonProps}/>
     </div>);
 }

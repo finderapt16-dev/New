@@ -81,6 +81,21 @@ afterEach(() => {
 });
 
 describe("/auth/callback after Continue with Google", () => {
+    it("shows the duplicate-signup message and offers Sign In instead of opening a dashboard", async () => {
+        saveIntent({ intent: "signup", role: "tenant" });
+        mocks.auth.getSession.mockResolvedValue({ data: { session: sessionWith("oauth") }, error: null });
+        mocks.finishGoogleSignIn.mockRejectedValue(new Error(
+            "An account with this email already exists. Please sign in instead.",
+        ));
+        renderCallback("/auth/callback#access_token=token&token_type=bearer&provider_token=google");
+
+        expect(await screen.findByText("An account with this email already exists. Please sign in instead.")).toBeInTheDocument();
+        expect(screen.queryByText("BROWSE PAGE")).not.toBeInTheDocument();
+        expect(screen.queryByText("DASHBOARD PAGE")).not.toBeInTheDocument();
+        await userEvent.click(screen.getByRole("link", { name: "Return to Sign In" }));
+        expect(await screen.findByText(/LOGIN PAGE/)).toBeInTheDocument();
+    });
+
     it("keeps an existing user signed in and opens their home page", async () => {
         saveIntent();
         mocks.auth.getSession.mockResolvedValue({ data: { session: sessionWith("oauth") }, error: null });

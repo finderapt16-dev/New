@@ -149,14 +149,10 @@ export function Login({ initialMessage = null, redirectTo: redirectToProp = null
                   </button>
                 </div>)}
 
-            <GoogleAuthOption intent="signin" redirectTo={requestedRedirect} onError={setError} disabled={loading} dividerLabel="or sign in with username"/>
-
             <form onSubmit={handleSubmit} className="login-form">
 
               <div>
                 <div className="login-form-fields">
-                  {/* The Google button now comes first; keep the dialog opening on the
-                      username field as before so username users can type right away. */}
                   <AuthField id="username" label="Username" value={username} onChange={setUsername} required autoFocus icon={<UserRound className="login-icon-small"/>}/>
 
                   <div className="login-password-field">
@@ -180,6 +176,8 @@ export function Login({ initialMessage = null, redirectTo: redirectToProp = null
                     Sign In
                   </>)}
               </Button>
+
+              <GoogleAuthOption intent="signin" redirectTo={requestedRedirect} onError={setError} disabled={loading} dividerLabel="or"/>
 
               <p className="login-signup-prompt">Don't have an account? <button type="button" onClick={onSwitchToSignup} className="login-create-link auth-dialog-link">Create account</button></p>
             </form>
