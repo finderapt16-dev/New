@@ -1,4 +1,6 @@
 import { AppLogo } from "@/components/AppLogo";
+import { LoginDialog } from "@/auth/LoginDialog";
+import { SignupDialog } from "@/auth/SignupDialog";
 import { LandingListingsSection } from "./LandingApartmentPreview";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger, } from "@/components/ui/sheet";
@@ -63,16 +65,8 @@ export function Landing() {
                 </Link>))}
               <div className="landing-account-nav">
                 {!user ? (<>
-                    <Link to="/login">
-                      <Button variant="ghost" size="sm" className="landing-login-button">
-                        Login
-                      </Button>
-                    </Link>
-                    <Link to="/signup">
-                      <Button size="sm" className="landing-account-button">
-                        Sign Up
-                      </Button>
-                    </Link>
+                    <LoginDialog trigger={<Button variant="ghost" size="sm" className="landing-login-button">Login</Button>} />
+                    <SignupDialog trigger={<Button size="sm" className="landing-account-button">Sign Up</Button>} />
                   </>) : (<Link to={dashboardPath}>
                     <Button size="sm" className="landing-account-button">
                       Dashboard
