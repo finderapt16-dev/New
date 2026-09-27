@@ -204,7 +204,28 @@ describe("resolveOAuthSignIn", () => {
         expect(authMock.signOut).not.toHaveBeenCalled();
     });
 
-    it("asks a first-time Google user to finish their account instead of failing", async () => {
+    it.each([
+        ["tenant", "profileByAuthId"],
+        ["landlord", "profileByAuthId"],
+        ["tenant", "profileByEmail"],
+        ["landlord", "profileByEmail"],
+    ])("rejects %s Google signup when an account exists by %s", async (role, lookup) => {
+        await signInWithGoogle({ intent: "signup", role });
+        authMock.getSession.mockResolvedValue({ data: { session: sessionFor(googleUser()) }, error: null });
+        db[lookup] = tenantRow;
+
+        await expect(resolveOAuthSignIn()).rejects.toThrow(
+            "An account with this email already exists. Please sign in instead.",
+        );
+        expect(authMock.signOut).toHaveBeenCalledTimes(1);
+        expect(readOAuthIntent()).toBeNull();
+        expect(db.inserts).toHaveLength(0);
+        expect(db.writes).toHaveLength(0);
+        expect(rpcMock).not.toHaveBeenCalled();
+    });
+
+    it.each(["tenant", "landlord"])("allows explicit Google signup for %s", async (role) => {
+        await signInWithGoogle({ intent: "signup", role });
         authMock.getSession.mockResolvedValue({ data: { session: sessionFor(googleUser()) }, error: null });
 
         const result = await resolveOAuthSignIn();
@@ -215,6 +236,25 @@ describe("resolveOAuthSignIn", () => {
         });
         expect(db.inserts.filter((entry) => entry.table === "app_users")).toHaveLength(0);
         expect(authMock.signOut).not.toHaveBeenCalled();
+    });
+
+    it.each([
+        { intent: "signin", role: null },
+        null,
+        { intent: "signup", role: null },
+        { intent: "signup", role: "tenant", startedAt: Date.now() - 31 * 60 * 1000 },
+    ])("rejects unregistered sign-in without a valid signup intent: %j", async (intent) => {
+        if (intent) {
+            window.sessionStorage.setItem(INTENT_KEY, JSON.stringify({
+                provider: "google", startedAt: Date.now(), ...intent,
+            }));
+        }
+        authMock.getSession.mockResolvedValue({ data: { session: sessionFor(googleUser()) }, error: null });
+
+        await expect(resolveOAuthSignIn()).rejects.toThrow("No AptFindr account is linked to this Google email. Create an account first.");
+        expect(authMock.signOut).toHaveBeenCalledTimes(1);
+        expect(readOAuthIntent()).toBeNull();
+        expect(db.inserts).toHaveLength(0);
     });
 
     it("signs a deactivated account back out", async () => {

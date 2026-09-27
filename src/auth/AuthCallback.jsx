@@ -166,6 +166,7 @@ export function AuthCallback() {
             <h1 className="auth-status-title">{isGoogle ? "Google sign-in unsuccessful" : "Verification unsuccessful"}</h1>
             <p className="auth-status-description">{view.message}</p>
             <Link to="/login" className="auth-status-login-link">Return to Sign In</Link>
+            {isGoogle && <Link to="/signup" className="auth-status-login-link">Create an account</Link>}
           </>) : (<>
             <h1 className="auth-status-title">{isGoogle ? "Signing you in" : "Verifying your email"}</h1>
             <p className="auth-status-description">

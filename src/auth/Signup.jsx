@@ -248,8 +248,6 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                 </div>)}
             </>
 
-            <GoogleAuthOption intent="signup" role={formData.role || null} redirectTo={redirectTo} onError={setError} disabled={loading} dividerLabel="or sign up with email"/>
-
             <form onSubmit={handleSubmit} className="signup-form">
 
               <div className="signup-role-field">
@@ -628,6 +626,8 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                       Creating your account...
                     </>) : ("Create Account")}
                 </Button>)}
+
+              {formData.role && (<GoogleAuthOption intent="signup" role={formData.role} redirectTo={redirectTo} onError={setError} disabled={loading} dividerLabel="or"/>)}
 
             </form>
           </div>

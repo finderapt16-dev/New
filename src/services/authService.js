@@ -841,8 +841,8 @@ function describeOAuthAccount(authUser) {
 /**
  * Finishes a Google sign-in on /auth/callback once supabase-js has stored the
  * session. Returns { status: 'signed_in', user } for an existing AptFindr
- * account, or { status: 'needs_profile', account } for a first-time Google
- * user who still has to choose Tenant or Landlord.
+ * account, or { status: 'needs_profile', account } for an explicit Google
+ * signup with a selected role. Unregistered sign-in users are signed out.
  */
 export async function resolveOAuthSignIn() {
     const { data, error } = await supabaseClient.auth.getSession();
@@ -855,9 +855,30 @@ export async function resolveOAuthSignIn() {
         await supabaseClient.auth.signOut();
         throw new Error('Confirm the email address of your Google account first, then try again.');
     }
+    const intent = readOAuthIntent();
+    // Signup must not silently log into (or relink) an existing account.
+    // Check both identifiers before the profile resolver performs any writes.
+    if (intent?.intent === 'signup') {
+        const existing = await fetchUserByAuthId(authUser.id)
+            || (authUser.email ? await fetchUserByEmail(authUser.email) : null);
+        if (existing) {
+            latestAuthProfileRequestId += 1;
+            clearOAuthIntent();
+            await supabaseClient.auth.signOut();
+            throw new Error('An account with this email already exists. Please sign in instead.');
+        }
+    }
     const profile = await ensureProfileForAuthUser(authUser, { createIfMissing: false });
-    if (!profile)
+    if (!profile) {
+        // Only the explicit Create Account flow may onboard a new Google user.
+        // Missing/expired intent must not silently turn sign-in into signup.
+        if (intent?.intent !== 'signup' || !PUBLIC_SIGNUP_ROLES.has(intent.role)) {
+            clearOAuthIntent();
+            await supabaseClient.auth.signOut();
+            throw new Error('No AptFindr account is linked to this Google email. Create an account first.');
+        }
         return { status: 'needs_profile', account: describeOAuthAccount(authUser) };
+    }
     try {
         assertActiveAccount(profile);
     }

@@ -86,7 +86,9 @@ describe("floating auth dialog", () => {
         mocks.google.mockReturnValue(new Promise(() => {}));
         renderDialog("login", "/apartment/apt-7");
 
-        expect(screen.getByText(/or sign in with username/i)).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /^sign in$/i }).compareDocumentPosition(
+            screen.getByRole("button", { name: /continue with google/i }),
+        ) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
         // The dialog still opens on the username field, as before the Google button existed.
         expect(screen.getByLabelText(/^username/i)).toHaveFocus();
         await userEvent.click(screen.getByRole("button", { name: /continue with google/i }));
@@ -101,11 +103,24 @@ describe("floating auth dialog", () => {
         mocks.google.mockReturnValue(new Promise(() => {}));
         renderDialog("signup");
 
-        expect(await screen.findByText(/or sign up with email/i)).toBeInTheDocument();
+        expect(screen.queryByRole("button", { name: /continue with google/i })).not.toBeInTheDocument();
         await userEvent.click(screen.getByRole("button", { name: /landlord/i }));
         await userEvent.click(screen.getByRole("button", { name: /continue with google/i }));
 
         expect(mocks.google).toHaveBeenCalledWith({ intent: "signup", role: "landlord", redirectTo: null });
+    });
+
+    it("places Google below Create Account after choosing Tenant", async () => {
+        mocks.google.mockReturnValue(new Promise(() => {}));
+        renderDialog("signup");
+        expect(screen.queryByRole("button", { name: /continue with google/i })).not.toBeInTheDocument();
+        await userEvent.click(screen.getByRole("button", { name: /tenant/i }));
+        const google = screen.getByRole("button", { name: /continue with google/i });
+        expect(screen.getByRole("button", { name: /^create account$/i }).compareDocumentPosition(google)
+            & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        await userEvent.click(google);
+        expect(mocks.google).toHaveBeenCalledWith({ intent: "signup", role: "tenant", redirectTo: null });
+        expect(mocks.signup).not.toHaveBeenCalled();
     });
 
     it("shows why Google sign-in could not start and lets the user retry", async () => {

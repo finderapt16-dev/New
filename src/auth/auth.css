@@ -226,7 +226,6 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  margin-bottom: 1.25rem;
 }
 
 .auth-google-button {
@@ -279,7 +278,7 @@
   .auth-google-spinner { animation-duration: 1600ms; }
 }
 
-/* "or sign in with username" — a centred label between two hairlines. */
+/* Alternative sign-in method — a centred label between two hairlines. */
 .auth-divider {
   display: flex;
   align-items: center;
