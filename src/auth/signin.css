@@ -92,7 +92,7 @@
 }
 
 .login-brand-name {
-  background-image: linear-gradient(to right in oklab, #16a5e1 0%, #0e93ca 100%);
+  background-image: linear-gradient(to right in oklab, #2f9bf4 0%, #1a8bef 100%);
   color: #0000;
   -webkit-background-clip: text;
   background-clip: text;
@@ -146,7 +146,7 @@
 }
 
 .login-visual-accent {
-  background-image: linear-gradient(to right in oklab, #16a5e1 0%, #0e93ca 100%);
+  background-image: linear-gradient(to right in oklab, #2f9bf4 0%, #1a8bef 100%);
   color: #0000;
   -webkit-background-clip: text;
   background-clip: text;
@@ -186,7 +186,7 @@
 }
 
 .login-benefit-symbol {
-  border: 1px solid #16a5e14d;
+  border: 1px solid #2f9bf44d;
   border-radius: .625rem;
   flex-shrink: 0;
   justify-content: center;
@@ -203,7 +203,7 @@
 }
 
 .login-benefit-symbol {
-  background-color: #16a5e133;
+  background-color: #2f9bf433;
 }
 
 @supports (color: color-mix(in lab, red, red)) {
@@ -213,7 +213,7 @@
 }
 
 .login-benefit-icon {
-  color: #16a5e1;
+  color: #2f9bf4;
   color: lab(80.1641% 16.6016 99.2089);
   width: .75rem;
   height: .75rem;
@@ -290,8 +290,8 @@
 }
 
 .login-mobile-brand-name {
-  color: #16a5e1;
-  color: lab(60.3514% 40.5624 87.1228);
+  color: #2f9bf4;
+  color: #2f9bf4;
   font-size: 1rem;
   font-weight: 900;
   line-height: 1.5;
@@ -310,8 +310,8 @@
 
 @media (hover: hover) {
   .login-signup-link:hover {
-    color: #16a5e1;
-    color: lab(60.3514% 40.5624 87.1228);
+    color: #2f9bf4;
+    color: #2f9bf4;
   }
 }
 
@@ -393,8 +393,8 @@
 }
 
 .login-resend-link {
-  color: #0e93ca;
-  color: lab(47.2709% 42.9082 69.2966);
+  color: #1a8bef;
+  color: #1a8bef;
   margin-top: .5rem;
   font-size: .75rem;
   font-weight: 700;
@@ -451,7 +451,7 @@
 }
 
 .login-verification-input:focus {
-  border-color: #16a5e1;
+  border-color: #2f9bf4;
   box-shadow: 0 0 0 3px rgba(22, 165, 225, .15);
 }
 
@@ -460,13 +460,13 @@
   height: 2.5rem;
   padding-inline: 1rem;
   border-radius: .75rem;
-  background-color: #16a5e1;
+  background-color: #2f9bf4;
   color: #ffffff;
   font-size: .8125rem;
   font-weight: 700;
 }
 
-.login-verification-send:hover { background-color: #0e93ca; }
+.login-verification-send:hover { background-color: #1a8bef; }
 .login-verification-send:disabled { background-color: #90a1b9; }
 
 .login-error-alert {
@@ -527,8 +527,8 @@
 }
 
 .login-recovery-link {
-  color: #16a5e1;
-  color: lab(60.3514% 40.5624 87.1228);
+  color: #2f9bf4;
+  color: #2f9bf4;
   font-size: .875rem;
   font-weight: 600;
   line-height: 1.42857;
@@ -539,14 +539,14 @@
 
 @media (hover: hover) {
   .login-recovery-link:hover {
-    color: #0e93ca;
-    color: lab(47.2709% 42.9082 69.2966);
+    color: #1a8bef;
+    color: #1a8bef;
   }
 }
 
 .login-submit-button {
   color: #fff;
-  background-color: #16a5e1;
+  background-color: #2f9bf4;
   border-radius: 1rem;
   justify-content: center;
   align-items: center;
@@ -565,7 +565,7 @@
 
 @media (hover: hover) {
   .login-submit-button:hover {
-    background-color: #0e93ca;
+    background-color: #1a8bef;
   }
 }
 
@@ -600,15 +600,15 @@
 }
 
 .login-create-link {
-  color: #16a5e1;
-  color: lab(60.3514% 40.5624 87.1228);
+  color: #2f9bf4;
+  color: #2f9bf4;
   font-weight: 700;
 }
 
 @media (hover: hover) {
   .login-create-link:hover {
-    color: #0e93ca;
-    color: lab(47.2709% 42.9082 69.2966);
+    color: #1a8bef;
+    color: #1a8bef;
   }
 }
 
@@ -629,8 +629,8 @@
 
 @media (hover: hover) {
   .login-home-link:hover {
-    color: #0e93ca;
-    color: lab(47.2709% 42.9082 69.2966);
+    color: #1a8bef;
+    color: #1a8bef;
   }
 }
 
@@ -687,20 +687,20 @@
   .login-badge-icon,
   .login-badge-text,
   .login-benefit-icon
-) { color: #16a5e1 !important; }
+) { color: #2f9bf4 !important; }
 
 .auth-palette :is(
   .login-recovery-link,
   .login-create-link,
   .login-home-link,
   .login-signup-link
-):hover { color: #0e93ca !important; }
+):hover { color: #1a8bef !important; }
 
 .auth-palette .login-submit-button {
-  background-color: #16a5e1 !important;
+  background-color: #2f9bf4 !important;
   color: #ffffff !important;
 }
-.auth-palette .login-submit-button:hover { background-color: #0e93ca !important; }
+.auth-palette .login-submit-button:hover { background-color: #1a8bef !important; }
 
 .auth-palette :is(.login-visual-badge, .login-benefit-symbol) {
   background-color: rgba(22, 165, 225, .10) !important;
@@ -709,8 +709,8 @@
 
 .auth-palette :is(.login-brand-name, .login-visual-accent) {
   background-image: none !important;
-  color: #16a5e1 !important;
-  -webkit-text-fill-color: #16a5e1 !important;
+  color: #2f9bf4 !important;
+  -webkit-text-fill-color: #2f9bf4 !important;
 }
 
 .auth-palette .auth-visual-panel :is(.login-visual-title, .login-benefit-text) {
@@ -719,3 +719,34 @@
 .auth-palette .auth-visual-panel :is(.login-visual-description, .login-brand-location) {
   color: #666666 !important;
 }
+
+/* ── Redesigned sign-in screen ── */
+.login-title { font-size: 1.25rem; font-weight: 800; }
+
+.login-submit-button {
+  height: 2.875rem;
+  border-radius: 10px;
+  font-size: .9375rem;
+  font-weight: 700;
+}
+
+.login-home-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .375rem;
+  margin-top: .25rem;
+  padding: .5rem;
+  border: none;
+  background: none;
+  color: #666666;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.42857;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color .15s cubic-bezier(.4, 0, .2, 1);
+}
+
+.login-home-link:hover { color: #2f9bf4; }
+.login-home-icon { width: 1rem; height: 1rem; }

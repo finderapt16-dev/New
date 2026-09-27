@@ -161,7 +161,7 @@ describe("finishing a first-time Google sign-up", () => {
         mocks.finishGoogleSignIn.mockResolvedValue(needsProfile);
     });
 
-    it("creates a tenant account after the terms are accepted", async () => {
+    it("creates a tenant account after the terms are accepted, then returns to sign-in", async () => {
         saveIntent({ intent: "signup" });
         mocks.completeGoogleSignup.mockResolvedValue({ id: "user-9", role: "tenant" });
         renderCallback();
@@ -180,9 +180,12 @@ describe("finishing a first-time Google sign-up", () => {
         await userEvent.click(screen.getByRole("checkbox"));
         await userEvent.click(screen.getByRole("button", { name: /^create account$/i }));
 
-        expect(await screen.findByText("BROWSE PAGE")).toBeInTheDocument();
+        // Registration does not sign the person in: like email signup, they
+        // land on the sign-in page and continue with Google explicitly.
+        expect(await screen.findByText(/Account created successfully\. Use Continue with Google to sign in\./)).toBeInTheDocument();
+        expect(screen.queryByText("BROWSE PAGE")).not.toBeInTheDocument();
         expect(mocks.completeGoogleSignup).toHaveBeenCalledWith({ role: "tenant", name: null, mobile: null, address: null, permitNumber: null, termsAccepted: true, landlordVerificationAccepted: false });
-        expect(mocks.auth.signOut).not.toHaveBeenCalled();
+        expect(mocks.logout).toHaveBeenCalledTimes(1);
         expect(window.sessionStorage.getItem(INTENT_KEY)).toBeNull();
     });
 
@@ -205,7 +208,8 @@ describe("finishing a first-time Google sign-up", () => {
         await userEvent.type(screen.getByLabelText(/^business permit number/i), "BP-2025-778");
         await userEvent.click(screen.getByRole("button", { name: /^create account$/i }));
 
-        expect(await screen.findByText("DASHBOARD PAGE")).toBeInTheDocument();
+        expect(await screen.findByText(/Account created successfully\. Use Continue with Google to sign in\./)).toBeInTheDocument();
+        expect(screen.queryByText("DASHBOARD PAGE")).not.toBeInTheDocument();
         expect(mocks.completeGoogleSignup).toHaveBeenCalledWith({
             role: "landlord",
             name: "Juan Dela Cruz",
@@ -215,6 +219,7 @@ describe("finishing a first-time Google sign-up", () => {
             termsAccepted: true,
             landlordVerificationAccepted: true,
         });
+        expect(mocks.logout).toHaveBeenCalledTimes(1);
     });
 
     it("keeps the form open with the server's message when creation fails", async () => {
@@ -227,6 +232,8 @@ describe("finishing a first-time Google sign-up", () => {
 
         expect(await screen.findByText(/already uses this email/i)).toBeInTheDocument();
         expect(screen.getByRole("button", { name: /^create account$/i })).toBeEnabled();
+        // A failed creation must not sign the Google session out.
+        expect(mocks.logout).not.toHaveBeenCalled();
     });
 
     it("can be cancelled, which signs the Google session out", async () => {

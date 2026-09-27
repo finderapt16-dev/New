@@ -36,15 +36,16 @@ describe("floating auth dialog", () => {
         expect(screen.getByRole("button", { name: /^sign in$/i })).toBeInTheDocument();
         await userEvent.click(screen.getByRole("button", { name: /create account/i }));
 
-        expect(await screen.findByText(/choose your account type/i)).toBeInTheDocument();
+        expect(await screen.findByText(/choose your role to continue/i)).toBeInTheDocument();
         expect(screen.queryByText("OLD SIGNUP PAGE")).not.toBeInTheDocument();
     });
 
-    it("returns to the floating sign-in view from signup", async () => {
+    it("returns to the floating sign-in view from the signup form screen", async () => {
         renderDialog("signup");
 
-        expect(await screen.findByText(/choose your account type/i)).toBeInTheDocument();
-        await userEvent.click(screen.getByRole("button", { name: /sign in here/i }));
+        expect(await screen.findByText(/choose your role to continue/i)).toBeInTheDocument();
+        await userEvent.click(screen.getByRole("button", { name: /tenant/i }));
+        await userEvent.click(screen.getByRole("button", { name: /^sign in$/i }));
 
         expect(await screen.findByRole("button", { name: /^sign in$/i })).toBeInTheDocument();
         expect(screen.queryByText("OLD LOGIN PAGE")).not.toBeInTheDocument();
@@ -103,9 +104,9 @@ describe("floating auth dialog", () => {
         mocks.google.mockReturnValue(new Promise(() => {}));
         renderDialog("signup");
 
-        expect(screen.queryByRole("button", { name: /continue with google/i })).not.toBeInTheDocument();
+        expect(screen.queryByRole("button", { name: /with google/i })).not.toBeInTheDocument();
         await userEvent.click(screen.getByRole("button", { name: /landlord/i }));
-        await userEvent.click(screen.getByRole("button", { name: /continue with google/i }));
+        await userEvent.click(screen.getByRole("button", { name: /sign up with google/i }));
 
         expect(mocks.google).toHaveBeenCalledWith({ intent: "signup", role: "landlord", redirectTo: null });
     });
@@ -115,11 +116,34 @@ describe("floating auth dialog", () => {
         renderDialog("signup");
         expect(screen.queryByRole("button", { name: /continue with google/i })).not.toBeInTheDocument();
         await userEvent.click(screen.getByRole("button", { name: /tenant/i }));
-        const google = screen.getByRole("button", { name: /continue with google/i });
+        const google = screen.getByRole("button", { name: /sign up with google/i });
         expect(screen.getByRole("button", { name: /^create account$/i }).compareDocumentPosition(google)
             & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
         await userEvent.click(google);
         expect(mocks.google).toHaveBeenCalledWith({ intent: "signup", role: "tenant", redirectTo: null });
+        expect(mocks.signup).not.toHaveBeenCalled();
+    });
+
+    it("places Google above the landlord wizard so it stays visible after choosing Landlord", async () => {
+        mocks.google.mockReturnValue(new Promise(() => {}));
+        renderDialog("signup");
+        expect(screen.queryByRole("button", { name: /with google/i })).not.toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole("button", { name: /landlord/i }));
+        const google = screen.getByRole("button", { name: /sign up with google/i });
+
+        // Google comes before the wizard's step content ("Personal Information")
+        // instead of below the whole multi-step form, where it would be buried.
+        const personalHeading = screen.getByRole("heading", { name: /personal information/i });
+        expect(google.compareDocumentPosition(personalHeading)
+            & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        // ...and before the wizard's Continue button, right under the role cards.
+        const wizardContinue = screen.getByRole("button", { name: /^continue$/i });
+        expect(google.compareDocumentPosition(wizardContinue)
+            & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+        await userEvent.click(google);
+        expect(mocks.google).toHaveBeenCalledWith({ intent: "signup", role: "landlord", redirectTo: null });
         expect(mocks.signup).not.toHaveBeenCalled();
     });
 

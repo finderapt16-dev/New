@@ -32,6 +32,7 @@ export function AuthDialog({
   onOpenChange,
   initialLoginMessage = null,
   redirectTo = null,
+  showBackToHome = false,
 }) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const open = controlledOpen ?? uncontrolledOpen;

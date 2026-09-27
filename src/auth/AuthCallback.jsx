@@ -144,10 +144,17 @@ export function AuthCallback() {
         })();
     }, [finishGoogleSignIn, navigate]);
     const handleCompleteSignup = async (details) => {
-        const user = await completeGoogleSignup(details);
+        await completeGoogleSignup(details);
         clearOAuthIntent();
+        // Email registration ends at the sign-in page; Google registration now
+        // does too. The profile exists, but the person signs in explicitly —
+        // with Google — instead of being dropped straight into the app.
+        logout();
         if (mountedRef.current)
-            navigate(getPostSignInPath(user, view.intent?.redirectTo), { replace: true });
+            navigate("/login", {
+                replace: true,
+                state: { message: "Account created successfully. Use Continue with Google to sign in." },
+            });
     };
     const handleCancelSignup = () => {
         clearOAuthIntent();

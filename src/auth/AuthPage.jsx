@@ -25,6 +25,7 @@ export function AuthPage({ view = "login" }) {
       <AuthDialog
         defaultView={view}
         open
+        showBackToHome
         onOpenChange={(next) => {
           if (!next) navigate("/", { replace: true });
         }}

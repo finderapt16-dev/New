@@ -64,7 +64,7 @@ describe("landing floating auth", () => {
 
         await userEvent.click(screen.getByRole("link", { name: /list your property/i }));
 
-        expect(await screen.findByText(/choose your account type/i)).toBeInTheDocument();
+        expect(await screen.findByText(/choose your role to continue/i)).toBeInTheDocument();
         expect(screen.queryByText("OLD SIGNUP PAGE")).not.toBeInTheDocument();
     });
 });

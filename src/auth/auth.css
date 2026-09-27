@@ -102,8 +102,8 @@
   --auth-primary: #ffffff;
   --auth-secondary: #f2f6fa;
   --auth-border: #d9d9d9;
-  --auth-accent: #16a5e1;
-  --auth-accent-hover: #0e93ca;
+  --auth-accent: #2f9bf4;
+  --auth-accent-hover: #1a8bef;
   --auth-text: #111111;
   --auth-subtext: #666666;
   --auth-muted: #8a8a8a;
@@ -267,7 +267,7 @@
 
 .auth-google-spinner {
   border: 2px solid rgb(22 165 225 / 25%);
-  border-top-color: var(--auth-accent, #16a5e1);
+  border-top-color: var(--auth-accent, #2f9bf4);
   border-radius: 9999px;
   animation: auth-google-spin 700ms linear infinite;
 }
@@ -298,3 +298,16 @@
   height: 1px;
   background-color: var(--auth-border, #d9d9d9);
 }
+
+/* ── Redesigned shared auth controls ── */
+.auth-field-label { font-size: .8125rem; font-weight: 600; }
+.auth-field-control { height: 2.875rem; border-radius: 10px; }
+
+.auth-google-button {
+  height: 2.875rem;
+  border-radius: 10px;
+  font-size: .9375rem;
+  font-weight: 600;
+}
+
+.login-submit-button { border-radius: 10px; }
