@@ -1156,3 +1156,112 @@
 .location-highlight {
   color: #0EA5E9;
 }
+
+/* =========================================================
+   LISTINGS EMPTY STATE
+   Shown when no published apartment exists yet. The catalog
+   is genuinely empty at that point, so the section uses a
+   dashed, image-free panel instead of placeholder photos.
+========================================================= */
+
+.landing-empty-state {
+  border-radius: 1rem;
+  border-style: dashed;
+  border-width: 1px;
+  border-color: var(--landing-border, #d9d9d9);
+  background-color: var(--landing-secondary, #f2f6fa);
+  padding-block: 3.5rem;
+  padding-inline: 1.5rem;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  display: flex;
+}
+
+@media (width >= 48rem) {
+  .landing-empty-state {
+    padding-block: 4.5rem;
+    padding-inline: 3rem;
+  }
+}
+
+.landing-empty-state-icon {
+  border-radius: 9999px;
+  background-color: #ffffff;
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--landing-border, #d9d9d9);
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 1.25rem;
+  color: var(--landing-accent, #16a5e1);
+  align-items: center;
+  justify-content: center;
+  display: flex;
+}
+
+.landing-empty-state-icon-glyph {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
+.landing-empty-state-title {
+  color: var(--landing-text, #111111);
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 900;
+  line-height: 1.3;
+}
+
+@media (width >= 48rem) {
+  .landing-empty-state-title {
+    font-size: 1.5rem;
+  }
+}
+
+.landing-empty-state-description {
+  color: var(--landing-subtext, #666666);
+  max-width: 34rem;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.landing-empty-state-actions {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  display: flex;
+}
+
+.landing-empty-state-primary {
+  border-radius: 0.75rem;
+  font-weight: 900;
+  color: #ffffff;
+  background-color: var(--landing-accent, #16a5e1);
+}
+
+.landing-empty-state-primary:hover {
+  background-color: var(--landing-accent-hover, #0e93ca);
+}
+
+.landing-empty-state-secondary {
+  border-radius: 0.75rem;
+  border-style: solid;
+  border-width: 1px;
+  border-color: var(--landing-border, #d9d9d9);
+  font-weight: 900;
+  color: var(--landing-text, #111111);
+  background-color: #ffffff;
+}
+
+.landing-empty-state-secondary:hover {
+  background-color: #e8eef3;
+}
+
+.landing-empty-state-arrow {
+  width: 1rem;
+  height: 1rem;
+  margin-left: 0.5rem;
+}
