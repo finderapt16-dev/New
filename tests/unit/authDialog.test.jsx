@@ -123,6 +123,29 @@ describe("floating auth dialog", () => {
         expect(mocks.signup).not.toHaveBeenCalled();
     });
 
+    it("places Google above the landlord wizard so it stays visible after choosing Landlord", async () => {
+        mocks.google.mockReturnValue(new Promise(() => {}));
+        renderDialog("signup");
+        expect(screen.queryByRole("button", { name: /continue with google/i })).not.toBeInTheDocument();
+
+        await userEvent.click(screen.getByRole("button", { name: /landlord/i }));
+        const google = screen.getByRole("button", { name: /continue with google/i });
+
+        // Google comes before the wizard's step content ("Personal Information")
+        // instead of below the whole multi-step form, where it would be buried.
+        const personalHeading = screen.getByRole("heading", { name: /personal information/i });
+        expect(google.compareDocumentPosition(personalHeading)
+            & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+        // ...and before the wizard's Continue button, right under the role cards.
+        const wizardContinue = screen.getByRole("button", { name: /^continue$/i });
+        expect(google.compareDocumentPosition(wizardContinue)
+            & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+        await userEvent.click(google);
+        expect(mocks.google).toHaveBeenCalledWith({ intent: "signup", role: "landlord", redirectTo: null });
+        expect(mocks.signup).not.toHaveBeenCalled();
+    });
+
     it("shows why Google sign-in could not start and lets the user retry", async () => {
         mocks.google.mockRejectedValueOnce(new Error("Continue with Google isn't available right now. Please use the form below instead."));
         renderDialog("login");

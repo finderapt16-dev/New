@@ -311,6 +311,11 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                   </div>
                 </div>)}
 
+              {/* Landlord: keep Google visible right after the role choice — the
+                  wizard below is long, so a bottom-placed button disappears past
+                  the fold and reads as missing. */}
+              {formData.role === "landlord" && (<GoogleAuthOption intent="signup" role="landlord" redirectTo={redirectTo} onError={setError} disabled={loading} dividerLabel="or"/>)}
+
               {formData.role === "landlord" && (<div className="signup-landlord-wizard">
                   <div className="signup-landlord-stepper">
                     {[
@@ -627,7 +632,7 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                     </>) : ("Create Account")}
                 </Button>)}
 
-              {formData.role && (<GoogleAuthOption intent="signup" role={formData.role} redirectTo={redirectTo} onError={setError} disabled={loading} dividerLabel="or"/>)}
+              {formData.role === "tenant" && (<GoogleAuthOption intent="signup" role="tenant" redirectTo={redirectTo} onError={setError} disabled={loading} dividerLabel="or"/>)}
 
             </form>
           </div>
