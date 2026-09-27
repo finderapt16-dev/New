@@ -406,6 +406,71 @@
   color: lab(65.5349% -2.25151 -14.5072);
 }
 
+/* Manual "resend verification email" helper for accounts that never received mail. */
+.login-verification-help { margin-top: .5rem; }
+
+.login-verification-toggle {
+  color: #0e93ca;
+  color: lab(47.2709% 42.9082 69.2966);
+  font-size: .75rem;
+  font-weight: 700;
+  line-height: 1.33333;
+  text-decoration: underline;
+}
+
+.login-verification-panel {
+  margin-top: .5rem;
+  padding: .75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: .75rem;
+  background-color: #f8fafc;
+}
+
+.login-verification-text {
+  margin-bottom: .5rem;
+  color: #45556c;
+  font-size: .75rem;
+  line-height: 1.5;
+}
+
+.login-verification-row {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+
+.login-verification-input {
+  flex: 1 1 auto;
+  height: 2.5rem;
+  min-width: 0;
+  padding-inline: .75rem;
+  border: 1px solid #d1d5db;
+  border-radius: .75rem;
+  background-color: #ffffff;
+  color: #111111;
+  font-size: .875rem;
+  outline: none;
+}
+
+.login-verification-input:focus {
+  border-color: #16a5e1;
+  box-shadow: 0 0 0 3px rgba(22, 165, 225, .15);
+}
+
+.login-verification-send {
+  flex: 0 0 auto;
+  height: 2.5rem;
+  padding-inline: 1rem;
+  border-radius: .75rem;
+  background-color: #16a5e1;
+  color: #ffffff;
+  font-size: .8125rem;
+  font-weight: 700;
+}
+
+.login-verification-send:hover { background-color: #0e93ca; }
+.login-verification-send:disabled { background-color: #90a1b9; }
+
 .login-error-alert {
   background-color: #fff1f2;
   background-color: lab(96.2369% 4.94152 1.28012);
@@ -620,6 +685,7 @@
   .login-recovery-link,
   .login-create-link,
   .login-resend-link,
+  .login-verification-toggle,
   .login-badge-icon,
   .login-badge-text,
   .login-benefit-icon

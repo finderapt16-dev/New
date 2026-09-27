@@ -15,6 +15,45 @@ export class SignupFlowError extends Error {
 const APP_USERS_TABLE = 'app_users';
 const VALID_ROLES = new Set(['tenant', 'landlord', 'admin']);
 let latestAuthProfileRequestId = 0;
+// Supabase only sends mail to redirect targets that are on its allow list, so the
+// verification links must be built from a known-good base. VITE_APP_URL lets a
+// deployment pin the public origin (useful for Vercel preview domains) instead of
+// trusting window.location.origin.
+function resolveAuthRedirectBase() {
+    const configured = import.meta.env.VITE_APP_URL?.trim();
+    if (configured && /^https?:\/\//i.test(configured)) {
+        return configured.replace(/\/+$/, '');
+    }
+    return typeof window === 'undefined' ? '' : window.location.origin;
+}
+function buildAuthRedirect(path) {
+    return `${resolveAuthRedirectBase()}${path}`;
+}
+// Supabase creates the auth user first and only then talks to the mailer, so a
+// signup can succeed while no confirmation email is ever delivered. Classifying
+// the response keeps that failure visible instead of silent.
+function describeEmailConfirmation(authUser, hasSession) {
+    if (hasSession) {
+        // A session on signup means "Confirm email" is OFF for the project.
+        return { state: 'disabled', sentAt: null };
+    }
+    if (authUser?.email_confirmed_at) {
+        return { state: 'confirmed', sentAt: authUser.confirmation_sent_at ?? null };
+    }
+    return authUser?.confirmation_sent_at
+        ? { state: 'sent', sentAt: authUser.confirmation_sent_at }
+        : { state: 'not_sent', sentAt: null };
+}
+const EMAIL_CONFIRMATION_HINTS = {
+    disabled: 'Supabase returned a session at signup, which means "Confirm email" is turned off (Authentication → Sign In/Providers → Email). No confirmation email is sent until it is enabled.',
+    not_sent: 'Supabase created the account but did not record a confirmation email. Check Authentication → Logs for "Email address not authorized" or a rate-limit error, then enable custom SMTP (Authentication → Emails → SMTP Settings — the default Supabase sender only delivers to project team members and is capped at a couple of messages per hour).',
+};
+function logEmailConfirmationProblem(state) {
+    const hint = EMAIL_CONFIRMATION_HINTS[state];
+    if (!hint)
+        return;
+    console.error(`[AUTH] Signup finished without a confirmed verification email (${state}). ${hint}`);
+}
 function isRecord(value) {
     return typeof value === 'object' && value !== null;
 }
@@ -425,7 +464,7 @@ export async function signupUser(input) {
         email,
         password: input.password,
         options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            emailRedirectTo: buildAuthRedirect('/auth/callback'),
             data: {
                 username,
                 name: input.name,
@@ -452,15 +491,20 @@ export async function signupUser(input) {
     const existingAccount = Array.isArray(authData.user.identities) && authData.user.identities.length === 0;
     if (existingAccount) {
         signupLog('[AUTH] Existing account response received', { email });
+        // Supabase deliberately does NOT resend the confirmation email for an
+        // already registered address, so the caller must offer a manual resend.
         return {
             user: pendingSignupUser(input, authData.user.id, role),
             accountCreated: false,
             profileCreated: false,
-            requiresEmailVerification: true,
+            requiresEmailVerification: !authData.user.email_confirmed_at,
             existingAccount: true,
+            emailConfirmation: { state: 'existing_account', sentAt: authData.user.confirmation_sent_at ?? null },
         };
     }
     const requiresEmailVerification = !authData.user.email_confirmed_at;
+    const emailConfirmation = describeEmailConfirmation(authData.user, Boolean(authData.session));
+    logEmailConfirmationProblem(emailConfirmation.state);
     signupLog('[AUTH] Auth account created', { authUserId: authData.user.id });
     signupLog(requiresEmailVerification ? '[AUTH] Verification pending' : '[AUTH] Email already confirmed');
     // handle_new_auth_user runs in the same database transaction as Auth user
@@ -484,13 +528,14 @@ export async function signupUser(input) {
             await supabaseClient.auth.signOut();
         }
     }
-    signupLog('[AUTH] Signup flow complete', { requiresEmailVerification, profileSetupError: Boolean(profileSetupError) });
+    signupLog('[AUTH] Signup flow complete', { requiresEmailVerification, emailConfirmation: emailConfirmation.state, profileSetupError: Boolean(profileSetupError) });
     return {
         user: profile,
         accountCreated: true,
         profileCreated: !profileSetupError,
         requiresEmailVerification,
         existingAccount: false,
+        emailConfirmation,
         profileSetupError,
     };
 }
@@ -546,29 +591,35 @@ export async function loginUser(credentials) {
     return profile;
 }
 export async function resendSignupVerification(email) {
-    const normalizedEmail = email.trim();
+    const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
     if (!/^\S+@\S+\.\S+$/.test(normalizedEmail))
         throw new Error('Enter a valid email address.');
     const { error } = await supabaseClient.auth.resend({
         type: 'signup', email: normalizedEmail,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        options: { emailRedirectTo: buildAuthRedirect('/auth/callback') },
     });
     if (!error)
         return;
     console.error('[AUTH] Verification resend failed', { message: error.message, status: error.status, code: error.code });
-    if (error.status === 429 || /rate|too many|seconds|smtp|mailer|email.*send|send.*email|email.*not.*authorized|not.*authorized.*email/i.test(`${error.code ?? ''} ${error.message}`)) {
-        throw new Error("We couldn't send the confirmation email right now. Please try again shortly.");
+    const details = `${error.code ?? ''} ${error.message}`;
+    // The default Supabase sender refuses addresses outside the project team.
+    if (/not.*authorized|unauthorized/i.test(details)) {
+        throw new Error('Supabase is not allowed to email this address yet. Enable custom SMTP in Supabase → Authentication → Emails → SMTP Settings, then try again.');
     }
-    if (/already.*confirm|already.*verif/i.test(error.message))
+    if (/already.*confirm|already.*verif/i.test(details))
         throw new Error('This email is already verified. Try signing in or resetting your password.');
-    if (/invalid.*email/i.test(error.message))
+    if (error.status === 429 || /rate|too many|seconds/i.test(details))
+        throw new Error('Too many verification emails were requested for this address. Wait a few minutes, then try again.');
+    if (/smtp|mailer|email.*send|send.*email|confirmation.*email/i.test(details))
+        throw new Error("We couldn't send the confirmation email right now. Please try again shortly.");
+    if (/invalid.*email/i.test(details))
         throw new Error('Enter a valid email address.');
     throw new Error('The verification email could not be requested. Please try again later.');
 }
 // Password recovery and email verification keep their UI decisions in the auth pages.
 export function requestPasswordResetEmail(email) {
     return supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: buildAuthRedirect('/reset-password'),
     });
 }
 export function exchangeAuthCode(code) {

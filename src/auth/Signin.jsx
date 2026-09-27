@@ -22,6 +22,8 @@ export function Login() {
     const [verificationEmail, setVerificationEmail] = useState("");
     const [resending, setResending] = useState(false);
     const [resendCooldown, setResendCooldown] = useState(0);
+    const [verificationHelpOpen, setVerificationHelpOpen] = useState(false);
+    const [helpEmail, setHelpEmail] = useState("");
     const requestedRedirect = new URLSearchParams(location.search).get("redirect");
     const redirectTo = requestedRedirect?.startsWith("/") && !requestedRedirect.startsWith("//")
         ? requestedRedirect
@@ -32,8 +34,14 @@ export function Login() {
     useEffect(() => {
         if (location.state?.message) {
             setSuccessMessage(location.state.message);
-            if (typeof location.state.verificationEmail === "string")
+            if (typeof location.state.verificationEmail === "string") {
                 setVerificationEmail(location.state.verificationEmail);
+                setHelpEmail(location.state.verificationEmail);
+            }
+            // Signup opens this panel when it could not confirm that Supabase
+            // actually sent the confirmation email.
+            if (location.state?.verificationHelp === true)
+                setVerificationHelpOpen(true);
             window.history.replaceState({}, document.title);
         }
     }, [location]);
@@ -43,14 +51,18 @@ export function Login() {
         const timer = window.setInterval(() => setResendCooldown((value) => Math.max(0, value - 1)), 1000);
         return () => window.clearInterval(timer);
     }, [resendCooldown]);
-    const resendVerification = async () => {
-        if (!verificationEmail || resending || resendCooldown > 0)
+    const requestVerificationEmail = async (targetEmail) => {
+        const email = (targetEmail ?? "").trim();
+        if (!email || resending || resendCooldown > 0)
             return;
         setResending(true);
         setError("");
         try {
-            await resendSignupVerification(verificationEmail);
-            setSuccessMessage("Verification email requested. Check your inbox and spam folder.");
+            await resendSignupVerification(email);
+            setVerificationEmail(email);
+            setHelpEmail(email);
+            setVerificationHelpOpen(false);
+            setSuccessMessage(`Verification email requested for ${email}. Check your inbox and spam folder.`);
             setResendCooldown(60);
         }
         catch (resendError) {
@@ -61,6 +73,7 @@ export function Login() {
             setResending(false);
         }
     };
+    const resendVerification = () => requestVerificationEmail(verificationEmail);
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -74,6 +87,10 @@ export function Login() {
             else {
                 const message = result.error || "Invalid username or password.";
                 setError(message);
+                // Unverified accounts are stuck until the confirmation email
+                // arrives, so surface the resend form immediately.
+                if (/verify your account/i.test(message))
+                    setVerificationHelpOpen(true);
             }
         }
         catch {
@@ -167,6 +184,32 @@ export function Login() {
                   </Alert>
                 </div>)}
             </>
+
+            <div className="login-verification-help">
+              <button type="button" className="login-verification-toggle" aria-expanded={verificationHelpOpen} onClick={() => {
+            setVerificationHelpOpen((open) => {
+                if (!open && !helpEmail)
+                    setHelpEmail(verificationEmail);
+                return !open;
+            });
+        }}>
+                {verificationHelpOpen ? "Hide verification help" : "Didn't receive a verification email?"}
+              </button>
+
+              {verificationHelpOpen && (<div className="login-verification-panel">
+                  <p className="login-verification-text">
+                    Enter the email address you registered with and we will ask
+                    Supabase to send a fresh confirmation link. Confirmation mail
+                    is delivered by Supabase, so also check your spam folder.
+                  </p>
+                  <div className="login-verification-row">
+                    <input id="verification-email" type="email" autoComplete="email" placeholder="you@example.com" aria-label="Verification email address" value={helpEmail} onChange={(event) => setHelpEmail(event.target.value)} className="login-verification-input"/>
+                    <button type="button" className="login-verification-send" disabled={resending || resendCooldown > 0} onClick={() => void requestVerificationEmail(helpEmail || verificationEmail)}>
+                      {resending ? "Sending..." : resendCooldown > 0 ? `Wait ${resendCooldown}s` : "Send link"}
+                    </button>
+                  </div>
+                </div>)}
+            </div>
 
             <form onSubmit={handleSubmit} className="login-form">
 

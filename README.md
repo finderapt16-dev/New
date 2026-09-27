@@ -33,6 +33,17 @@ Page-specific CSS lives beside its page or section. Landing and authentication n
 
 The local `supabase-master-migration.sql` is intentionally ignored and must not be committed. Run the current migration manually in the Supabase SQL Editor when required. Configure production Site URL, allowed `/auth/callback` and `/reset-password` redirects, and custom SMTP in Supabase.
 
+## Signup verification emails
+
+Confirmation mail is delivered by Supabase Auth, not by this app. When someone registers and no email arrives, the cause is a project setting — check them in this order:
+
+1. **Custom SMTP** — Authentication → Emails → SMTP Settings. Supabase's built-in sender refuses every address that is not a member of the project team (*Email address not authorized*), is capped at about two messages per hour, and is not meant for production ([docs](https://supabase.com/docs/guides/auth/auth-smtp)).
+2. **Confirm email** — Authentication → Sign In/Providers → Email → `Confirm email` must be ON. With it off, signup returns a session and no mail is sent; the signup screen now says so instead of reporting success.
+3. **Redirect URLs** — Authentication → URL Configuration needs the Site URL plus `https://<domain>/auth/callback`, `https://<domain>/reset-password`, `http://localhost:5173/**`, and `https://*-<vercel-slug>.vercel.app/**` for previews ([docs](https://supabase.com/docs/guides/auth/redirect-urls)). Set `VITE_APP_URL` to pin one canonical origin for the links when preview domains should not be used.
+4. **Logs** — Authentication → Logs shows `Email address not authorized`, `over_email_send_rate_limit`, and SMTP failures.
+
+Run `scripts/database/diagnose_email_confirmation.sql` in the SQL Editor to see, per account, whether Supabase ever recorded a confirmation email (`auth.users.confirmation_sent_at`). Anyone stuck without mail can request a fresh link from **Didn't receive a verification email?** on the sign-in page, which calls `supabase.auth.resend({ type: 'signup' })`.
+
 ## Landlord file layout
 
 Keep `src/landlord/` **flat, without feature subfolders**. All landlord JSX, CSS, and shared JS helpers live directly in this one directory so every file is visible together. Each JSX file has its same-named CSS alongside it, such as `LandlordDashboard.jsx` / `LandlordDashboard.css` and `ManageRooms.jsx` / `ManageRooms.css`.
