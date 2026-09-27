@@ -1,18 +1,20 @@
 import { AuthField } from "./AuthField";
-import { AppLogo } from "@/components/AppLogo";
-import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { isTenantRole, resendSignupVerification } from "@/services/authService";
-import { AlertCircle, BadgeCheck, CheckCircle2, Eye, EyeOff, Home, Key, UserRound, MapPin, ShieldCheck, } from "lucide-react";
+import { AlertCircle, CheckCircle2, Eye, EyeOff, Key, UserRound, } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./signin.css";
-export function Login({ variant = "page", initialMessage = null, onSwitchToSignup, onSwitchToForgot, }) {
-    const isDialog = variant === "dialog";
+
+/**
+ * Floating sign-in form. Always rendered inside AuthDialog — "Create account"
+ * and "Forgot password?" switch views in the same dialog, and the optional
+ * redirectTo sends the user back to the page they came from after sign-in.
+ */
+export function Login({ initialMessage = null, redirectTo: redirectToProp = null, onSwitchToSignup, onSwitchToForgot, }) {
     const navigate = useNavigate();
-    const location = useLocation();
     const { login } = useAuth();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -25,42 +27,23 @@ export function Login({ variant = "page", initialMessage = null, onSwitchToSignu
     const [resendCooldown, setResendCooldown] = useState(0);
     const [verificationHelpOpen, setVerificationHelpOpen] = useState(false);
     const [helpEmail, setHelpEmail] = useState("");
-    const requestedRedirect = new URLSearchParams(location.search).get("redirect");
+    const requestedRedirect = redirectToProp;
     const redirectTo = requestedRedirect?.startsWith("/") && !requestedRedirect.startsWith("//")
         ? requestedRedirect
         : "/dashboard";
-    const signupPath = requestedRedirect
-        ? `/signup?redirect=${encodeURIComponent(redirectTo)}`
-        : "/signup";
     useEffect(() => {
-        if (isDialog)
-            return;
-        if (location.state?.message) {
-            setSuccessMessage(location.state.message);
-            if (typeof location.state.verificationEmail === "string") {
-                setVerificationEmail(location.state.verificationEmail);
-                setHelpEmail(location.state.verificationEmail);
-            }
-            // Signup opens this panel when it could not confirm that Supabase
-            // actually sent the confirmation email.
-            if (location.state?.verificationHelp === true)
-                setVerificationHelpOpen(true);
-            window.history.replaceState({}, document.title);
-        }
-    }, [location, isDialog]);
-    // Floating mode: the signup view hands its result state directly instead
-    // of navigating to /login, so surface it the same way here.
-    useEffect(() => {
-        if (!isDialog || !initialMessage?.message)
+        if (!initialMessage?.message)
             return;
         setSuccessMessage(initialMessage.message);
         if (typeof initialMessage.verificationEmail === "string") {
             setVerificationEmail(initialMessage.verificationEmail);
             setHelpEmail(initialMessage.verificationEmail);
         }
+        // Signup opens this panel when it could not confirm that Supabase
+        // actually sent the confirmation email.
         if (initialMessage.verificationHelp === true)
             setVerificationHelpOpen(true);
-    }, [isDialog, initialMessage]);
+    }, [initialMessage]);
     useEffect(() => {
         if (resendCooldown <= 0)
             return;
@@ -117,64 +100,7 @@ export function Login({ variant = "page", initialMessage = null, onSwitchToSignu
         }
     };
     return (<div className="auth-palette login-page">
-
-      <div className="auth-visual-panel login-visual-panel">
-        <div className="login-background">
-          <ImageWithFallback src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=960" alt="Modern apartment in La Paz" className="auth-background-image login-background-image"/>
-          <div className="auth-background-overlay login-background-overlay"/>
-        </div>
-
-        <div className="login-visual-content">
-          <Link to="/" className="login-brand">
-            <AppLogo className="login-brand-logo"/>
-            <div>
-              <span className="login-brand-name">AptFindr</span>
-              <p className="login-brand-location">La Paz, Iloilo City</p>
-            </div>
-          </Link>
-
-          <div className="login-introduction">
-            <div>
-              <h2 className="login-visual-title">
-                Continue to<br />
-                <span className="login-visual-accent">
-                  AptFindr
-                </span>
-              </h2>
-              <p className="login-visual-description">
-                Sign in to browse apartments or manage your property listings.
-              </p>
-            </div>
-          </div>
-
-          <div className="auth-benefits login-benefits">
-            {[
-            { icon: BadgeCheck, text: "Review landlord verification status" },
-            { icon: ShieldCheck, text: "Check available rooms and listing details" },
-            { icon: MapPin, text: "Compare apartment locations on the map" },
-        ].map(({ icon: Icon, text }) => (<div key={text} className="login-benefit">
-                <div className="login-benefit-symbol">
-                  <Icon className="login-benefit-icon"/>
-                </div>
-                <span className="login-benefit-text">{text}</span>
-              </div>))}
-          </div>
-
-        </div>
-      </div>
-
       <div className="login-content">
-
-        <div className="login-mobile-header">
-          <Link to="/" className="login-mobile-brand">
-            <AppLogo className="login-mobile-logo"/>
-            <span className="login-mobile-brand-name">AptFindr</span>
-          </Link>
-          <Link to={signupPath} className="login-signup-link">
-            Create account
-          </Link>
-        </div>
-
         <div className="login-form-container">
           <div className="auth-form-shell login-form-shell">
 
@@ -233,11 +159,9 @@ export function Login({ variant = "page", initialMessage = null, onSwitchToSignu
                           {showPass ? <EyeOff className="login-icon-small"/> : <Eye className="login-icon-small"/>}
                         </button>}/>
                     <div className="login-recovery-link-row">
-                      {isDialog ? (<button type="button" onClick={onSwitchToForgot} className="login-recovery-link auth-dialog-link">
-                          Forgot password?
-                        </button>) : (<Link to="/forgot-password" className="login-recovery-link">
-                          Forgot password?
-                        </Link>)}
+                      <button type="button" onClick={onSwitchToForgot} className="login-recovery-link auth-dialog-link">
+                        Forgot password?
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -252,12 +176,7 @@ export function Login({ variant = "page", initialMessage = null, onSwitchToSignu
                   </>)}
               </Button>
 
-              <p className="login-signup-prompt">Don't have an account? {isDialog ? (<button type="button" onClick={onSwitchToSignup} className="login-create-link auth-dialog-link">Create account</button>) : (<Link to={signupPath} className="login-create-link">Create account</Link>)}</p>
-
-              <Link to="/" className="login-home-link">
-                <Home className="login-icon-small"/>
-                Back to Home
-              </Link>
+              <p className="login-signup-prompt">Don't have an account? <button type="button" onClick={onSwitchToSignup} className="login-create-link auth-dialog-link">Create account</button></p>
             </form>
           </div>
         </div>

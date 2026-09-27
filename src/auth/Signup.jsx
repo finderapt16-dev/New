@@ -1,13 +1,10 @@
 import { AuthField } from "./AuthField";
 import "./signup.css";
-import { AppLogo } from "@/components/AppLogo";
-
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { AlertCircle, BadgeCheck, Building2, Check, CheckCircle2, ChevronRight, ClipboardList, Eye, EyeOff, Home, Key, Lock, Mail, MapPin, Phone, ShieldCheck, Upload, User, Users } from "lucide-react";
+import { AlertCircle, BadgeCheck, Building2, Check, CheckCircle2, ChevronRight, ClipboardList, Eye, EyeOff, Key, Lock, Mail, MapPin, Phone, ShieldCheck, Upload, User, Users } from "lucide-react";
 import { useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
 /* ─── Password strength ────────────────────────────────────── */
 function getStrength(p) {
     let s = 0;
@@ -26,25 +23,12 @@ function getStrength(p) {
 const strengthLabel = ["", "Weak", "Fair", "Good", "Strong", "Very strong"];
 const strengthColor = ["", "signup-strength-fill-weak", "signup-strength-fill-fair", "signup-strength-fill-good", "signup-strength-fill-strong", "signup-strength-fill-very-strong"];
 const strengthText = ["", "signup-strength-text-weak", "signup-strength-text-fair", "signup-strength-text-good", "signup-strength-text-strong", "signup-strength-text-very-strong"];
-export function Signup({ variant = "page", onSwitchToLogin, onSwitchToForgot, }) {
-    const isDialog = variant === "dialog";
-    const navigate = useNavigate();
-    const location = useLocation();
+/**
+ * Floating registration form. Always rendered inside AuthDialog - the result
+ * is handed to the floating sign-in view instead of navigating pages.
+ */
+export function Signup({ onSwitchToLogin, onSwitchToForgot, }) {
     const { signup } = useAuth();
-    const requestedRedirect = new URLSearchParams(location.search).get("redirect");
-    const redirectTo = requestedRedirect?.startsWith("/") && !requestedRedirect.startsWith("//")
-        ? requestedRedirect
-        : null;
-    const loginPath = redirectTo ? `/login?redirect=${encodeURIComponent(redirectTo)}` : "/login";
-    // Floating mode: stay inside the dialog and switch to the sign-in view
-    // instead of navigating to the old full-page /login route.
-    const goToLogin = (path, options) => {
-        if (isDialog) {
-            onSwitchToLogin?.(options?.state);
-            return;
-        }
-        navigate(path, options);
-    };
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const submissionInFlightRef = useRef(false);
@@ -146,40 +130,34 @@ export function Signup({ variant = "page", onSwitchToLogin, onSwitchToForgot, })
             const confirmationState = result.signup?.emailConfirmation?.state;
             if (result.success && result.signup?.existingAccount) {
                 // Supabase never resends on signup, so offer the manual resend form.
-                goToLogin(loginPath, {
-                    state: {
+                onSwitchToLogin?.({
                         message: result.signup.requiresEmailVerification
                             ? `An account already exists for ${formData.email.trim()}. If it is still unverified, use "Resend verification email" below.`
                             : "An account may already exist for this email. Sign in or reset your password instead of registering again.",
                         verificationEmail: formData.email.trim(),
                         verificationHelp: true,
-                    },
                 });
             }
             else if (result.success && result.signup?.profileSetupError) {
-                goToLogin(loginPath, { state: { message: result.signup.profileSetupError, verificationEmail: formData.email.trim(), verificationHelp: true } });
+                onSwitchToLogin?.({ message: result.signup.profileSetupError, verificationEmail: formData.email.trim(), verificationHelp: true });
             }
             else if (result.success && result.signup?.requiresEmailVerification) {
                 const emailSent = confirmationState === "sent";
-                goToLogin(loginPath, {
-                    state: {
+                onSwitchToLogin?.({
                         message: emailSent
                             ? `Account created. A verification link was sent to ${formData.email.trim()}. Check your inbox and spam folder before signing in.`
                             : `Account created, but we could not confirm that the verification email was sent to ${formData.email.trim()}. Check your inbox and spam folder, and use "Resend verification email" below if nothing arrives within a few minutes.`,
                         verificationEmail: formData.email.trim(),
                         verificationHelp: !emailSent,
-                    },
                 });
             }
             else if (result.success) {
                 // No pending verification means either the address was already
                 // confirmed or "Confirm email" is off for the project.
-                goToLogin(loginPath, {
-                    state: {
+                onSwitchToLogin?.({
                         message: confirmationState === "disabled"
                             ? "Account created. Email confirmation is turned off for this project, so no verification email was sent and you can sign in right away."
                             : "Account created successfully. You can now sign in.",
-                    },
                 });
             }
             else {
@@ -241,61 +219,7 @@ export function Signup({ variant = "page", onSwitchToLogin, onSwitchToForgot, })
     };
     return (<div className="auth-palette signup-page">
 
-      <div className="auth-visual-panel signup-visual-panel">
-        <div className="signup-background">
-          <div className="auth-background-overlay signup-background-overlay" />
-         </div>
-        <div className="signup-visual-content">
-          <Link to="/" className="signup-brand">
-            <AppLogo className="signup-brand-logo"/>
-            <div>
-              <span className="signup-brand-name">AptFindr</span>
-              <p className="signup-brand-location">La Paz, Iloilo City</p>
-            </div>
-          </Link>
-
-          <div className="signup-introduction">
-            <div>
-             
-              <h2 className="signup-visual-title">
-                Create your<br />
-                <span className="signup-visual-accent">
-                  AptFindr account
-                </span>
-              </h2>
-              <p className="signup-visual-description">
-                Choose an account type and provide the information required for your role.
-              </p>
-            </div>
-          </div>
-
-          <div className="auth-benefits signup-benefits">
-            {[
-            { icon: BadgeCheck, text: "Review landlord verification status" },
-            { icon: ShieldCheck, text: "Submit listing reports for admin review" },
-            { icon: MapPin, text: "Compare apartment locations on the map" },
-        ].map(({ icon: Icon, text }) => (<div key={text} className="signup-benefit">
-                <div className="signup-benefit-symbol">
-                  <Icon className="signup-benefit-icon"/>
-                </div>
-                <span className="signup-benefit-text">{text}</span>
-              </div>))}
-          </div>
-
-        </div>
-      </div>
-
       <div className="signup-content">
-
-        <div className="signup-mobile-header">
-          <Link to="/" className="signup-mobile-brand">
-            <AppLogo className="signup-mobile-logo"/>
-            <span className="signup-mobile-brand-name">AptFindr</span>
-          </Link>
-          <Link to={loginPath} className="signup-login-link">
-            Sign in
-          </Link>
-        </div>
 
         <div className="signup-form-container">
           <div className="signup-form-shell">
@@ -304,7 +228,7 @@ export function Signup({ variant = "page", onSwitchToLogin, onSwitchToForgot, })
               <h1 className="signup-title">Create your account</h1>
               <p className="signup-description">
                 Already registered?{" "}
-                {isDialog ? (<button type="button" onClick={() => onSwitchToLogin?.()} className="signup-login-prompt-link auth-dialog-link">Sign in here</button>) : (<Link to={loginPath} className="signup-login-prompt-link">Sign in here</Link>)}
+                <button type="button" onClick={() => onSwitchToLogin?.()} className="signup-login-prompt-link auth-dialog-link">Sign in here</button>
               </p>
             </div>
 
@@ -315,16 +239,10 @@ export function Signup({ variant = "page", onSwitchToLogin, onSwitchToForgot, })
                     <AlertDescription className="signup-error-text">{error}</AlertDescription>
                   </Alert>
                   {(error.includes("may already exist") || error.includes("couldn't send the confirmation email")) && (<div className="signup-error-actions">
-                    {isDialog ? (<>
                       <button type="button" onClick={() => onSwitchToLogin?.()} className="signup-error-link auth-dialog-link">Sign in</button>
                       <button type="button" onClick={() => onSwitchToForgot?.()} className="signup-error-link auth-dialog-link">Forgot password</button>
                       <button type="button" onClick={() => onSwitchToLogin?.({ message: "Use Resend Verification Email for this account.", verificationEmail: formData.email.trim(), verificationHelp: true })} className="signup-error-link auth-dialog-link">Resend verification</button>
-                    </>) : (<>
-                      <Link to={loginPath} className="signup-error-link">Sign in</Link>
-                      <Link to="/forgot-password" className="signup-error-link">Forgot password</Link>
-                      <Link to={loginPath} state={{ message: "Use Resend Verification Email for this account.", verificationEmail: formData.email.trim() }} className="signup-error-link">Resend verification</Link>
-                    </>)}
-                  </div>)}
+                    </div>)}
                 </div>)}
             </>
 
@@ -706,10 +624,6 @@ export function Signup({ variant = "page", onSwitchToLogin, onSwitchToForgot, })
                     </>) : ("Create Account")}
                 </Button>)}
 
-              <Link to="/" className="signup-home-link">
-                <Home className="signup-icon-small"/>
-                Back to Home
-              </Link>
             </form>
           </div>
         </div>

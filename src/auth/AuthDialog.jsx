@@ -21,23 +21,30 @@ const VIEW_META = {
 };
 
 /**
- * Single floating auth panel. "Create account" and "Forgot password?" switch
- * views inside this same dialog instead of navigating to the old full-page
- * /signup and /forgot-password routes.
+ * The one and only auth UI: a floating panel where sign-in, sign-up and
+ * forgot-password switch views in the same dialog. Used by the landing page
+ * and by the /login, /signup and /forgot-password routes.
  */
-export function AuthDialog({ trigger, defaultView = "login", open: controlledOpen, onOpenChange }) {
+export function AuthDialog({
+  trigger,
+  defaultView = "login",
+  open: controlledOpen,
+  onOpenChange,
+  initialLoginMessage = null,
+  redirectTo = null,
+}) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
   const open = controlledOpen ?? uncontrolledOpen;
   const setOpen = onOpenChange ?? setUncontrolledOpen;
   const [view, setView] = useState(defaultView);
-  // Result handed by the signup view so the sign-in view can show it
-  // (verification message + resend link), same as the page flow.
-  const [loginMessage, setLoginMessage] = useState(null);
+  // Message shown by the sign-in view (protected-page notice or the result
+  // handed over by the signup view).
+  const [loginMessage, setLoginMessage] = useState(initialLoginMessage);
 
   const handleOpenChange = (next) => {
     if (next) {
       setView(defaultView);
-      setLoginMessage(null);
+      setLoginMessage(initialLoginMessage);
     }
     setOpen(next);
   };
@@ -57,21 +64,20 @@ export function AuthDialog({ trigger, defaultView = "login", open: controlledOpe
         <DialogDescription className="auth-dialog-accessible-description">{meta.description}</DialogDescription>
         {view === "login" && (
           <Login
-            variant="dialog"
             initialMessage={loginMessage}
+            redirectTo={redirectTo}
             onSwitchToSignup={() => setView("signup")}
             onSwitchToForgot={() => setView("forgot")}
           />
         )}
         {view === "signup" && (
           <Signup
-            variant="dialog"
             onSwitchToLogin={switchToLogin}
             onSwitchToForgot={() => setView("forgot")}
           />
         )}
         {view === "forgot" && (
-          <ForgotPassword variant="dialog" onSwitchToLogin={() => switchToLogin()} />
+          <ForgotPassword onSwitchToLogin={() => switchToLogin()} />
         )}
       </DialogContent>
     </Dialog>

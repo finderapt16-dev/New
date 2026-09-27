@@ -1,4 +1,5 @@
 import { AppLogo } from "@/components/AppLogo";
+import { AuthDialog } from "@/auth/AuthDialog";
 import { LoginDialog } from "@/auth/LoginDialog";
 import { SignupDialog } from "@/auth/SignupDialog";
 import { LandingListingsSection } from "./LandingApartmentPreview";
@@ -9,25 +10,41 @@ import { Mail, MapPin, Menu, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./landing.css";
+const LANDING_LOGIN_MESSAGE = "Please sign in or create an account to view apartment details.";
 export function Landing() {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [landingSearch, setLandingSearch] = useState("");
     const [scrolled, setScrolled] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false);
+    // Floating auth prompt opened by protected landing actions (search,
+    // browse, listing cards). Null when closed.
+    const [authPrompt, setAuthPrompt] = useState(null);
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener("scroll", onScroll);
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
     const dashboardPath = user?.role === "admin" ? "/admin" : "/dashboard";
+    const openAuthPrompt = (view, { redirect = null, message = null } = {}) => {
+        setAuthPrompt({ view, redirect, message });
+    };
     const handleProtectedAction = (e) => {
         if (!user) {
             e.preventDefault();
             const destination = e.currentTarget.getAttribute("href") || "/browse";
-            navigate(`/login?redirect=${encodeURIComponent(destination)}`, {
-                state: { message: "Please sign in or create an account to view apartment details." },
-            });
+            openAuthPrompt("login", { redirect: destination, message: LANDING_LOGIN_MESSAGE });
         }
+    };
+    const handleMobileProtectedAction = (e) => {
+        handleProtectedAction(e);
+        if (!user)
+            setMenuOpen(false);
+    };
+    const handleSignupAction = (e) => {
+        e?.preventDefault?.();
+        setMenuOpen(false);
+        openAuthPrompt("signup");
     };
     const handleLandingSearch = (e) => {
         e.preventDefault();
@@ -35,9 +52,7 @@ export function Landing() {
             ? `/browse?search=${encodeURIComponent(landingSearch.trim())}`
             : "/browse";
         if (!user) {
-            navigate(`/login?redirect=${encodeURIComponent(destination)}`, {
-                state: { message: "Please sign in or create an account to view apartment details." },
-            });
+            openAuthPrompt("login", { redirect: destination, message: LANDING_LOGIN_MESSAGE });
             return;
         }
         navigate(destination);
@@ -75,7 +90,7 @@ export function Landing() {
               </div>
             </nav>
 
-            <Sheet>
+            <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger className="landing-menu-trigger">
                 <Menu className="landing-menu-icon"/>
               </SheetTrigger>
@@ -83,13 +98,22 @@ export function Landing() {
                 <SheetTitle className="landing-menu-title">Menu</SheetTitle>
                 <SheetDescription className="landing-menu-description">AptFindr — La Paz, Iloilo City</SheetDescription>
                 <nav className="landing-mobile-nav">
-                  {[
-            { to: "/browse", label: "Browse Apartments", protected: true },
-            { to: "/favorites", label: "Favorites", protected: true },
-            ...(!user ? [{ to: "/login", label: "Login", protected: false }, { to: "/signup", label: "Sign Up", protected: false }] : [{ to: dashboardPath, label: "Dashboard", protected: false }]),
-        ].map(({ to, label, protected: isProtected }) => (<Link key={to} to={to} onClick={isProtected ? handleProtectedAction : undefined} className="landing-mobile-link">
-                      {label}
-                    </Link>))}
+                  <Link to="/browse" onClick={handleMobileProtectedAction} className="landing-mobile-link">
+                    Browse Apartments
+                  </Link>
+                  <Link to="/favorites" onClick={handleMobileProtectedAction} className="landing-mobile-link">
+                    Favorites
+                  </Link>
+                  {!user ? (<>
+                    <button type="button" onClick={() => { setMenuOpen(false); openAuthPrompt("login"); }} className="landing-mobile-link">
+                      Login
+                    </button>
+                    <button type="button" onClick={() => { setMenuOpen(false); openAuthPrompt("signup"); }} className="landing-mobile-link">
+                      Sign Up
+                    </button>
+                  </>) : (<Link to={dashboardPath} className="landing-mobile-link">
+                    Dashboard
+                  </Link>)}
                 </nav>
               </SheetContent>
             </Sheet>
@@ -136,7 +160,7 @@ Browse verified apartment listings, compare rental options, explore locations, a
       </section>
 
       <div className="landing-listings-wrapper">
-        <LandingListingsSection onBrowseClick={handleProtectedAction}/>
+        <LandingListingsSection onBrowseClick={handleProtectedAction} onSignupClick={handleSignupAction}/>
       </div>
 
   
@@ -151,11 +175,9 @@ Browse verified apartment listings, compare rental options, explore locations, a
             
             
             <div className="landing-cta-actions">
-              <Link to="/login">
-                <Button size="lg" className="landing-create-button">
-                  Load More
-                </Button>
-              </Link>
+              <Button size="lg" className="landing-create-button" onClick={() => openAuthPrompt("login")}>
+                Load More
+              </Button>
             </div>
 
           </div>
@@ -198,5 +220,8 @@ Browse verified apartment listings, compare rental options, explore locations, a
           </div>
         </div>
       </footer>
+
+      {authPrompt ? (<AuthDialog defaultView={authPrompt.view} open onOpenChange={(next) => { if (!next)
+                setAuthPrompt(null); }} initialLoginMessage={authPrompt.message ? { message: authPrompt.message } : null} redirectTo={authPrompt.redirect}/>) : null}
     </div>);
 }

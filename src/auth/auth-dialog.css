@@ -20,7 +20,7 @@
 .auth-dialog-accessible-title,
 .auth-dialog-accessible-description { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
-/* The dialog shows only the form: hide the full-page panels/headers/footers. */
+/* The auth forms are floating-only: content fills the dialog. */
 .auth-dialog-content .login-page,
 .auth-dialog-content .signup-page,
 .auth-dialog-content .forgot-password-page {
@@ -28,14 +28,6 @@
   display: block;
   background: transparent;
 }
-.auth-dialog-content .login-visual-panel,
-.auth-dialog-content .signup-visual-panel,
-.auth-dialog-content .forgot-password-visual-panel,
-.auth-dialog-content .login-mobile-header,
-.auth-dialog-content .signup-mobile-header,
-.auth-dialog-content .forgot-password-mobile-header,
-.auth-dialog-content .login-home-link,
-.auth-dialog-content .signup-home-link { display: none; }
 .auth-dialog-content .login-content,
 .auth-dialog-content .signup-content,
 .auth-dialog-content .forgot-password-content {
@@ -63,9 +55,15 @@
   cursor: pointer;
 }
 
-/* Recovery success panel: single action in the dialog (no "Back to Home"). */
+/* Recovery success panel: single full-width "Try again" action. */
 .auth-dialog-content .forgot-password-navigation { grid-template-columns: 1fr; }
-.auth-dialog-content .forgot-password-navigation a { display: none; }
+
+/* Backdrop behind the floating panel on the /login, /signup and
+   /forgot-password routes (the dialog overlay covers it). */
+.auth-page-backdrop {
+  min-height: 100vh;
+  background: #f2f6fa;
+}
 
 @media (max-width: 560px) {
   .auth-dialog-content { width: calc(100vw - 20px); max-height: 92vh; border-radius: 20px; }
