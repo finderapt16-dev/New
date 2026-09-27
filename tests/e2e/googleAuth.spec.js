@@ -138,10 +138,12 @@ test("a new landlord continues with Google from Create account and finishes thei
     await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "Create account" }).click();
 
-    await expect(page).toHaveURL(/\/dashboard$/);
+    // Registration ends signed out at the sign-in page, matching email
+    // registration — the person signs in explicitly with Google afterwards.
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByText("Account created successfully. Use Continue with Google to sign in.")).toBeVisible();
     await page.waitForLoadState("networkidle");
-    await expect(page).toHaveURL(/\/dashboard$/);
-    await expect(page.getByRole("heading", { name: "Sign in to AptFindr" })).toHaveCount(0);
+    await expect(page).toHaveURL(/\/login$/);
     expect(supabase.rpcCalls).toEqual([{
         p_role: "landlord",
         p_terms_accepted: true,
@@ -151,7 +153,8 @@ test("a new landlord continues with Google from Create account and finishes thei
         p_address: "Brgy. Baldoza, La Paz, Iloilo City",
         p_permit_number: "BP-2025-778",
     }]);
-    expect(supabase.logouts).toBe(0);
+    expect(supabase.logouts).toBe(1);
+    await expect.poll(() => page.evaluate((key) => localStorage.getItem(key), STORAGE_KEY)).toBeNull();
     expect(supabase.logins).toContainEqual(expect.objectContaining({ user_id: PROFILE_ID, metadata: { provider: "google", signup: true } }));
 });
 
@@ -166,11 +169,10 @@ test("a new tenant can finish a Google sign-up started from the sign-in view", a
     await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "Create account" }).click();
 
-    await expect(page).toHaveURL(/\/browse$/);
-    await expect(page.getByRole("heading", { name: "Available Apartments" })).toBeVisible();
-    await page.waitForLoadState("networkidle");
-    await expect(page).toHaveURL(/\/browse$/);
+    await expect(page).toHaveURL(/\/login$/);
+    await expect(page.getByText("Account created successfully. Use Continue with Google to sign in.")).toBeVisible();
     expect(supabase.rpcCalls).toEqual([expect.objectContaining({ p_role: "tenant", p_terms_accepted: true, p_landlord_verification_accepted: false, p_permit_number: null })]);
+    expect(supabase.logouts).toBe(1);
 });
 
 test("cancelling the account setup signs the Google session out", async ({ page }) => {
