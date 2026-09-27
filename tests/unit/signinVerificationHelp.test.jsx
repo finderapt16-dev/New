@@ -8,6 +8,7 @@ vi.mock("@/contexts/AuthContext", () => ({ useAuth: () => ({ login: mocks.login 
 vi.mock("@/services/authService", () => ({
     resendSignupVerification: (...args) => mocks.resend(...args),
     isTenantRole: (role) => role === "tenant",
+    signInWithGoogle: vi.fn(),
 }));
 
 const { Login } = await import("@/auth/Signin");

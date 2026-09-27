@@ -1,4 +1,4 @@
-import { supabase as supabaseClient } from './supabaseClient';
+import { fetchAuthSettings, supabase as supabaseClient } from './supabaseClient';
 import { safeRandomId } from '../utils/safeRandomId';
 export class SignupFlowError extends Error {
     stage;
@@ -14,6 +14,7 @@ export class SignupFlowError extends Error {
 }
 const APP_USERS_TABLE = 'app_users';
 const VALID_ROLES = new Set(['tenant', 'landlord', 'admin']);
+const PUBLIC_SIGNUP_ROLES = new Set(['tenant', 'landlord']);
 let latestAuthProfileRequestId = 0;
 // Supabase only sends mail to redirect targets that are on its allow list, so the
 // verification links must be built from a known-good base. VITE_APP_URL lets a
@@ -268,7 +269,10 @@ export async function fetchUserByEmail(email) {
     }
     return data ? normalizeUser(data) : null;
 }
-async function ensureProfileForAuthUser(authUser) {
+// Resolves to null (instead of creating a profile) when createIfMissing is
+// false, and for a first-time "Continue with Google" user who has not chosen
+// Tenant or Landlord yet — /auth/callback creates that profile.
+async function ensureProfileForAuthUser(authUser, { createIfMissing = true } = {}) {
     const existingByAuthId = await fetchUserByAuthId(authUser.id);
     if (existingByAuthId) {
         assertValidRole(existingByAuthId.role);
@@ -304,6 +308,9 @@ async function ensureProfileForAuthUser(authUser) {
         return profile;
     }
     const role = normalizeRoleValue(authUser.user_metadata?.role);
+    if (!createIfMissing || (isOAuthAuthUser(authUser) && !PUBLIC_SIGNUP_ROLES.has(role))) {
+        return null;
+    }
     if (role !== 'tenant' && role !== 'landlord') {
         throw new Error('A public account profile cannot be created with this role.');
     }
@@ -361,6 +368,12 @@ export async function getCurrentAuthenticatedUser() {
         return null;
     }
     const profile = await ensureProfileForAuthUser(authUser);
+    if (!profile) {
+        // Signed in with Google, but the account setup on /auth/callback was
+        // not finished yet. Keep the Supabase session so it can be completed.
+        persistCurrentUser(null);
+        return null;
+    }
     assertActiveAccount(profile);
     persistCurrentUser(profile);
     return profile;
@@ -384,6 +397,11 @@ export function onAuthStateChange(callback) {
             .then((profile) => {
             if (requestId !== latestAuthProfileRequestId)
                 return;
+            if (!profile) {
+                persistCurrentUser(null);
+                callback(null);
+                return;
+            }
             assertActiveAccount(profile);
             persistCurrentUser(profile);
             callback(profile);
@@ -585,6 +603,10 @@ export async function loginUser(credentials) {
         throw new Error('Please verify your account before signing in.');
     }
     const profile = await ensureProfileForAuthUser(data.user);
+    if (!profile) {
+        await supabaseClient.auth.signOut();
+        throw new Error('Your AptFindr profile could not be loaded. Please contact support.');
+    }
     assertActiveAccount(profile);
     await recordLogin(profile, data.user.id, true, { username });
     persistCurrentUser(profile);
@@ -636,6 +658,281 @@ export function updateAuthPassword(password) {
 }
 export function signOutAuthSession() {
     return supabaseClient.auth.signOut();
+}
+/* ─── Continue with Google (Supabase OAuth) ────────────────────────────────
+ * The Supabase client keeps its default implicit flow (the email confirmation
+ * and password-reset links rely on it), so Google sends the new session back
+ * in the URL fragment of /auth/callback and supabase-js stores it on load.
+ * What the callback page still needs — sign-in or sign-up, the chosen role and
+ * where to go next — is remembered in sessionStorage for this tab only.
+ */
+const OAUTH_INTENT_STORAGE_KEY = 'aptfindr:oauth-intent';
+const OAUTH_INTENT_MAX_AGE_MS = 30 * 60 * 1000;
+const GOOGLE_SETUP_HINT = 'Turn it on in Supabase → Authentication → Sign In / Providers → Google (Client ID and Client Secret from a Google Cloud "Web application" OAuth client), then add this site\'s /auth/callback URL under Authentication → URL Configuration → Redirect URLs.';
+/** A same-site path such as "/browse"; never "//other.site" or a full URL. */
+export function getSafeRedirectPath(value) {
+    if (typeof value !== 'string')
+        return null;
+    const path = value.trim();
+    return path.startsWith('/') && !path.startsWith('//') && !path.startsWith('/\\') ? path : null;
+}
+/** Where a freshly signed-in user lands (same rules as the sign-in form). */
+export function getPostSignInPath(user, requestedRedirect = null) {
+    const redirect = getSafeRedirectPath(requestedRedirect);
+    if (redirect)
+        return redirect;
+    if (user?.role === 'admin')
+        return '/admin';
+    return isTenantRole(user?.role) ? '/browse' : '/dashboard';
+}
+function getSessionStorage() {
+    try {
+        return typeof window === 'undefined' ? null : window.sessionStorage;
+    }
+    catch {
+        // Storage blocked by privacy settings: the callback falls back to the
+        // sign-in method recorded in the session itself.
+        return null;
+    }
+}
+function saveOAuthIntent(intent) {
+    try {
+        getSessionStorage()?.setItem(OAUTH_INTENT_STORAGE_KEY, JSON.stringify(intent));
+    }
+    catch {
+        // Google sign-in still works; only the chosen role and return page are lost.
+    }
+}
+export function readOAuthIntent() {
+    let raw = null;
+    try {
+        raw = getSessionStorage()?.getItem(OAUTH_INTENT_STORAGE_KEY) ?? null;
+    }
+    catch {
+        raw = null;
+    }
+    if (!raw)
+        return null;
+    try {
+        const parsed = JSON.parse(raw);
+        if (!isRecord(parsed) || parsed.provider !== 'google' || typeof parsed.startedAt !== 'number')
+            return null;
+        if (Date.now() - parsed.startedAt > OAUTH_INTENT_MAX_AGE_MS)
+            return null;
+        const role = normalizeRoleValue(parsed.role);
+        return {
+            provider: 'google',
+            intent: parsed.intent === 'signup' ? 'signup' : 'signin',
+            role: PUBLIC_SIGNUP_ROLES.has(role) ? role : null,
+            redirectTo: getSafeRedirectPath(parsed.redirectTo),
+            startedAt: parsed.startedAt,
+        };
+    }
+    catch {
+        return null;
+    }
+}
+export function clearOAuthIntent() {
+    try {
+        getSessionStorage()?.removeItem(OAUTH_INTENT_STORAGE_KEY);
+    }
+    catch {
+        // Nothing to clean up when storage is unavailable.
+    }
+}
+function decodeJwtPayload(token) {
+    if (typeof token !== 'string')
+        return null;
+    const payload = token.split('.')[1];
+    if (!payload)
+        return null;
+    try {
+        const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+        const binary = atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, '='));
+        const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+        return JSON.parse(new TextDecoder().decode(bytes));
+    }
+    catch {
+        return null;
+    }
+}
+/**
+ * Supabase records how a session was created in the access token's "amr"
+ * claim: "oauth" for Google, "otp" / "email/signup" for email links and
+ * "password" for the username sign-in form.
+ */
+export function isOAuthSession(session) {
+    const claims = decodeJwtPayload(session?.access_token);
+    return Array.isArray(claims?.amr) && claims.amr.some((entry) => isRecord(entry) && entry.method === 'oauth');
+}
+function isOAuthAuthUser(authUser) {
+    const provider = typeof authUser?.app_metadata?.provider === 'string' ? authUser.app_metadata.provider.toLowerCase() : '';
+    return provider !== '' && provider !== 'email' && provider !== 'phone';
+}
+async function assertGoogleProviderEnabled() {
+    const settings = await fetchAuthSettings();
+    // Unknown (offline, blocked, older Auth server): let Supabase decide.
+    if (!isRecord(settings) || !isRecord(settings.external) || settings.external.google !== false)
+        return;
+    console.error(`[AUTH] Google sign-in is turned off for this Supabase project. ${GOOGLE_SETUP_HINT}`);
+    throw new Error("Continue with Google isn't available right now. Please use the form below instead.");
+}
+/**
+ * Sends the browser to Google through Supabase Auth. Resolves just before the
+ * page unloads; rejects (without leaving the page) when sign-in cannot start.
+ */
+export async function signInWithGoogle({ intent = 'signin', role = null, redirectTo = null } = {}) {
+    await assertGoogleProviderEnabled();
+    const normalizedRole = normalizeRoleValue(role);
+    saveOAuthIntent({
+        provider: 'google',
+        intent: intent === 'signup' ? 'signup' : 'signin',
+        role: PUBLIC_SIGNUP_ROLES.has(normalizedRole) ? normalizedRole : null,
+        redirectTo: getSafeRedirectPath(redirectTo),
+        startedAt: Date.now(),
+    });
+    const { data, error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            // The same callback page as email verification, so the Redirect URL
+            // that is already allow-listed in Supabase keeps working.
+            redirectTo: buildAuthRedirect('/auth/callback'),
+            // People with several Google accounts can pick the right one.
+            queryParams: { prompt: 'select_account' },
+        },
+    });
+    if (error) {
+        clearOAuthIntent();
+        console.error('[AUTH] Google sign-in could not start', { message: error.message, status: error.status, code: error.code });
+        throw new Error('Google sign-in could not be started. Please try again.');
+    }
+    return data;
+}
+/** Friendly text for the error Supabase adds to /auth/callback after a failed Google sign-in. */
+export function describeGoogleSignInError(params) {
+    const error = (params.get('error') ?? '').toLowerCase();
+    const code = (params.get('error_code') ?? '').toLowerCase();
+    const description = params.get('error_description') ?? '';
+    console.error('[AUTH] Google sign-in was rejected', { error, code, description });
+    if (/database error saving new user/i.test(description)) {
+        console.error('[AUTH] New Google accounts are blocked by the database signup trigger. Run scripts/database/google_oauth_signup.sql in the Supabase SQL Editor.');
+        return "We couldn't create your AptFindr account with Google yet. Please try again later, or sign up with your email instead.";
+    }
+    if (code === 'signup_disabled' || /signups? not allowed/i.test(description))
+        return "New accounts can't be created right now. If you already have an AptFindr account, sign in with your username and password.";
+    if (code === 'provider_email_needs_verification' || /unverified email/i.test(description))
+        return 'Confirm the email address of your Google account first (check your inbox for a confirmation email), then try again.';
+    if (error === 'access_denied')
+        return 'Google sign-in was cancelled. You can try again or use your username and password.';
+    if (code === 'bad_oauth_state' || code === 'bad_oauth_callback' || /oauth state/i.test(description))
+        return 'Your Google sign-in expired or was opened in another tab. Please try again.';
+    if (/email/i.test(description) && /external provider|missing|not provided/i.test(description))
+        return "Google didn't share your email address with AptFindr. Allow access to your email and try again.";
+    return 'Google sign-in could not be completed. Please try again.';
+}
+function describeOAuthAccount(authUser) {
+    const metadata = isRecord(authUser.user_metadata) ? authUser.user_metadata : {};
+    return {
+        email: authUser.email ?? '',
+        name: getStringValue(metadata, ['full_name', 'name']).trim(),
+        avatarUrl: getStringValue(metadata, ['avatar_url', 'picture']),
+    };
+}
+/**
+ * Finishes a Google sign-in on /auth/callback once supabase-js has stored the
+ * session. Returns { status: 'signed_in', user } for an existing AptFindr
+ * account, or { status: 'needs_profile', account } for a first-time Google
+ * user who still has to choose Tenant or Landlord.
+ */
+export async function resolveOAuthSignIn() {
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (error)
+        console.error('[AUTH] Google sign-in session could not be read', { message: error.message });
+    const authUser = data?.session?.user;
+    if (error || !authUser)
+        throw new Error('Google sign-in could not be completed. Please try again.');
+    if (requiresPendingEmailVerification(authUser)) {
+        await supabaseClient.auth.signOut();
+        throw new Error('Confirm the email address of your Google account first, then try again.');
+    }
+    const profile = await ensureProfileForAuthUser(authUser, { createIfMissing: false });
+    if (!profile)
+        return { status: 'needs_profile', account: describeOAuthAccount(authUser) };
+    try {
+        assertActiveAccount(profile);
+    }
+    catch (inactiveError) {
+        await supabaseClient.auth.signOut();
+        throw inactiveError;
+    }
+    // Profile lookups started by earlier auth events must not overwrite this.
+    latestAuthProfileRequestId += 1;
+    await recordLogin(profile, authUser.id, true, { provider: 'google' });
+    persistCurrentUser(profile);
+    return { status: 'signed_in', user: profile };
+}
+function mapOAuthSignupError(error) {
+    const message = error?.message ?? '';
+    const code = error?.code ?? '';
+    console.error('[AUTH] Google account setup failed', { message, code, details: error?.details, hint: error?.hint });
+    if (code === 'PGRST202' || /fn_complete_oauth_signup/i.test(message)) {
+        console.error('[AUTH] The fn_complete_oauth_signup database function is missing. Run scripts/database/google_oauth_signup.sql in the Supabase SQL Editor.');
+        return new Error("Google sign-up isn't fully set up yet. Please try again later, or sign up with your email instead.");
+    }
+    // Messages raised by fn_complete_oauth_signup itself are written for people.
+    if (code === 'P0001' && message)
+        return new Error(message);
+    if (code === '42501' || /jwt|not authenticated/i.test(message))
+        return new Error('Your Google sign-in has expired. Please continue with Google again.');
+    if (/fetch|network|connection/i.test(message))
+        return new Error('We could not reach the account service. Check your connection and try again.');
+    return new Error('We could not finish creating your account. Please try again.');
+}
+/**
+ * Creates the AptFindr profile for a first-time Google user after they choose
+ * Tenant or Landlord and accept the terms (fn_complete_oauth_signup RPC).
+ */
+export async function completeOAuthSignup(details = {}) {
+    const role = normalizeRoleValue(details.role);
+    if (!PUBLIC_SIGNUP_ROLES.has(role))
+        throw new Error('Choose Tenant or Landlord to finish creating your account.');
+    if (details.termsAccepted !== true)
+        throw new Error('You must agree to the Terms of Use and Privacy Policy to continue.');
+    const isLandlord = role === 'landlord';
+    if (isLandlord) {
+        if (details.landlordVerificationAccepted !== true)
+            throw new Error('You must agree to the Terms of Use and Landlord Verification Policy to continue.');
+        if (!nonEmptyString(details.name))
+            throw new Error('Full name is required.');
+        if (!nonEmptyString(details.mobile))
+            throw new Error('Mobile number is required.');
+        if (!nonEmptyString(details.address))
+            throw new Error('Home address is required.');
+        if (!nonEmptyString(details.permitNumber))
+            throw new Error('Business permit number is required.');
+    }
+    const { data, error } = await supabaseClient.rpc('fn_complete_oauth_signup', {
+        p_role: role,
+        p_terms_accepted: true,
+        p_landlord_verification_accepted: isLandlord,
+        p_name: nonEmptyString(details.name),
+        p_mobile: isLandlord ? nonEmptyString(details.mobile) : null,
+        p_address: isLandlord ? nonEmptyString(details.address) : null,
+        p_permit_number: isLandlord ? nonEmptyString(details.permitNumber) : null,
+    });
+    if (error)
+        throw mapOAuthSignupError(error);
+    const profile = normalizeUser(Array.isArray(data) ? data[0] : data);
+    if (!profile.id) {
+        console.error('[AUTH] fn_complete_oauth_signup returned no profile');
+        throw new Error('We could not finish creating your account. Please try again.');
+    }
+    assertValidRole(profile.role);
+    assertActiveAccount(profile);
+    latestAuthProfileRequestId += 1;
+    await recordLogin(profile, profile.authId ?? null, true, { provider: 'google', signup: true });
+    persistCurrentUser(profile);
+    return profile;
 }
 export async function updateUser(userId, updates) {
     if (typeof updates.password === 'string' && updates.password.length > 0) {

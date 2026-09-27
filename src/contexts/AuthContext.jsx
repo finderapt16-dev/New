@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, } from 'react';
 import { supabase } from '../services/supabaseClient';
 import { clearLegacyApplicationStorage } from '../utils/legacyStorageCleanup';
-import { deleteUser as deleteUserRecord, fetchAppUsers, getCurrentAuthenticatedUser, getPendingLandlordCount, loginUser, logoutUser, onAuthStateChange, persistCurrentUser, signupUser, updateUser as updateUserRecord, verifyLandlord as verifyLandlordRecord } from '../services/authService';
+import { completeOAuthSignup, deleteUser as deleteUserRecord, fetchAppUsers, getCurrentAuthenticatedUser, getPendingLandlordCount, loginUser, logoutUser, onAuthStateChange, persistCurrentUser, resolveOAuthSignIn, signupUser, updateUser as updateUserRecord, verifyLandlord as verifyLandlordRecord } from '../services/authService';
 function getErrorMessage(error, fallback) {
     if (error instanceof Error && error.message.trim().length > 0) {
         return error.message;
@@ -134,6 +134,48 @@ export function AuthProvider({ children }) {
             }
         }
     }, [refreshUsers]);
+    // Called by /auth/callback after Google sends the person back. Resolves to
+    // { status: 'signed_in', user } or { status: 'needs_profile', account }.
+    const finishGoogleSignIn = useCallback(async () => {
+        const requestId = ++authRequestIdRef.current;
+        setIsLoading(true);
+        try {
+            const result = await resolveOAuthSignIn();
+            if (requestId === authRequestIdRef.current) {
+                setCurrentUser(result.status === 'signed_in' ? result.user : null);
+            }
+            return result;
+        }
+        catch (error) {
+            if (requestId === authRequestIdRef.current)
+                setCurrentUser(null);
+            throw error;
+        }
+        finally {
+            if (requestId === authRequestIdRef.current)
+                setIsLoading(false);
+            void refreshUsers().catch((refreshError) => {
+                console.warn('Failed to refresh users after Google sign-in:', refreshError);
+            });
+        }
+    }, [refreshUsers]);
+    // Creates the AptFindr profile for a first-time Google user.
+    const completeGoogleSignup = useCallback(async (details) => {
+        const requestId = ++authRequestIdRef.current;
+        try {
+            const user = await completeOAuthSignup(details);
+            if (requestId === authRequestIdRef.current)
+                setCurrentUser(user);
+            void refreshUsers().catch((refreshError) => {
+                console.warn('Failed to refresh users after Google sign-up:', refreshError);
+            });
+            return user;
+        }
+        finally {
+            if (requestId === authRequestIdRef.current)
+                setIsLoading(false);
+        }
+    }, [refreshUsers]);
     const signup = useCallback(async (input) => {
         try {
             const signupResult = await signupUser(input);
@@ -210,6 +252,8 @@ export function AuthProvider({ children }) {
         isAuthenticated: currentUser !== null,
         refreshUsers,
         login,
+        finishGoogleSignIn,
+        completeGoogleSignup,
         signup,
         updateUser,
         deleteUser,
@@ -223,6 +267,8 @@ export function AuthProvider({ children }) {
         isLoading,
         refreshUsers,
         login,
+        finishGoogleSignIn,
+        completeGoogleSignup,
         signup,
         updateUser,
         deleteUser,

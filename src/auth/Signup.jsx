@@ -1,4 +1,5 @@
 import { AuthField } from "./AuthField";
+import { GoogleAuthOption } from "./GoogleAuthButton";
 import "./signup.css";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ const strengthText = ["", "signup-strength-text-weak", "signup-strength-text-fai
  * Floating registration form. Always rendered inside AuthDialog - the result
  * is handed to the floating sign-in view instead of navigating pages.
  */
-export function Signup({ onSwitchToLogin, onSwitchToForgot, }) {
+export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }) {
     const { signup } = useAuth();
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -246,6 +247,8 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, }) {
                     </div>)}
                 </div>)}
             </>
+
+            <GoogleAuthOption intent="signup" role={formData.role || null} redirectTo={redirectTo} onError={setError} disabled={loading} dividerLabel="or sign up with email"/>
 
             <form onSubmit={handleSubmit} className="signup-form">
 

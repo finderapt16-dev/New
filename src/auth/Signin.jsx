@@ -1,4 +1,5 @@
 import { AuthField } from "./AuthField";
+import { GoogleAuthOption } from "./GoogleAuthButton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -148,11 +149,15 @@ export function Login({ initialMessage = null, redirectTo: redirectToProp = null
                   </button>
                 </div>)}
 
+            <GoogleAuthOption intent="signin" redirectTo={requestedRedirect} onError={setError} disabled={loading} dividerLabel="or sign in with username"/>
+
             <form onSubmit={handleSubmit} className="login-form">
 
               <div>
                 <div className="login-form-fields">
-                  <AuthField id="username" label="Username" value={username} onChange={setUsername} required icon={<UserRound className="login-icon-small"/>}/>
+                  {/* The Google button now comes first; keep the dialog opening on the
+                      username field as before so username users can type right away. */}
+                  <AuthField id="username" label="Username" value={username} onChange={setUsername} required autoFocus icon={<UserRound className="login-icon-small"/>}/>
 
                   <div className="login-password-field">
                     <AuthField id="password" label="Password" type={showPass ? "text" : "password"} value={password} onChange={setPassword} required icon={<Key className="login-icon-small"/>} suffix={<button type="button" onClick={() => setShowPass(!showPass)} className="auth-password-toggle login-password-toggle" aria-label={showPass ? "Hide password" : "Show password"}>
