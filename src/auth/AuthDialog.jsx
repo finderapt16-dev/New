@@ -72,6 +72,7 @@ export function AuthDialog({
         )}
         {view === "signup" && (
           <Signup
+            redirectTo={redirectTo}
             onSwitchToLogin={switchToLogin}
             onSwitchToForgot={() => setView("forgot")}
           />

@@ -3,19 +3,20 @@ import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const mocks = vi.hoisted(() => ({ login: vi.fn(), signup: vi.fn(), resend: vi.fn(), reset: vi.fn() }));
+const mocks = vi.hoisted(() => ({ login: vi.fn(), signup: vi.fn(), resend: vi.fn(), reset: vi.fn(), google: vi.fn() }));
 vi.mock("@/contexts/AuthContext", () => ({ useAuth: () => ({ login: mocks.login, signup: mocks.signup, user: null }) }));
 vi.mock("@/services/authService", () => ({
     resendSignupVerification: (...args) => mocks.resend(...args),
     requestPasswordResetEmail: (...args) => mocks.reset(...args),
     isTenantRole: (role) => role === "tenant",
+    signInWithGoogle: (...args) => mocks.google(...args),
 }));
 
 const { AuthDialog } = await import("@/auth/AuthDialog");
 
-const renderDialog = (defaultView = "login") => {
+const renderDialog = (defaultView = "login", redirectTo = null) => {
     const router = createMemoryRouter([
-        { path: "/", element: <AuthDialog defaultView={defaultView} open onOpenChange={() => {}} /> },
+        { path: "/", element: <AuthDialog defaultView={defaultView} open onOpenChange={() => {}} redirectTo={redirectTo} /> },
         { path: "/signup", element: <p>OLD SIGNUP PAGE</p> },
         { path: "/login", element: <p>OLD LOGIN PAGE</p> },
         { path: "/forgot-password", element: <p>OLD FORGOT PAGE</p> },
@@ -79,5 +80,41 @@ describe("floating auth dialog", () => {
 
         expect(await screen.findByText(/verification link was sent to tenant@example\.com/i)).toBeInTheDocument();
         expect(screen.queryByText("OLD LOGIN PAGE")).not.toBeInTheDocument();
+    });
+
+    it("offers Continue with Google on the sign-in view", async () => {
+        mocks.google.mockReturnValue(new Promise(() => {}));
+        renderDialog("login", "/apartment/apt-7");
+
+        expect(screen.getByText(/or sign in with username/i)).toBeInTheDocument();
+        // The dialog still opens on the username field, as before the Google button existed.
+        expect(screen.getByLabelText(/^username/i)).toHaveFocus();
+        await userEvent.click(screen.getByRole("button", { name: /continue with google/i }));
+
+        expect(mocks.google).toHaveBeenCalledWith({ intent: "signin", role: null, redirectTo: "/apartment/apt-7" });
+        const busyButton = screen.getByRole("button", { name: /connecting to google/i });
+        expect(busyButton).toBeDisabled();
+        expect(screen.getByRole("button", { name: /^sign in$/i })).toBeInTheDocument();
+    });
+
+    it("offers Continue with Google on the create-account view and passes the chosen role", async () => {
+        mocks.google.mockReturnValue(new Promise(() => {}));
+        renderDialog("signup");
+
+        expect(await screen.findByText(/or sign up with email/i)).toBeInTheDocument();
+        await userEvent.click(screen.getByRole("button", { name: /landlord/i }));
+        await userEvent.click(screen.getByRole("button", { name: /continue with google/i }));
+
+        expect(mocks.google).toHaveBeenCalledWith({ intent: "signup", role: "landlord", redirectTo: null });
+    });
+
+    it("shows why Google sign-in could not start and lets the user retry", async () => {
+        mocks.google.mockRejectedValueOnce(new Error("Continue with Google isn't available right now. Please use the form below instead."));
+        renderDialog("login");
+
+        await userEvent.click(screen.getByRole("button", { name: /continue with google/i }));
+
+        expect(await screen.findByText(/continue with google isn't available right now/i)).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /continue with google/i })).toBeEnabled();
     });
 });

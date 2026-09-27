@@ -44,6 +44,21 @@ Confirmation mail is delivered by Supabase Auth, not by this app. When someone r
 
 Run `scripts/database/diagnose_email_confirmation.sql` in the SQL Editor to see, per account, whether Supabase ever recorded a confirmation email (`auth.users.confirmation_sent_at`). Anyone stuck without mail can request a fresh link from **Didn't receive a verification email?** on the sign-in page, which calls `supabase.auth.resend({ type: 'signup' })`.
 
+## Google sign-in (Continue with Google)
+
+The sign-in and create-account views show **Continue with Google** (`src/auth/GoogleAuthButton.jsx`), which calls `supabase.auth.signInWithOAuth({ provider: 'google' })`. Google returns to the same `/auth/callback` page as email verification. That page keeps Google users signed in (email-confirmation links are still signed out, as before), and a first-time Google user chooses Tenant or Landlord and accepts the terms before their AptFindr profile is created. Existing accounts can use Google right away: Supabase links the Google identity to the user with the same email ([identity linking](https://supabase.com/docs/guides/auth/auth-identity-linking)).
+
+One-time setup:
+
+1. **Google Cloud** — APIs & Services → OAuth consent screen (app name, support email, your domain). Then Credentials → Create credentials → OAuth client ID → *Web application*:
+   - Authorized JavaScript origins: `https://<domain>` and `http://localhost:5173`
+   - Authorized redirect URIs: `https://<project-ref>.supabase.co/auth/v1/callback` — copy the exact Callback URL shown in Supabase's Google provider panel
+2. **Supabase** — Authentication → Sign In / Providers → Google → enable it and paste the Client ID and Client Secret ([docs](https://supabase.com/docs/guides/auth/social-login/auth-google)).
+3. **Redirect URLs** — nothing new: Google uses the `/auth/callback` entries from the list above.
+4. **Database** — run `scripts/database/google_oauth_signup.sql` in the SQL Editor after the master migration (and after `repair_signup_profile_setup.sql` if you use it; re-run it whenever either of those is run again). Without it, the signup trigger rejects brand-new Google users and Supabase answers *Database error saving new user*.
+
+While Google is disabled in Supabase, the button says it is unavailable instead of opening Supabase's error page.
+
 ## Landlord file layout
 
 Keep `src/landlord/` **flat, without feature subfolders**. All landlord JSX, CSS, and shared JS helpers live directly in this one directory so every file is visible together. Each JSX file has its same-named CSS alongside it, such as `LandlordDashboard.jsx` / `LandlordDashboard.css` and `ManageRooms.jsx` / `ManageRooms.css`.
