@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { AlertCircle, BadgeCheck, Building2, Check, CheckCircle2, ChevronRight, ClipboardList, Eye, EyeOff, Key, Lock, Mail, MapPin, Phone, ShieldCheck, Upload, User, Users } from "lucide-react";
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 /* ─── Password strength ────────────────────────────────────── */
 function getStrength(p) {
     let s = 0;
@@ -587,7 +588,8 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, }) {
                         <input type="checkbox" checked={landlordAgreementAccepted} onChange={(event) => setLandlordAgreementAccepted(event.target.checked)} className="signup-checkbox"/>
                         <span>
                           <strong>
-                            I agree to AptFindr&apos;s Terms of Use, Privacy Policy,
+                            I agree to AptFindr&apos;s <Link to="/terms-of-service" className="signup-agreement-link">Terms of Use</Link>,{" "}
+                            <Link to="/privacy-policy" className="signup-agreement-link">Privacy Policy</Link>,
                             and Landlord Verification Policy.
                           </strong>{" "}
                           I understand that my Business Permit Number and submitted
@@ -614,7 +616,7 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, }) {
 
               {formData.role === "tenant" && (<label className="signup-agreement">
                   <input type="checkbox" checked={tenantTermsAccepted} onChange={(event) => setTenantTermsAccepted(event.target.checked)} className="signup-checkbox"/>
-                  <span><strong>I agree to AptFindr&apos;s Terms of Use and Privacy Policy.</strong> I understand that the information I provide will be used to manage my AptFindr account and that I am responsible for using the platform appropriately.</span>
+                  <span><strong>I agree to AptFindr&apos;s <Link to="/terms-of-service" className="signup-agreement-link">Terms of Use</Link> and <Link to="/privacy-policy" className="signup-agreement-link">Privacy Policy</Link>.</strong> I understand that the information I provide will be used to manage my AptFindr account and that I am responsible for using the platform appropriately.</span>
                 </label>)}
 
               {formData.role === "tenant" && (<Button type="submit" disabled={loading} className="signup-submit-button">

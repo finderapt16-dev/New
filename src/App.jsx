@@ -9,6 +9,7 @@ import { Root } from "./components/Root";
 const Landing = lazy(() => import("./landing/Landing").then((module) => ({ default: module.Landing })));
 const NotFound = lazy(() => import("./landing/NotFound").then((module) => ({ default: module.NotFound })));
 const PrivacyPolicy = lazy(() => import("./landing/PrivacyPolicy").then((module) => ({ default: module.PrivacyPolicy })));
+const TermsOfService = lazy(() => import("./landing/TermsOfService").then((module) => ({ default: module.TermsOfService })));
 // Authentication and shared account pages
 const AuthPage = lazy(() => import("./auth/AuthPage").then((module) => ({ default: module.AuthPage })));
 const ResetPassword = lazy(() => import("./auth/ResetPassword").then((module) => ({ default: module.ResetPassword })));
@@ -71,6 +72,7 @@ export const router = createBrowserRouter([
             { path: "admin", element: <ProtectedRoute allowedRoles={["admin"]}><PageLoader>{roleDashboard}</PageLoader></ProtectedRoute> },
             // Authentication.
             { path: "privacy-policy", element: <PageLoader><PrivacyPolicy /></PageLoader> },
+            { path: "terms-of-service", element: <PageLoader><TermsOfService /></PageLoader> },
             { path: "login", element: <PageLoader><AuthPage view="login" /></PageLoader> },
             { path: "signup", element: <PageLoader><AuthPage view="signup" /></PageLoader> },
             { path: "forgot-password", element: <PageLoader><AuthPage view="forgot" /></PageLoader> },

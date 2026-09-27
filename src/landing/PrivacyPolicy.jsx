@@ -77,7 +77,8 @@ export function PrivacyPolicy() {
           </section>
         ))}
         <p style={styles.footer}>
-          For privacy requests or questions, use the Support feature in AptFindr. This policy should be reviewed and kept consistent with AptFindr's actual data practices.
+          For privacy requests or questions, use the Support feature in AptFindr. This policy should be reviewed and kept consistent with AptFindr&apos;s actual data practices. Your use of AptFindr is also governed by our{" "}
+          <Link to="/terms-of-service" style={{ color: "#2563eb", fontWeight: 600, textDecoration: "none" }}>Terms of Service</Link>.
         </p>
         <Link to="/" style={styles.backLink}>Return to AptFindr</Link>
       </article>

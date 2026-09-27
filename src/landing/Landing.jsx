@@ -206,7 +206,7 @@ Browse verified apartment listings, compare rental options, explore locations, a
               <ul className="landing-footer-links">
                 <li><span className="landing-footer-link">Help Desk</span></li>
                 <li><span className="landing-footer-link">Contact Us</span></li>
-                <li><span className="landing-footer-link">Terms of Service</span></li>
+                <li><Link to="/terms-of-service" className="landing-footer-link">Terms of Service</Link></li>
            
               </ul>
               <div className="landing-footer-coverage">
