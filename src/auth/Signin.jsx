@@ -185,18 +185,11 @@ export function Login() {
                 </div>)}
             </>
 
-            <div className="login-verification-help">
-              <button type="button" className="login-verification-toggle" aria-expanded={verificationHelpOpen} onClick={() => {
-            setVerificationHelpOpen((open) => {
-                if (!open && !helpEmail)
-                    setHelpEmail(verificationEmail);
-                return !open;
-            });
-        }}>
-                {verificationHelpOpen ? "Hide verification help" : "Didn't receive a verification email?"}
-              </button>
-
-              {verificationHelpOpen && (<div className="login-verification-panel">
+            {/* Verification recovery is shown only when the account is
+                actually stuck: an unverified sign-in, or a signup that
+                could not confirm delivery. The old always-visible toggle
+                was noise on an otherwise clean login page. */}
+            {verificationHelpOpen && (<div className="login-verification-panel">
                   <p className="login-verification-text">
                     Enter the email address you registered with and we will ask
                     Supabase to send a fresh confirmation link. Confirmation mail
@@ -208,8 +201,10 @@ export function Login() {
                       {resending ? "Sending..." : resendCooldown > 0 ? `Wait ${resendCooldown}s` : "Send link"}
                     </button>
                   </div>
+                  <button type="button" className="login-verification-dismiss" onClick={() => setVerificationHelpOpen(false)}>
+                    Dismiss
+                  </button>
                 </div>)}
-            </div>
 
             <form onSubmit={handleSubmit} className="login-form">
 

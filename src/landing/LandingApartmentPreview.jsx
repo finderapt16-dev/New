@@ -1,10 +1,11 @@
-import {ArrowRight,Loader2,} from "lucide-react";
+import {ArrowRight,Building2,Loader2,} from "lucide-react";
 import {useEffect,useMemo,useState,} from "react";
 import { Link } from "react-router-dom";
 import { useApartmentsContext } from "@/contexts/ApartmentsContext";
 import { getApartmentImageUrl } from "@/utils/images";
 import { isTenantVisibleApartment } from "@/utils/listingVisibility";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
+import { Button } from "@/components/ui/button";
 import {fetchApartmentViews,} from "@/services/dashboardSupabaseService";
 
 
@@ -367,7 +368,13 @@ export function LandingApartmentPreview({
     if (
         previewApartments.length === 0
     ) {
-        return null;
+        return (
+            <LandingListingsEmptyState
+                onBrowseClick={
+                    onBrowseClick
+                }
+            />
+        );
     }
 
 
@@ -463,7 +470,7 @@ export function LandingListingsSection({
 
 
     return (
-        <LandingListingsPlaceholder
+        <LandingListingsEmptyState
             onBrowseClick={
                 onBrowseClick
             }
@@ -473,136 +480,72 @@ export function LandingListingsSection({
 
 
 /* =========================================================
-   PLACEHOLDER
+   EMPTY STATE
 ========================================================= */
 
-export function LandingListingsPlaceholder({
+/**
+ * Shown on the public landing page while no published listing
+ * exists. Deliberately free of stock photography: an empty
+ * catalog is a real state, so it gets a real message instead
+ * of fake apartment photos.
+ */
+export function LandingListingsEmptyState({
     onBrowseClick,
 }) {
-    return (
-        <section className="landing-placeholder-section">
-
+    return (<section className="landing-listings-section">
             <div className="landing-listings-container">
 
-                <div className="landing-section-heading">
+                <section className="landing-listings-heading">
+                    <div className="landing-listings-copy">
+                        <h2 className="landing-section-title">
+                            Apartment Listings
+                        </h2>
+                    </div>
+                </section>
 
-                    <h2 className="landing-listings-title">
-                        Explore Apartment Listings
-                    </h2>
+                <div className="landing-empty-state">
+                    <span className="landing-empty-state-icon">
+                        <Building2 className="landing-empty-state-icon-glyph"/>
+                    </span>
 
-                    <p className="landing-placeholder-description">
-                        No published apartments yet.
-                        Landlords can submit apartment
-                        and permit information for
-                        admin review.
+                    <h3 className="landing-empty-state-title">
+                        No apartments listed yet
+                    </h3>
+
+                    <p className="landing-empty-state-description">
+                        Nothing is available in La Paz at the
+                        moment. Every property is reviewed
+                        and verified before it goes live,
+                        so listings appear here as soon as
+                        landlords finish signing up.
                     </p>
 
-                </div>
+                    <div className="landing-empty-state-actions">
+                        <Link to="/signup">
+                            <Button
+                                size="lg"
+                                className="landing-empty-state-primary"
+                            >
+                                List your property
 
+                                <ArrowRight className="landing-empty-state-arrow"/>
+                            </Button>
+                        </Link>
 
-                <div className="landing-placeholder-grid">
-
-                    {/* APARTMENT PLACEHOLDER */}
-
-                    <article
-                        className="landing-placeholder-card"
-                        onClick={onBrowseClick}
-                        onKeyDown={(event) => {
-                            if (
-                                event.key === "Enter"
-                            ) {
-                                onBrowseClick?.(
-                                    event
-                                );
-                            }
-                        }}
-                        role="button"
-                        tabIndex={0}
-                    >
-
-                        <ImageWithFallback
-                            src="https://images.unsplash.com/photo-1654506012740-09321c969dc2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcGFydG1lbnQlMjBpbnRlcmlvciUyMGxpdmluZyUyMHJvb218ZW58MXx8fHwxNzcyMTg1Njk0fDA&ixlib=rb-4.1.0&q=80&w=1080"
-                            alt="Apartment interior example"
-                            className="landing-placeholder-image"
-                        />
-
-                        <div className="landing-placeholder-overlay" />
-
-
-                        <div className="landing-placeholder-content">
-
-                            <h3 className="landing-placeholder-title">
-                                Apartment information
-                            </h3>
-
-                            <p className="landing-placeholder-copy">
-                                Photos, amenities,
-                                rent, availability,
-                                and landlord details
-                            </p>
-
-                            <span className="landing-placeholder-link">
+                        <Link
+                            to="/browse"
+                            onClick={onBrowseClick}
+                        >
+                            <Button
+                                size="lg"
+                                variant="outline"
+                                className="landing-empty-state-secondary"
+                            >
                                 Browse listings
-
-                                <ArrowRight className="landing-placeholder-arrow" />
-                            </span>
-
-                        </div>
-
-                    </article>
-
-
-                    {/* MAP PLACEHOLDER */}
-
-                    <div
-                        className="landing-placeholder-card"
-                        onClick={onBrowseClick}
-                        onKeyDown={(event) => {
-                            if (
-                                event.key === "Enter"
-                            ) {
-                                onBrowseClick?.(
-                                    event
-                                );
-                            }
-                        }}
-                        role="button"
-                        tabIndex={0}
-                    >
-
-                        <ImageWithFallback
-                            src="https://images.unsplash.com/photo-1754298994778-514e0a285479?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9wZXJ0eSUyMG1hcCUyMGxvY2F0aW9uJTIwcGlufGVufDF8fHx8MTc3MjE5MjMzOHww&ixlib=rb-4.1.0&q=80&w=1080"
-                            alt="Map location example"
-                            className="landing-placeholder-image"
-                        />
-
-                        <div className="landing-placeholder-overlay" />
-
-
-                        <div className="landing-placeholder-content">
-
-                            <h3 className="landing-placeholder-title">
-                                GIS map browsing
-                            </h3>
-
-                            <p className="landing-placeholder-copy">
-                                Compare apartment
-                                locations within
-                                La Paz before visiting
-                            </p>
-
-                            <span className="landing-placeholder-link">
-                                Open map view
-
-                                <ArrowRight className="landing-placeholder-arrow" />
-                            </span>
-
-                        </div>
-
+                            </Button>
+                        </Link>
                     </div>
-
                 </div>
             </div>
-        </section>
-    );
+        </section>);
 }

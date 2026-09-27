@@ -407,23 +407,21 @@
 }
 
 /* Manual "resend verification email" helper for accounts that never received mail. */
-.login-verification-help { margin-top: .5rem; }
-
-.login-verification-toggle {
-  color: #0e93ca;
-  color: lab(47.2709% 42.9082 69.2966);
-  font-size: .75rem;
-  font-weight: 700;
-  line-height: 1.33333;
-  text-decoration: underline;
-}
-
 .login-verification-panel {
-  margin-top: .5rem;
+  margin-bottom: 1rem;
   padding: .75rem;
   border: 1px solid #e5e7eb;
   border-radius: .75rem;
   background-color: #f8fafc;
+}
+
+.login-verification-dismiss {
+  margin-top: .5rem;
+  color: #45556c;
+  font-size: .75rem;
+  font-weight: 700;
+  line-height: 1.33333;
+  text-decoration: underline;
 }
 
 .login-verification-text {
@@ -685,7 +683,7 @@
   .login-recovery-link,
   .login-create-link,
   .login-resend-link,
-  .login-verification-toggle,
+  .login-verification-dismiss,
   .login-badge-icon,
   .login-badge-text,
   .login-benefit-icon
