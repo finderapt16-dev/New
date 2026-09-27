@@ -12,7 +12,7 @@
 }
 
 .signup-strength-fill-good {
-  background-color: #fcbb00;
+  background-color: #8cc6fa;
   background-color: lab(80.1641% 16.6016 99.2089);
 }
 
@@ -37,8 +37,8 @@
 }
 
 .signup-strength-text-good {
-  color: #dd7400;
-  color: lab(60.3514% 40.5624 87.1228);
+  color: #2f9bf4;
+  color: #2f9bf4;
 }
 
 .signup-strength-text-strong {
@@ -152,7 +152,7 @@
 }
 
 .signup-brand-name {
-  background-image: linear-gradient(to right in oklab, #fcbb00 0%, #ff8b1a 100%);
+  background-image: linear-gradient(to right in oklab, #8cc6fa 0%, #ff8b1a 100%);
   color: #0000;
   -webkit-background-clip: text;
   background-clip: text;
@@ -206,7 +206,7 @@
 }
 
 .signup-visual-accent {
-  background-image: linear-gradient(to right in oklab, #fcbb00 0%, #ff8b1a 100%);
+  background-image: linear-gradient(to right in oklab, #8cc6fa 0%, #ff8b1a 100%);
   color: #0000;
   -webkit-background-clip: text;
   background-clip: text;
@@ -246,7 +246,7 @@
 }
 
 .signup-benefit-symbol {
-  border: 1px solid #f99c004d;
+  border: 1px solid #5aabf74d;
   border-radius: .625rem;
   flex-shrink: 0;
   justify-content: center;
@@ -263,7 +263,7 @@
 }
 
 .signup-benefit-symbol {
-  background-color: #f99c0033;
+  background-color: #5aabf733;
 }
 
 @supports (color: color-mix(in lab, red, red)) {
@@ -273,7 +273,7 @@
 }
 
 .signup-benefit-icon {
-  color: #fcbb00;
+  color: #8cc6fa;
   color: lab(80.1641% 16.6016 99.2089);
   width: .75rem;
   height: .75rem;
@@ -345,8 +345,8 @@
 }
 
 .signup-mobile-brand-name {
-  color: #dd7400;
-  color: lab(60.3514% 40.5624 87.1228);
+  color: #2f9bf4;
+  color: #2f9bf4;
   font-size: 1rem;
   font-weight: 900;
   line-height: 1.5;
@@ -365,8 +365,8 @@
 
 @media (hover: hover) {
   .signup-login-link:hover {
-    color: #dd7400;
-    color: lab(60.3514% 40.5624 87.1228);
+    color: #2f9bf4;
+    color: #2f9bf4;
   }
 }
 
@@ -428,8 +428,8 @@
 }
 
 .signup-login-prompt-link {
-  color: #dd7400;
-  color: lab(60.3514% 40.5624 87.1228);
+  color: #2f9bf4;
+  color: #2f9bf4;
   font-weight: 700;
   transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke;
   transition-duration: .15s;
@@ -438,8 +438,8 @@
 
 @media (hover: hover) {
   .signup-login-prompt-link:hover {
-    color: #b75000;
-    color: lab(47.2709% 42.9082 69.2966);
+    color: #1a8bef;
+    color: #1a8bef;
   }
 }
 
@@ -482,8 +482,8 @@
 }
 
 .signup-error-link {
-  color: #b75000;
-  color: lab(47.2709% 42.9082 69.2966);
+  color: #1a8bef;
+  color: #1a8bef;
 }
 
 :where(.signup-form > :not(:last-child)) {
@@ -529,7 +529,7 @@
 .signup-role-option-active {
   background-color: #fffbeb;
   background-color: lab(98.6252% -.635982 8.42309);
-  border-color: #f99c00;
+  border-color: #5aabf7;
   border-color: lab(72.7183% 31.8672 97.9407);
 }
 
@@ -562,11 +562,11 @@
 }
 
 .signup-role-symbol-active {
-  color: #dd7400;
-  color: lab(60.3514% 40.5624 87.1228);
+  color: #2f9bf4;
+  color: #2f9bf4;
   background-color: #fffbeb;
   background-color: lab(98.6252% -.635982 8.42309);
-  border-color: #f99c00;
+  border-color: #5aabf7;
   border-color: lab(72.7183% 31.8672 97.9407);
 }
 
@@ -594,7 +594,7 @@
 }
 
 .signup-role-selected {
-  background-color: #f99c00;
+  background-color: #5aabf7;
   background-color: lab(72.7183% 31.8672 97.9407);
   border-radius: 3.40282e38px;
   justify-content: center;
@@ -670,7 +670,7 @@
 .signup-document-upload-active {
   background-color: #fffbeb;
   background-color: lab(98.6252% -.635982 8.42309);
-  border-color: #fcbb00;
+  border-color: #8cc6fa;
   border-color: lab(80.1641% 16.6016 99.2089);
 }
 
@@ -701,7 +701,7 @@
 }
 
 .signup-document-icon {
-  color: #f99c00;
+  color: #5aabf7;
   color: lab(72.7183% 31.8672 97.9407);
   width: 1.25rem;
   height: 1.25rem;
@@ -710,8 +710,8 @@
 .signup-document-name {
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #b75000;
-  color: lab(47.2709% 42.9082 69.2966);
+  color: #1a8bef;
+  color: #1a8bef;
   width: 100%;
   font-size: 10px;
   font-weight: 600;
@@ -947,7 +947,7 @@
 
 .signup-submit-button {
   color: #fff;
-  background-color: #16a5e1;
+  background-color: #2f9bf4;
   border-radius: 1rem;
   justify-content: center;
   align-items: center;
@@ -966,7 +966,7 @@
 
 @media (hover: hover) {
   .signup-submit-button:hover {
-    background-color: #76614d;
+    background-color: #1a8bef;
   }
 }
 
@@ -1008,8 +1008,8 @@
 
 @media (hover: hover) {
   .signup-home-link:hover {
-    color: #b75000;
-    color: lab(47.2709% 42.9082 69.2966);
+    color: #1a8bef;
+    color: #1a8bef;
   }
 }
 
@@ -1086,8 +1086,8 @@
   .signup-section-chevron-active
 ) {
   background-image: none !important;
-  color: #16a5e1 !important;
-  -webkit-text-fill-color: #16a5e1 !important;
+  color: #2f9bf4 !important;
+  -webkit-text-fill-color: #2f9bf4 !important;
 }
 
 /* Main text */
@@ -1133,27 +1133,27 @@
   .signup-badge-text,
   .signup-benefit-icon
 ) {
-  color: #16a5e1 !important;
+  color: #2f9bf4 !important;
 }
 
 /* Role selection */
 .auth-palette :is(.signup-role-option-active, .signup-role-symbol-active) {
   background-color: #f2f6fa !important;
-  border-color: #16a5e1 !important;
+  border-color: #2f9bf4 !important;
 }
 
 .auth-palette .signup-role-symbol-active {
-  color: #16a5e1 !important;
+  color: #2f9bf4 !important;
 }
 
 .auth-palette .signup-role-selected {
-  background-color: #16a5e1 !important;
+  background-color: #2f9bf4 !important;
 }
 
 /* Upload controls */
 .auth-palette .signup-document-upload-active {
   background-color: #f2f6fa !important;
-  border-color: #16a5e1 !important;
+  border-color: #2f9bf4 !important;
 }
 
 .auth-palette .signup-document-upload-idle {
@@ -1165,7 +1165,7 @@
   .auth-palette .signup-document-upload-idle:hover,
   .auth-palette .signup-role-option-idle:hover {
     background-color: #f2f6fa !important;
-    border-color: #16a5e1 !important;
+    border-color: #2f9bf4 !important;
   }
 }
 .auth-palette .signup-strength-segment-idle  {
@@ -1174,19 +1174,19 @@
 
 /* Checkbox */
 .auth-palette .signup-checkbox {
-  accent-color: #16a5e1 !important;
+  accent-color: #2f9bf4 !important;
   border-color: #d9d9d9 !important;
 }
 
 /* Main create-account button */
 .auth-palette .signup-submit-button {
-  background-color: #16a5e1 !important;
+  background-color: #2f9bf4 !important;
   color: #ffffff !important;
 }
 
 @media (hover: hover) {
   .auth-palette .signup-submit-button:hover {
-    background-color: #0e93ca !important;
+    background-color: #1a8bef !important;
   }
 
   .auth-palette :is(
@@ -1195,7 +1195,7 @@
     .signup-next-button,
     .signup-home-link
   ):hover {
-    color: #0e93ca !important;
+    color: #1a8bef !important;
   }
 }
 
@@ -1270,7 +1270,7 @@
 
 .signup-landlord-step-circle-active,
 .signup-landlord-step-circle-complete {
-  background: #16a5e1;
+  background: #2f9bf4;
   color: #ffffff;
 }
 
@@ -1299,7 +1299,7 @@
 }
 
 .signup-landlord-step-connector-complete {
-  background: #16a5e1;
+  background: #2f9bf4;
 }
 
 .signup-landlord-panel {
@@ -1347,14 +1347,14 @@
   align-items: center;
   justify-content: center;
   gap: .5rem;
-  border: 1px solid #16a5e1;
-  background: #16a5e1;
+  border: 1px solid #2f9bf4;
+  background: #2f9bf4;
   color: #ffffff;
 }
 
 .signup-landlord-continue:hover {
-  border-color: #0e93ca;
-  background: #0e93ca;
+  border-color: #1a8bef;
+  background: #1a8bef;
 }
 
 .signup-landlord-actions-end .signup-landlord-continue {
@@ -1384,7 +1384,7 @@
 .signup-landlord-review-heading button {
   border: 0;
   background: transparent;
-  color: #16a5e1;
+  color: #2f9bf4;
   font-size: .75rem;
   font-weight: 600;
   cursor: pointer;
@@ -1436,4 +1436,139 @@
   .signup-documents-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ── Redesigned create-account flow (role screen → form screen) ── */
+.signup-back-row { margin-bottom: .25rem; }
+
+.signup-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: .125rem;
+  padding: .25rem .375rem .25rem 0;
+  border: none;
+  background: none;
+  color: #666666;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.42857;
+  cursor: pointer;
+  transition: color .15s cubic-bezier(.4, 0, .2, 1);
+}
+
+.signup-back-button:hover { color: #2f9bf4; }
+.signup-back-icon { width: 1.125rem; height: 1.125rem; }
+
+/* Step 1: vertical role cards */
+.signup-roles {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.signup-role-card {
+  display: flex;
+  align-items: center;
+  gap: .875rem;
+  width: 100%;
+  padding: 1rem 1.125rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s cubic-bezier(.4, 0, .2, 1), box-shadow .15s cubic-bezier(.4, 0, .2, 1);
+}
+
+@media (hover: hover) {
+  .signup-role-card:hover {
+    border-color: #bfe0fc;
+    box-shadow: 0 2px 10px rgb(47 155 244 / 14%);
+  }
+}
+
+.signup-role-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #5aabf7 0%, #2f9bf4 100%);
+  color: #ffffff;
+}
+
+.signup-role-card-glyph { width: 1.25rem; height: 1.25rem; }
+
+.signup-role-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: .125rem;
+  min-width: 0;
+}
+
+.signup-role-card-title {
+  color: #111111;
+  font-size: .9375rem;
+  font-weight: 700;
+  line-height: 1.33333;
+}
+
+.signup-role-card-description {
+  color: #666666;
+  font-size: .8125rem;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.signup-role-card-chevron {
+  margin-left: auto;
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: #94a3b8;
+}
+
+/* Step 2: form screen shell */
+.signup-title { font-size: 1.25rem; }
+
+.signup-description {
+  margin-top: .375rem;
+  color: #666666;
+  font-size: .875rem;
+  font-weight: 400;
+  line-height: 1.42857;
+}
+
+.signup-login-prompt {
+  margin: 0;
+  color: #666666;
+  font-size: .875rem;
+  font-weight: 400;
+  line-height: 1.42857;
+  text-align: center;
+}
+
+.signup-login-prompt-link {
+  color: #2f9bf4;
+  font-weight: 700;
+}
+
+.signup-login-prompt-link:hover { color: #1a8bef; }
+
+/* Gray "Password must contain" info box */
+.signup-tenant-password-help {
+  gap: .25rem;
+  padding: .75rem .875rem;
+  border: none;
+  border-radius: 10px;
+  background-color: #f6f8fb;
+  font-size: .8125rem;
+  font-weight: 700;
+}
+
+.signup-tenant-password-help span {
+  font-size: .75rem;
+  font-weight: 400;
 }

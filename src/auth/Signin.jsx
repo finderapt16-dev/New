@@ -4,9 +4,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { isTenantRole, resendSignupVerification } from "@/services/authService";
-import { AlertCircle, CheckCircle2, Eye, EyeOff, Key, UserRound, } from "lucide-react";
+import { AlertCircle, CheckCircle2, Eye, EyeOff, House, } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./signin.css";
 
 /**
@@ -14,7 +14,7 @@ import "./signin.css";
  * and "Forgot password?" switch views in the same dialog, and the optional
  * redirectTo sends the user back to the page they came from after sign-in.
  */
-export function Login({ initialMessage = null, redirectTo: redirectToProp = null, onSwitchToSignup, onSwitchToForgot, }) {
+export function Login({ initialMessage = null, redirectTo: redirectToProp = null, onSwitchToSignup, onSwitchToForgot, showBackToHome = false, }) {
     const navigate = useNavigate();
     const { login } = useAuth();
     const [username, setUsername] = useState("");
@@ -106,7 +106,7 @@ export function Login({ initialMessage = null, redirectTo: redirectToProp = null
           <div className="auth-form-shell login-form-shell">
 
             <div className="login-form-heading">
-              <h1 className="login-title">Sign in to AptFindr</h1>
+              <h1 className="login-title">Sign in</h1>
             </div>
 
             <>
@@ -153,10 +153,10 @@ export function Login({ initialMessage = null, redirectTo: redirectToProp = null
 
               <div>
                 <div className="login-form-fields">
-                  <AuthField id="username" label="Username" value={username} onChange={setUsername} required autoFocus icon={<UserRound className="login-icon-small"/>}/>
+                  <AuthField id="username" label="Username" value={username} onChange={setUsername} required autoFocus/>
 
                   <div className="login-password-field">
-                    <AuthField id="password" label="Password" type={showPass ? "text" : "password"} value={password} onChange={setPassword} required icon={<Key className="login-icon-small"/>} suffix={<button type="button" onClick={() => setShowPass(!showPass)} className="auth-password-toggle login-password-toggle" aria-label={showPass ? "Hide password" : "Show password"}>
+                    <AuthField id="password" label="Password" type={showPass ? "text" : "password"} value={password} onChange={setPassword} required suffix={<button type="button" onClick={() => setShowPass(!showPass)} className="auth-password-toggle login-password-toggle" aria-label={showPass ? "Hide password" : "Show password"}>
                           {showPass ? <EyeOff className="login-icon-small"/> : <Eye className="login-icon-small"/>}
                         </button>}/>
                     <div className="login-recovery-link-row">
@@ -173,13 +173,18 @@ export function Login({ initialMessage = null, redirectTo: redirectToProp = null
                     <div className="login-spinner"/>
                     Signing in...
                   </>) : (<>
-                    Sign In
+                    Sign in
                   </>)}
               </Button>
 
               <GoogleAuthOption intent="signin" redirectTo={requestedRedirect} onError={setError} disabled={loading} dividerLabel="or"/>
 
-              <p className="login-signup-prompt">Don't have an account? <button type="button" onClick={onSwitchToSignup} className="login-create-link auth-dialog-link">Create account</button></p>
+              <p className="login-signup-prompt">Already have an account? <button type="button" onClick={onSwitchToSignup} className="login-create-link auth-dialog-link">Create Account</button></p>
+
+              {showBackToHome && (<Link to="/" className="login-home-link">
+                  <House className="login-home-icon" aria-hidden="true"/>
+                  Back to Home
+                </Link>)}
             </form>
           </div>
         </div>

@@ -4,7 +4,7 @@ import "./signup.css";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { AlertCircle, BadgeCheck, Building2, Check, CheckCircle2, ChevronRight, ClipboardList, Eye, EyeOff, Key, Lock, Mail, MapPin, Phone, ShieldCheck, Upload, User, Users } from "lucide-react";
+import { AlertCircle, BadgeCheck, Building2, Check, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, Eye, EyeOff, Key, Lock, Mail, MapPin, Phone, ShieldCheck, Upload, User, Users } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 /* ─── Password strength ────────────────────────────────────── */
@@ -33,6 +33,9 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
     const { signup } = useAuth();
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    // Step 1 of the redesigned flow is a dedicated role screen; picking a role
+    // reveals that role's form as its own screen.
+    const [signupStep, setSignupStep] = useState("role");
     const submissionInFlightRef = useRef(false);
     const [showPass, setShowPass] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
@@ -227,11 +230,14 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
           <div className="signup-form-shell">
 
             <div className="signup-form-heading">
-              <h1 className="signup-title">Create your account</h1>
-              <p className="signup-description">
-                Already registered?{" "}
-                <button type="button" onClick={() => onSwitchToLogin?.()} className="signup-login-prompt-link auth-dialog-link">Sign in here</button>
-              </p>
+              {signupStep === "form" && (<div className="signup-back-row">
+                  <button type="button" onClick={() => { setError(""); setSignupStep("role"); }} className="signup-back-button" aria-label="Back to role selection">
+                    <ChevronLeft className="signup-back-icon" aria-hidden="true"/>
+                    Back
+                  </button>
+                </div>)}
+              <h1 className="signup-title">Create Your Account</h1>
+              {signupStep === "role" && (<p className="signup-description">Choose your role to continue.</p>)}
             </div>
 
             <>
@@ -250,48 +256,43 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
 
             <form onSubmit={handleSubmit} className="signup-form">
 
-              <div className="signup-role-field">
-                <p className="signup-role-label">Choose your account type</p>
-                <div className="signup-role-options">
+              {signupStep === "role" && (<div className="signup-roles">
                   {[
-            { id: "tenant", label: "Tenant", sub: "Browse apartments", icon: Users },
-            { id: "landlord", label: "Landlord", sub: "Manage listings", icon: Building2 },
-        ].map((item) => {
-            const selected = formData.role === item.id;
-            return (<button key={item.id} type="button" onClick={() => setFormData((previous) => ({
-                    ...previous,
-                    role: item.id,
-                }))} className={`signup-role-option ${selected ? "signup-role-option-active" : "signup-role-option-idle"}`}>
-                        <div className={`signup-role-symbol ${selected ? "signup-role-symbol-active" : "signup-role-symbol-idle"}`}>
-                          <item.icon className="signup-icon"/>
-                        </div>
-                        <span className="signup-role-title">{item.label}</span>
-                        <span className="signup-role-description">{item.sub}</span>
-                        {selected && (<div className="signup-role-selected">
-                            <Check className="signup-role-check"/>
-                          </div>)}
-                      </button>);
-        })}
-                </div>
-              </div>
+            { id: "tenant", label: "Tenant", sub: "Find and explore verified apartments in La Paz.", icon: Users },
+            { id: "landlord", label: "Landlord", sub: "List and manage your apartment properties.", icon: Building2 },
+        ].map((item) => (<button key={item.id} type="button" onClick={() => {
+            setError("");
+            setFormData((previous) => ({ ...previous, role: item.id }));
+            setSignupStep("form");
+        }} className="signup-role-card">
+                      <span className="signup-role-card-icon">
+                        <item.icon className="signup-role-card-glyph"/>
+                      </span>
+                      <span className="signup-role-card-body">
+                        <span className="signup-role-card-title">{item.label}</span>
+                        <span className="signup-role-card-description">{item.sub}</span>
+                      </span>
+                      <ChevronRight className="signup-role-card-chevron" aria-hidden="true"/>
+                    </button>))}
+                </div>)}
 
-              {formData.role === "tenant" && (<div className="signup-tenant-simple-form">
+              {signupStep === "form" && formData.role === "tenant" && (<div className="signup-tenant-simple-form">
                   <div className="signup-account-field">
-                    <AuthField id="username" label="Username" value={formData.username} onChange={(v) => set("username", v)} required placeholder="Enter your username" icon={<User className="signup-icon-small"/>}/>
+                    <AuthField id="username" label="Username" value={formData.username} onChange={(v) => set("username", v)} required placeholder="Enter your username"/>
                   </div>
 
                   <div className="signup-account-field">
-                    <AuthField id="email" label="Email Address" type="email" value={formData.email} onChange={(v) => set("email", v)} required placeholder="Enter your email address" icon={<Mail className="signup-icon-small"/>}/>
+                    <AuthField id="email" label="Email Address" type="email" value={formData.email} onChange={(v) => set("email", v)} required placeholder="Enter your email address"/>
                   </div>
 
                   <div className="signup-account-field">
-                    <AuthField id="password" label="Password" type={showPass ? "text" : "password"} value={formData.password} onChange={(v) => set("password", v)} required placeholder="Enter your password" icon={<Key className="signup-icon-small"/>} suffix={<button type="button" onClick={() => setShowPass(!showPass)} className="auth-password-toggle signup-password-toggle" aria-label={showPass ? "Hide password" : "Show password"}>
+                    <AuthField id="password" label="Password" type={showPass ? "text" : "password"} value={formData.password} onChange={(v) => set("password", v)} required placeholder="Enter your password" suffix={<button type="button" onClick={() => setShowPass(!showPass)} className="auth-password-toggle signup-password-toggle" aria-label={showPass ? "Hide password" : "Show password"}>
                           {showPass ? (<EyeOff className="signup-icon-small"/>) : (<Eye className="signup-icon-small"/>)}
                         </button>}/>
                   </div>
 
                   <div className="signup-account-field">
-                    <AuthField id="confirm" label="Confirm Password" type={showConfirm ? "text" : "password"} value={formData.confirmPassword} onChange={(v) => set("confirmPassword", v)} required placeholder="Confirm your password" icon={<Lock className="signup-icon-small"/>} suffix={<button type="button" onClick={() => setShowConfirm(!showConfirm)} className="auth-password-toggle signup-password-toggle" aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}>
+                    <AuthField id="confirm" label="Confirm Password" type={showConfirm ? "text" : "password"} value={formData.confirmPassword} onChange={(v) => set("confirmPassword", v)} required placeholder="Confirm your password" suffix={<button type="button" onClick={() => setShowConfirm(!showConfirm)} className="auth-password-toggle signup-password-toggle" aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}>
                           {showConfirm ? (<EyeOff className="signup-icon-small"/>) : (<Eye className="signup-icon-small"/>)}
                         </button>}/>
 
@@ -314,9 +315,9 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
               {/* Landlord: keep Google visible right after the role choice — the
                   wizard below is long, so a bottom-placed button disappears past
                   the fold and reads as missing. */}
-              {formData.role === "landlord" && (<GoogleAuthOption intent="signup" role="landlord" redirectTo={redirectTo} onError={setError} disabled={loading} dividerLabel="or"/>)}
+              {signupStep === "form" && formData.role === "landlord" && (<GoogleAuthOption intent="signup" role="landlord" redirectTo={redirectTo} onError={setError} disabled={loading} dividerLabel="or" label="Sign Up with Google"/>)}
 
-              {formData.role === "landlord" && (<div className="signup-landlord-wizard">
+              {signupStep === "form" && formData.role === "landlord" && (<div className="signup-landlord-wizard">
                   <div className="signup-landlord-stepper">
                     {[
                 "Personal Information",
@@ -620,19 +621,24 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                     </div>)}
                 </div>)}
 
-              {formData.role === "tenant" && (<label className="signup-agreement">
+              {signupStep === "form" && formData.role === "tenant" && (<label className="signup-agreement">
                   <input type="checkbox" checked={tenantTermsAccepted} onChange={(event) => setTenantTermsAccepted(event.target.checked)} className="signup-checkbox"/>
-                  <span><strong>I agree to AptFindr&apos;s <Link to="/terms-of-service" className="signup-agreement-link">Terms of Use</Link> and <Link to="/privacy-policy" className="signup-agreement-link">Privacy Policy</Link>.</strong> I understand that the information I provide will be used to manage my AptFindr account and that I am responsible for using the platform appropriately.</span>
+                  <span><strong>I agree to the <Link to="/terms-of-service" className="signup-agreement-link">Terms of Service</Link> and <Link to="/privacy-policy" className="signup-agreement-link">Privacy Policy</Link>.</strong></span>
                 </label>)}
 
-              {formData.role === "tenant" && (<Button type="submit" disabled={loading} className="signup-submit-button">
+              {signupStep === "form" && formData.role === "tenant" && (<Button type="submit" disabled={loading} className="signup-submit-button">
                   {loading ? (<>
                       <div className="signup-spinner"/>
                       Creating your account...
                     </>) : ("Create Account")}
                 </Button>)}
 
-              {formData.role === "tenant" && (<GoogleAuthOption intent="signup" role="tenant" redirectTo={redirectTo} onError={setError} disabled={loading} dividerLabel="or"/>)}
+              {signupStep === "form" && formData.role === "tenant" && (<GoogleAuthOption intent="signup" role="tenant" redirectTo={redirectTo} onError={setError} disabled={loading} dividerLabel="or" label="Sign Up with Google"/>)}
+
+              {signupStep === "form" && (<p className="signup-login-prompt">
+                  Already have an account?{" "}
+                  <button type="button" onClick={() => onSwitchToLogin?.()} className="signup-login-prompt-link auth-dialog-link">Sign in</button>
+                </p>)}
 
             </form>
           </div>

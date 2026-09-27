@@ -126,7 +126,7 @@ test("a new landlord continues with Google from Create account and finishes thei
     await page.goto("/signup");
 
     await page.getByRole("button", { name: /Landlord/ }).first().click();
-    await page.getByRole("button", { name: "Continue with Google" }).click();
+    await page.getByRole("button", { name: "Sign Up with Google" }).click();
 
     await expect(page.getByRole("heading", { name: "Finish setting up your account" })).toBeVisible();
     await expect(page.getByText("juan.delacruz@gmail.com")).toBeVisible();

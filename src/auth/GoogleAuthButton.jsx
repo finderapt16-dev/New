@@ -16,7 +16,7 @@ export function GoogleLogo({ className }) {
  * takes the browser to Google; /auth/callback finishes the sign-in (and asks
  * first-time users to choose Tenant or Landlord).
  */
-export function GoogleAuthButton({ intent = "signin", role = null, redirectTo = null, onError, disabled = false }) {
+export function GoogleAuthButton({ intent = "signin", role = null, redirectTo = null, onError, disabled = false, label = "Continue with Google" }) {
     const [loading, setLoading] = useState(false);
     const inFlightRef = useRef(false);
     useEffect(() => {
@@ -50,7 +50,7 @@ export function GoogleAuthButton({ intent = "signin", role = null, redirectTo = 
     };
     return (<button type="button" className="auth-google-button" onClick={() => void handleClick()} disabled={disabled || loading} aria-busy={loading || undefined}>
       {loading ? <span className="auth-google-spinner" aria-hidden="true"/> : <GoogleLogo className="auth-google-logo"/>}
-      <span>{loading ? "Connecting to Google…" : "Continue with Google"}</span>
+      <span>{loading ? "Connecting to Google…" : label}</span>
     </button>);
 }
 
