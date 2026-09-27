@@ -438,6 +438,7 @@ export function LandingApartmentPreview({
 
 export function LandingListingsSection({
     onBrowseClick,
+    onSignupClick,
 }) {
     const {
         apartments,
@@ -474,6 +475,9 @@ export function LandingListingsSection({
             onBrowseClick={
                 onBrowseClick
             }
+            onSignupClick={
+                onSignupClick
+            }
         />
     );
 }
@@ -491,6 +495,7 @@ export function LandingListingsSection({
  */
 export function LandingListingsEmptyState({
     onBrowseClick,
+    onSignupClick,
 }) {
     return (<section className="landing-listings-section">
             <div className="landing-listings-container">
@@ -521,7 +526,7 @@ export function LandingListingsEmptyState({
                     </p>
 
                     <div className="landing-empty-state-actions">
-                        <Link to="/signup">
+                        <Link to="/signup" onClick={onSignupClick}>
                             <Button
                                 size="lg"
                                 className="landing-empty-state-primary"

@@ -9,9 +9,7 @@ import { Root } from "./components/Root";
 const Landing = lazy(() => import("./landing/Landing").then((module) => ({ default: module.Landing })));
 const NotFound = lazy(() => import("./landing/NotFound").then((module) => ({ default: module.NotFound })));
 // Authentication and shared account pages
-const Login = lazy(() => import("./auth/Signin").then((module) => ({ default: module.Login })));
-const Signup = lazy(() => import("./auth/Signup").then((module) => ({ default: module.Signup })));
-const ForgotPassword = lazy(() => import("./auth/ForgotPassword").then((module) => ({ default: module.ForgotPassword })));
+const AuthPage = lazy(() => import("./auth/AuthPage").then((module) => ({ default: module.AuthPage })));
 const ResetPassword = lazy(() => import("./auth/ResetPassword").then((module) => ({ default: module.ResetPassword })));
 const AuthCallback = lazy(() => import("./auth/AuthCallback").then((module) => ({ default: module.AuthCallback })));
 const Dashboard = lazy(() => import("./auth/Dashboard").then((module) => ({ default: module.Dashboard })));
@@ -71,9 +69,9 @@ export const router = createBrowserRouter([
             { path: "dashboard", element: <ProtectedRoute><PageLoader>{roleDashboard}</PageLoader></ProtectedRoute> },
             { path: "admin", element: <ProtectedRoute allowedRoles={["admin"]}><PageLoader>{roleDashboard}</PageLoader></ProtectedRoute> },
             // Authentication.
-            { path: "login", element: <PageLoader><Login /></PageLoader> },
-            { path: "signup", element: <PageLoader><Signup /></PageLoader> },
-            { path: "forgot-password", element: <PageLoader><ForgotPassword /></PageLoader> },
+            { path: "login", element: <PageLoader><AuthPage view="login" /></PageLoader> },
+            { path: "signup", element: <PageLoader><AuthPage view="signup" /></PageLoader> },
+            { path: "forgot-password", element: <PageLoader><AuthPage view="forgot" /></PageLoader> },
             { path: "*", element: <PageLoader><NotFound /></PageLoader> },
         ],
     },
