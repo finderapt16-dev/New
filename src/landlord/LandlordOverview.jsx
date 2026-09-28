@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { formatApartmentLocation } from "@/utils/apartmentLocation";
 import { getRoomStatus } from "@/landlord/landlordStatus";
 import { LandlordEmptyIllustration } from "@/landlord/LandlordEmptyIllustration";
+import { PropertyEngagement } from "@/landlord/PropertyEngagement";
 import { ApartmentListingGuidelinesModal } from "@/landlord/ApartmentListingGuidelinesModal";
 
 const rowDate = (row, fields) => {
@@ -364,6 +365,19 @@ export const LandlordOverview = ({
               </div>
             )}
           </section>
+
+          {/* One engagement panel per property (views / favorites / ratings). */}
+          <div className="ld-engagement-stack">
+            {myApartments.map((apartment) => (
+              <PropertyEngagement
+                key={apartment.id}
+                apartment={apartment}
+                viewRows={viewRows}
+                favoriteRows={favoriteRows}
+                ratingRows={ratingRows}
+              />
+            ))}
+          </div>
         </>
       )}
 
