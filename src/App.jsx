@@ -59,6 +59,7 @@ export const router = createBrowserRouter([
             { path: "admin/apartment/:id/document/:documentId", element: <ProtectedRoute allowedRoles={["admin"]}><PageLoader><AdminDocumentReview /></PageLoader></ProtectedRoute> },
             // Landlord property management.
             { path: "add-apartment", element: <ProtectedRoute allowedRoles={["landlord"]}><PageLoader><AddApartment /></PageLoader></ProtectedRoute> },
+            { path: "add-property", element: <ProtectedRoute allowedRoles={["landlord"]}><PageLoader><AddApartment /></PageLoader></ProtectedRoute> },
             { path: "landlord/properties/:id/rooms", element: <ProtectedRoute allowedRoles={["landlord"]}><PageLoader><ManageRooms /></PageLoader></ProtectedRoute> },
             { path: "landlord/properties/:id/rooms/:roomId/edit", element: <ProtectedRoute allowedRoles={["landlord"]}><PageLoader><EditRoom /></PageLoader></ProtectedRoute> },
             // Tenant favorites and shared account settings.
