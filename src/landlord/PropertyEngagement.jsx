@@ -67,8 +67,7 @@ const METRIC_DEFS = [
 // selected period, with the change compared to the previous period. One card
 // is rendered per property the landlord owns.
 export function PropertyEngagement({ apartment, viewRows = [], favoriteRows = [], ratingRows = [] }) {
-  const [period, setPeriod] = useState("7d");
-  const days = period === "30d" ? 30 : 7;
+  const [period, setPeriod] = useState("thisMonth");
   const title = apartment.title || "Untitled property";
 
   const metrics = useMemo(() => {
@@ -80,15 +79,19 @@ export function PropertyEngagement({ apartment, viewRows = [], favoriteRows = []
     };
 
     const today = dayStart(new Date());
-    const windowStart = new Date(today.getFullYear(), today.getMonth(), today.getDate() - (days - 1)).getTime();
-    const previousStart = windowStart - days * DAY_MS;
+    const offset = period === "lastMonth" ? -1 : 0;
+    const windowStart = new Date(today.getFullYear(), today.getMonth() + offset, 1).getTime();
+    const windowEnd = new Date(today.getFullYear(), today.getMonth() + offset + 1, 1).getTime();
+    const previousStart = new Date(today.getFullYear(), today.getMonth() + offset - 1, 1).getTime();
+    const days = Math.round((windowEnd - windowStart) / DAY_MS);
     const buckets = Array.from({ length: days }, (_, index) => {
-      const start = windowStart + index * DAY_MS;
-      const date = new Date(start);
+      const date = new Date(windowStart); date.setDate(date.getDate() + index);
+      const start = date.getTime();
+      const next = new Date(date); next.setDate(next.getDate() + 1);
       const label = days > 7
         ? (index % 5 === 0 || index === days - 1 ? date.toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "")
         : date.toLocaleDateString("en-US", { weekday: "short" });
-      return { start, end: start + DAY_MS, label };
+      return { start, end: next.getTime(), label };
     });
     const inWindow = (time, start, end) => time !== null && time >= start && time < end;
 
@@ -99,7 +102,7 @@ export function PropertyEngagement({ apartment, viewRows = [], favoriteRows = []
         (total, row) => (inWindow(timestampOf(row), bucket.start, bucket.end) ? total + definition.weight(row) : total),
         0,
       ));
-      const currentRows = rows.filter((row) => inWindow(timestampOf(row), windowStart, windowStart + days * DAY_MS));
+      const currentRows = rows.filter((row) => inWindow(timestampOf(row), windowStart, windowEnd));
       const previousRows = rows.filter((row) => inWindow(timestampOf(row), previousStart, windowStart));
       const sum = (list) => list.reduce((total, row) => total + definition.weight(row), 0);
       // Views/favorites total the raw counts; ratings report the window average.
@@ -118,9 +121,9 @@ export function PropertyEngagement({ apartment, viewRows = [], favoriteRows = []
         change,
       };
     });
-  }, [apartment.id, days, favoriteRows, ratingRows, viewRows]);
+  }, [apartment.id, period, favoriteRows, ratingRows, viewRows]);
 
-  const changeLabel = period === "7d" ? "last week" : "previous 30 days";
+  const changeLabel = "previous month";
 
   return (
     <section className="pe-card">
@@ -132,8 +135,8 @@ export function PropertyEngagement({ apartment, viewRows = [], favoriteRows = []
         <label className="pe-period">
           <CalendarDays size={14} />
           <select value={period} onChange={(event) => setPeriod(event.target.value)} aria-label={`Engagement period for ${title}`}>
-            <option value="7d">Last 7 Days</option>
-            <option value="30d">Last 30 Days</option>
+            <option value="thisMonth">This Month</option>
+            <option value="lastMonth">Last Month</option>
           </select>
         </label>
       </header>
@@ -172,7 +175,6 @@ export function PropertyEngagement({ apartment, viewRows = [], favoriteRows = []
                 {neutral ? <TrendingUp size={12} /> : down ? <TrendingDown size={12} /> : <TrendingUp size={12} />}
                 {neutral ? "No change compared to " : `${metric.change > 0 ? "+" : ""}${metric.change}% compared to `}
                 {changeLabel}
-                <small>vs. previous {days} days</small>
               </footer>
             </article>
           );
