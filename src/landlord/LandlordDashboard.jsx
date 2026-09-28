@@ -49,9 +49,7 @@ export function LandlordDashboard() {
     const [favoriteUsers, setFavoriteUsers] = useState([]);
     const [notifications, setNotifications] = useState([]);
     const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
-    const [notifSearch, setNotifSearch] = useState("");
     const [notifCategory, setNotifCategory] = useState("all");
-    const [notifSort, setNotifSort] = useState("newest");
     const [openNotifMenuId, setOpenNotifMenuId] = useState(null);
     const [isMarkingAllNotifs, setIsMarkingAllNotifs] = useState(false);
     // Loading states for action prevention
@@ -90,18 +88,22 @@ export function LandlordDashboard() {
             setDeletingNotifId(null);
         }
     };
-    const toggleNotifReadStatus = async (notificationId, isCurrentlyRead) => {
+    const setNotificationReadStatus = async (notificationId, shouldBeRead, isCurrentlyRead) => {
         if (!user?.id)
             return;
-        const updated = isCurrentlyRead
-            ? await markNotificationUnread(notificationId, user.id)
-            : await markNotificationRead(notificationId, user.id);
+        if (shouldBeRead === isCurrentlyRead) {
+            setOpenNotifMenuId(null);
+            return;
+        }
+        const updated = shouldBeRead
+            ? await markNotificationRead(notificationId, user.id)
+            : await markNotificationUnread(notificationId, user.id);
         if (!updated) {
             toast.error("Unable to update notification status.");
             return;
         }
-        setNotifications((previous) => previous.map((notification) => notification.id === notificationId ? { ...notification, ...updated, read: !isCurrentlyRead, is_read: !isCurrentlyRead } : notification));
-        setUnreadNotificationCount((previous) => Math.max(0, previous + (isCurrentlyRead ? 1 : -1)));
+        setNotifications((previous) => previous.map((notification) => notification.id === notificationId ? { ...notification, ...updated, read: shouldBeRead, is_read: shouldBeRead } : notification));
+        setUnreadNotificationCount((previous) => Math.max(0, previous + (shouldBeRead ? -1 : 1)));
         setOpenNotifMenuId(null);
     };
     const markAllLandlordNotificationsRead = async () => {
@@ -1116,7 +1118,22 @@ export function LandlordDashboard() {
     const sectionMap = {
         overview: () => (<LandlordOverview myApartments={myApartments} user={user} availableCount={availableCount} landlordVerified={landlordVerified} landlordPermit={landlordPermit} setSettingsTab={setSettingsTab} setActiveSection={setActiveSection} isLoadingApartments={isLoadingApartments} ratingSummary={ratingSummary} viewRows={landlordViewRows} favoriteRows={landlordFavoriteRows} ratingRows={ratingRows} ratingsLoading={ratingsLoading} openViewers={openViewers} aptViews={aptViews} openFavoriters={openFavoriters} aptFavs={aptFavs} setEditingApartment={setEditingApartment} editingApartment={editingApartment} handleSaveApartment={handleSaveEditedApartment} handleTogglePublication={handleTogglePublication} deletingApartmentId={deletingApartmentId} handleDeleteApartment={handleDeleteApartment} onAddProperty={() => navigate("/add-apartment")}/>),
         activity: () => (<LandlordActivity activityRange={activityRange} landlordViewRows={landlordViewRows} landlordFavoriteRows={landlordFavoriteRows} ratingRows={ratingRows} propertyIds={propertyIds} myApartments={myApartments} getViewWeight={getViewWeight} setActivityRange={setActivityRange} isLoadingApartments={isLoadingApartments} isLoadingActivityData={isLoadingActivityData}/>),
-        notifications: () => (<LandlordNotifications notifications={notifications} notifSearch={notifSearch} notifCategory={notifCategory} notifSort={notifSort} isMarkingAllNotifs={isMarkingAllNotifs} markAllLandlordNotificationsRead={markAllLandlordNotificationsRead} setNotifCategory={setNotifCategory} setNotifSearch={setNotifSearch} setNotifSort={setNotifSort} isLoadingNotifications={isLoadingNotifications} handleNotificationClick={handleNotificationClick} setOpenNotifMenuId={setOpenNotifMenuId} openNotifMenuId={openNotifMenuId} toggleNotifReadStatus={toggleNotifReadStatus} deletingNotifId={deletingNotifId} deleteNotif={deleteNotif} landlordAppeals={landlordAppeals} getAppealMetadata={getAppealMetadata}/>),
+        notifications: () => (
+            <LandlordNotifications
+                notifications={notifications}
+                notifCategory={notifCategory}
+                isMarkingAllNotifs={isMarkingAllNotifs}
+                markAllLandlordNotificationsRead={markAllLandlordNotificationsRead}
+                setNotifCategory={setNotifCategory}
+                isLoadingNotifications={isLoadingNotifications}
+                handleNotificationClick={handleNotificationClick}
+                setOpenNotifMenuId={setOpenNotifMenuId}
+                openNotifMenuId={openNotifMenuId}
+                setNotificationReadStatus={setNotificationReadStatus}
+                deletingNotifId={deletingNotifId}
+                deleteNotif={deleteNotif}
+            />
+        ),
         settings: () => (<LandlordSettings settingsTab={settingsTab} setSettingsTab={setSettingsTab} profileTab={<ProfileTab profile={profile} isUploadingProfilePhoto={isUploadingProfilePhoto} profilePhotoInputRef={profilePhotoInputRef} handleRemoveProfilePhoto={handleRemoveProfilePhoto} handleProfilePhoto={handleProfilePhoto} updateProfile={updateProfile} setProfile={setProfile} savedProfile={savedProfile} handleUpdateProfile={handleUpdateProfile} isUpdatingProfile={isUpdatingProfile}/>} alertsTab={<AlertsTab alerts={alerts} setA={setA} handleSaveAlerts={handleSaveAlerts}/>} businessTab={<BusinessTab business={business} setB={setB} myApartments={myApartments} allRooms={allRooms} availableCount={availableCount} setEditingApartment={setEditingApartment} setBusiness={setBusiness} savedBusiness={savedBusiness} handleSaveBusiness={handleSaveBusiness}/>} securityTab={<SecurityTab security={security} passwordState={passwordState} setPasswordState={setPasswordState} handlePasswordChange={handlePasswordChange} twoFAState={twoFAState} handleSetup2FA={handleSetup2FA} updateSecurity={updateSecurity} setTwoFAState={setTwoFAState} handleCancel2FASetup={handleCancel2FASetup} handleVerify2FA={handleVerify2FA} handleSaveSecurity={handleSaveSecurity} handleDeleteAccount={handleDeleteAccount}/>}/>),
         help: () => (<LandlordHelpSupport navigate={navigate} setSettingsTab={setSettingsTab} supportSubmitted={supportSubmitted} setSupportSubmitted={setSupportSubmitted} supportForm={supportForm} setSupportForm={setSupportForm} handleSupportSubmit={handleSupportSubmit} isSubmittingSupport={isSubmittingSupport}/>),
     };
