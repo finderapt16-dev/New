@@ -69,6 +69,8 @@ const composeStreetAddress = (street = "", barangay = "") => [
     String(street ?? "").trim(),
     String(barangay ?? "").trim() ? `Brgy. ${String(barangay).trim()}` : "",
 ].filter(Boolean).join(", ");
+const buildLocationAddressQuery = ({ address = "", city = "", state = "", zip = "" } = {}) => [address, city, state, zip, "Philippines"].filter(Boolean).join(", ");
+const normalizeLocationQuery = (value = "") => String(value ?? "").trim().replace(/\s+/g, " ").toLowerCase();
 const INITIAL_FORM_DATA = {
     title: "",
     sqft: 500,
@@ -165,6 +167,11 @@ export function AddApartment() {
     const [locationResolving, setLocationResolving] = useState(false);
     const manualLocationPinRef = useRef(false);
     const lastAutoGeocodedAddressRef = useRef("");
+    // Fields the landlord typed by hand are never overwritten by the map pin.
+    const manualBarangayRef = useRef(false);
+    const manualStreetRef = useRef(false);
+    const [pinnedAddressFill, setPinnedAddressFill] = useState(null);
+    const [pinnedAddressOffer, setPinnedAddressOffer] = useState(null);
     const [uploadedImages, setUploadedImages] = useState([]);
     const [amenitiesInput, setAmenitiesInput] = useState("");
     const [utilitiesInput, setUtilitiesInput] = useState("");
@@ -301,6 +308,10 @@ export function AddApartment() {
         setLocationResolving(false);
         manualLocationPinRef.current = false;
         lastAutoGeocodedAddressRef.current = "";
+        manualBarangayRef.current = false;
+        manualStreetRef.current = false;
+        setPinnedAddressFill(null);
+        setPinnedAddressOffer(null);
     };
     const discardDraft = (resetForm = true) => {
         if (user?.id) {
@@ -328,6 +339,11 @@ export function AddApartment() {
         const restoredLocationPinned = hasValidApartmentCoordinates(restoredFormData.lat, restoredFormData.lng);
         setLocationPinned(restoredLocationPinned);
         manualLocationPinRef.current = restoredLocationPinned;
+        // Restored drafts belong to the landlord, so keep the saved address text.
+        manualBarangayRef.current = Boolean(String(restoredFormData.barangay ?? "").trim());
+        manualStreetRef.current = Boolean(String(restoredFormData.street ?? "").trim());
+        setPinnedAddressFill(null);
+        setPinnedAddressOffer(null);
         setUploadedImages(pendingDraft.uploadedImages ?? []);
         setAmenitiesInput(pendingDraft.amenitiesInput ?? "");
         setUtilitiesInput(pendingDraft.utilitiesInput ?? "");
@@ -440,7 +456,7 @@ export function AddApartment() {
         });
     };
     const FieldError = ({ field }) => validationErrors[field] ? <p className="add-property-error" role="alert">{validationErrors[field]}</p> : null;
-    const locationAddressQuery = useMemo(() => [formData.address, formData.city, formData.state, formData.zip, "Philippines"].filter(Boolean).join(", "), [formData.address, formData.city, formData.state, formData.zip]);
+    const locationAddressQuery = useMemo(() => buildLocationAddressQuery(formData), [formData.address, formData.city, formData.state, formData.zip]);
     const updateLocationField = (field, value) => {
         setFormData((current) => {
             const next = { ...current, [field]: value };
@@ -449,6 +465,12 @@ export function AddApartment() {
             next.lng = undefined;
             return next;
         });
+        if (field === "barangay")
+            manualBarangayRef.current = String(value ?? "").trim().length > 0;
+        if (field === "street")
+            manualStreetRef.current = String(value ?? "").trim().length > 0;
+        setPinnedAddressFill(null);
+        setPinnedAddressOffer(null);
         lastAutoGeocodedAddressRef.current = "";
         manualLocationPinRef.current = false;
         setLocationPinned(false);
@@ -466,17 +488,65 @@ export function AddApartment() {
         setLocationPinned(isValid);
         manualLocationPinRef.current = isValid;
         if (isValid) {
-            lastAutoGeocodedAddressRef.current = locationAddressQuery.trim().replace(/\s+/g, " ").toLowerCase();
+            lastAutoGeocodedAddressRef.current = normalizeLocationQuery(locationAddressQuery);
             setLocationResolving(false);
             clearValidationError("mapLocation");
         }
+    };
+    /* =========================================================
+       PIN -> ADDRESS AUTO-FILL
+
+       Dropping or dragging the map pin resolves the pinned
+       point, and the barangay + street it belongs to are
+       filled into the Address fields above.
+    ========================================================= */
+    const applyPinnedAddressToForm = (details, { force = false } = {}) => {
+        const barangay = String(details?.barangay ?? "").trim();
+        const street = String(details?.street ?? "").trim();
+        if (!barangay && !street)
+            return;
+        const currentBarangay = String(formData.barangay ?? "").trim();
+        const currentStreet = String(formData.street ?? "").trim();
+        // A typed value that already matches the pin (ignoring casing) is not a conflict.
+        const matchesPinValue = (currentValue, pinValue) => Boolean(currentValue) && normalizeLocationQuery(currentValue) === normalizeLocationQuery(pinValue);
+        const canFill = (currentValue, pinValue, isManual) => force || !currentValue || matchesPinValue(currentValue, pinValue) || !isManual;
+        const nextBarangay = barangay && canFill(currentBarangay, barangay, manualBarangayRef.current) ? barangay : currentBarangay;
+        const nextStreet = street && canFill(currentStreet, street, manualStreetRef.current) ? street : currentStreet;
+        const changed = nextBarangay !== currentBarangay || nextStreet !== currentStreet;
+        const keptTypedValue = (barangay && nextBarangay !== barangay) || (street && nextStreet !== street);
+        if (changed) {
+            if (nextBarangay !== currentBarangay)
+                manualBarangayRef.current = false;
+            if (nextStreet !== currentStreet)
+                manualStreetRef.current = false;
+            const nextAddress = composeStreetAddress(nextStreet, nextBarangay) || String(formData.address ?? "");
+            // The pin already told us where this address is, so do not geocode it again.
+            lastAutoGeocodedAddressRef.current = normalizeLocationQuery(buildLocationAddressQuery({
+                address: nextAddress,
+                city: formData.city,
+                state: formData.state,
+                zip: formData.zip,
+            }));
+            setFormData((current) => ({
+                ...current,
+                barangay: nextBarangay,
+                street: nextStreet,
+                address: nextAddress,
+            }));
+            setPinnedAddressFill({ barangay: nextBarangay, street: nextStreet });
+            setLocationResolving(false);
+            clearValidationError("barangay");
+            clearValidationError("street");
+            clearValidationError("mapLocation");
+        }
+        setPinnedAddressOffer(!force && keptTypedValue ? { barangay, street } : null);
     };
     useEffect(() => {
         if (currentStep !== 2)
             return;
         if (!String(formData.address ?? "").trim())
             return;
-        const normalizedQuery = locationAddressQuery.trim().replace(/\s+/g, " ").toLowerCase();
+        const normalizedQuery = normalizeLocationQuery(locationAddressQuery);
         if (!normalizedQuery || normalizedQuery === lastAutoGeocodedAddressRef.current)
             return;
         setLocationResolving(true);
@@ -1016,6 +1086,19 @@ export function AddApartment() {
                                                 <FieldError field="street" />
                                             </div>
                                         </div>
+                                        {pinnedAddressFill && (
+                                            <p className="add-property-autofill-note" role="status">
+                                                Auto-filled from the pinned map location: {[pinnedAddressFill.street, pinnedAddressFill.barangay ? `Brgy. ${pinnedAddressFill.barangay}` : ""].filter(Boolean).join(", ")}. You can still edit these fields.
+                                            </p>
+                                        )}
+                                        {pinnedAddressOffer && (
+                                            <p className="add-property-autofill-note add-property-autofill-note--offer" role="status">
+                                                The pin points to {[pinnedAddressOffer.street, pinnedAddressOffer.barangay ? `Brgy. ${pinnedAddressOffer.barangay}` : ""].filter(Boolean).join(", ")}.
+                                                <button type="button" className="add-property-autofill-action" onClick={() => applyPinnedAddressToForm(pinnedAddressOffer, { force: true })}>
+                                                    Use pin address
+                                                </button>
+                                            </p>
+                                        )}
                                         <div className="add-property-fields add-property-fields--three">
                                             <div className="add-property-form-field">
                                                 <Label htmlFor="add-property-district">District / Area</Label>
@@ -1050,7 +1133,7 @@ export function AddApartment() {
                                     <section className="add-property-section add-property-map-section">
                                         <div className="add-property-section-heading">
                                             <h3>Map Location</h3>
-                                            <p>Enter the property address to locate it automatically, or click the map or drag the pin to select the exact location.</p>
+                                            <p>Enter the property address to locate it automatically, or click the map or drag the pin to select the exact location. The barangay and street above are filled from the pin.</p>
                                         </div>
                                         <div className="add-property-map">
                                             <PropertyLocationPicker
@@ -1062,7 +1145,10 @@ export function AddApartment() {
                                                     if (!manualLocationPinRef.current)
                                                         setLocationResolving(status === "loading");
                                                 }}
-                                                onMapAddressChange={() => clearValidationError("mapLocation")}
+                                                onMapAddressChange={(label, details) => {
+                                                    clearValidationError("mapLocation");
+                                                    applyPinnedAddressToForm(details);
+                                                }}
                                                 onLocationChange={(lat, lng, source) => {
                                                     if (source === "geocode" && manualLocationPinRef.current)
                                                         return;
