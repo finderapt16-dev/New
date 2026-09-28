@@ -72,8 +72,6 @@ const composeStreetAddress = (street = "", barangay = "") => [
 const INITIAL_FORM_DATA = {
     title: "",
     sqft: 500,
-    minPrice: "",
-    maxPrice: "",
     street: "",
     barangay: "",
     address: "",
@@ -268,8 +266,6 @@ export function AddApartment() {
         return Boolean(String(formData.title ?? "").trim()
             || String(formData.description ?? "").trim()
             || String(formData.address ?? "").trim()
-            || String(formData.minPrice ?? "").trim()
-            || String(formData.maxPrice ?? "").trim()
             || amenitiesInput.trim()
             || utilitiesInput.trim()
             || customAmenityInput.trim()
@@ -541,12 +537,6 @@ export function AddApartment() {
             errors.description = "Description must be 500 characters or fewer.";
         if (uploadedImages.length === 0)
             errors.images = "Upload at least one property photo.";
-        if (!Number(formData.minPrice) || Number(formData.minPrice) <= 0)
-            errors.minPrice = "Enter a minimum price.";
-        if (!Number(formData.maxPrice) || Number(formData.maxPrice) <= 0)
-            errors.maxPrice = "Enter a maximum price.";
-        else if (Number(formData.minPrice) > 0 && Number(formData.maxPrice) < Number(formData.minPrice))
-            errors.maxPrice = "Maximum price must be at least the minimum price.";
         if (!String(formData.barangay ?? "").trim())
             errors.barangay = "Barangay is required.";
         if (!String(formData.street ?? "").trim())
@@ -565,7 +555,7 @@ export function AddApartment() {
             errors.businessPermit = "Business permit number is required.";
         if (!String(verificationData.permitExpiry).trim())
             errors.permitExpiry = "Permit expiry date is required.";
-        const firstStep = errors.title || errors.sqft || errors.description || errors.images || errors.minPrice || errors.maxPrice
+        const firstStep = errors.title || errors.sqft || errors.description || errors.images
             ? 1
             : errors.barangay || errors.street || errors.mapLocation
                 ? 2
@@ -580,7 +570,7 @@ export function AddApartment() {
         const { errors } = validateAllFields();
         const belongsToStep = (field) => {
             if (step === 1)
-                return ["title", "sqft", "description", "images", "minPrice", "maxPrice"].includes(field);
+                return ["title", "sqft", "description", "images"].includes(field);
             if (step === 2)
                 return ["barangay", "street", "mapLocation"].includes(field);
             if (step === 3)
@@ -671,7 +661,8 @@ export function AddApartment() {
         const draftApartment = {
             id: "",
             title: formData.title || "",
-            price: Number(formData.minPrice) || 0,
+            // Room prices are added later in Manage Rooms; the property itself has no price.
+            price: 0,
             bedrooms: 0,
             bathrooms: 0,
             sqft: Number(formData.sqft) || 500,
@@ -703,10 +694,6 @@ export function AddApartment() {
                 utilityItems,
                 customFeatures: submittedFeatures,
                 featureMetadata: {
-                    propertyPriceRange: {
-                        minimum: Number(formData.minPrice),
-                        maximum: Number(formData.maxPrice),
-                    },
                     locationDetails: {
                         barangay: formData.barangay.trim(),
                         street: formData.street.trim(),
@@ -994,50 +981,6 @@ export function AddApartment() {
                                             </div>
                                         </div>
 
-                                        <fieldset className="add-property-price-range">
-                                            <legend>Price Range</legend>
-                                            <div className="add-property-fields add-property-fields--two">
-                                                <div className="add-property-form-field">
-                                                    <Label htmlFor="add-property-min-price">Minimum Price <span className="add-property-required">*</span></Label>
-                                                    <Input
-                                                        id="add-property-min-price"
-                                                        type="number"
-                                                        min="1"
-                                                        step="100"
-                                                        inputMode="numeric"
-                                                        value={formData.minPrice}
-                                                        onChange={(event) => {
-                                                            setFormData((current) => ({ ...current, minPrice: event.target.value }));
-                                                            if (Number(event.target.value) > 0) clearValidationError("minPrice");
-                                                            if (Number(event.target.value) <= Number(formData.maxPrice)) clearValidationError("maxPrice");
-                                                        }}
-                                                        placeholder="e.g., 5,000"
-                                                        aria-invalid={Boolean(validationErrors.minPrice)}
-                                                        className={fieldClass("minPrice")}
-                                                    />
-                                                    <FieldError field="minPrice" />
-                                                </div>
-                                                <div className="add-property-form-field">
-                                                    <Label htmlFor="add-property-max-price">Maximum Price <span className="add-property-required">*</span></Label>
-                                                    <Input
-                                                        id="add-property-max-price"
-                                                        type="number"
-                                                        min="1"
-                                                        step="100"
-                                                        inputMode="numeric"
-                                                        value={formData.maxPrice}
-                                                        onChange={(event) => {
-                                                            setFormData((current) => ({ ...current, maxPrice: event.target.value }));
-                                                            if (Number(event.target.value) > 0) clearValidationError("maxPrice");
-                                                        }}
-                                                        placeholder="e.g., 10,000"
-                                                        aria-invalid={Boolean(validationErrors.maxPrice)}
-                                                        className={fieldClass("maxPrice")}
-                                                    />
-                                                    <FieldError field="maxPrice" />
-                                                </div>
-                                            </div>
-                                        </fieldset>
                                     </section>
                                 </>
                             )}
