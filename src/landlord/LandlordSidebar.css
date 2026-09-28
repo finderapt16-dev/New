@@ -264,3 +264,4 @@
 .landlord-sidebar-nav-active { background:#f2f6fa; color:#16a5e1; }
 .landlord-sidebar-nav-idle { color:#111111; }
 .landlord-sidebar-nav-idle:hover { background:#f2f6fa; color:#16a5e1; }
+.landlord-sidebar-add-property[aria-current="page"] { background:#f2f6fa; color:#16a5e1; }

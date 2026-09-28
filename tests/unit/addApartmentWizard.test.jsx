@@ -81,6 +81,10 @@ describe("Add Property wizard", () => {
     render(<MemoryRouter><AddApartment /></MemoryRouter>);
 
     expect(screen.getByRole("heading", { name: "Add Property", level: 1 })).toBeInTheDocument();
+    const addPropertyButtons = screen.getAllByRole("button", { name: "Add Property" });
+    expect(addPropertyButtons).toHaveLength(2);
+    expect(addPropertyButtons.every((button) => button.getAttribute("aria-current") === "page")).toBe(true);
+    expect(screen.getByRole("button", { name: "Open navigation" })).toBeInTheDocument();
     expect(screen.getByText("Step 1 of 4")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Property Information", level: 2 })).toBeInTheDocument();
 

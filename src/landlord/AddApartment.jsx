@@ -1,5 +1,6 @@
 import "./AddApartment.css";
 import { PropertyLocationPicker } from "@/landlord/PropertyLocationPicker";
+import { LandlordSidebar } from "@/landlord/LandlordSidebar";
 import { MultiImageUploader } from "@/components/MultiImageUploader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
@@ -13,7 +14,7 @@ import { VERIFICATION_DOCUMENT_TYPES, uploadVerificationDocuments, validateVerif
 import { deletePropertyDraft, fetchPropertyDraft, savePropertyDraft, } from "@/services/propertyDraftService";
 import { DEFAULT_LA_PAZ_MAP_CENTER, hasValidApartmentCoordinates, } from "@/utils/mapCoordinates";
 import { supabase } from "@/services/supabaseClient";
-import { ArrowLeft, ArrowRight, Check, ChevronDown, Cloud, CloudUpload, FileText, MapPin, Plus, RotateCcw, Upload, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronDown, Cloud, CloudUpload, FileText, MapPin, Menu, Plus, RotateCcw, Upload, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -99,9 +100,56 @@ const INITIAL_VERIFICATION_DATA = {
     idType: "",
     idNumber: "",
 };
+const scrollWizardToTop = () => {
+    const shellScroller = document.querySelector(".landlord-add-property-shell .app-shell-main");
+    if (typeof shellScroller?.scrollTo === "function") {
+        shellScroller.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+};
+function LandlordAddPropertyShell({ user, logout, navigate, children }) {
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const sidebarProps = {
+        user,
+        verified: Boolean(user?.isVerified),
+        activeSection: "add-property",
+        onSectionChange: (section) => navigate(`/dashboard?section=${section}`),
+        onClose: () => setSidebarOpen(false),
+        onLogout: () => {
+            logout?.();
+            navigate("/");
+        },
+        onAddProperty: () => navigate("/add-apartment"),
+    };
+    return (
+        <div className="app-shell landlord-shell landlord-add-property-shell">
+            <div className="app-shell-frame">
+                <aside className="app-shell-sidebar">
+                    <LandlordSidebar {...sidebarProps} />
+                </aside>
+                {sidebarOpen && <div className="app-sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
+                <aside className={`app-sidebar-drawer ${sidebarOpen ? "is-open" : ""}`}>
+                    <button type="button" onClick={() => setSidebarOpen(false)} aria-label="Close navigation" className="app-sidebar-close">
+                        <X className="add-property-menu-icon" />
+                    </button>
+                    <LandlordSidebar {...sidebarProps} />
+                </aside>
+                <button type="button" aria-label="Open navigation" onClick={() => setSidebarOpen(true)} className="app-sidebar-trigger">
+                    <Menu className="add-property-menu-icon" />
+                </button>
+                <div className="app-shell-main">
+                    <div className="app-shell-content app-shell-content-mobile-nav">
+                        {children}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
 export function AddApartment() {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const { refreshApartments } = useApartmentsContext();
     const [currentStep, setCurrentStep] = useState(1);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -550,25 +598,25 @@ export function AddApartment() {
             return;
         if (targetStep < currentStep) {
             setCurrentStep(targetStep);
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            scrollWizardToTop();
             return;
         }
         for (let step = currentStep; step < targetStep; step += 1) {
             if (!validateStep(step)) {
                 setCurrentStep(step);
                 toast.error(`Complete ${stepConfig[step - 1].title} before continuing.`);
-                window.scrollTo({ top: 0, behavior: "smooth" });
+                scrollWizardToTop();
                 return;
             }
         }
         setCurrentStep(targetStep);
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        scrollWizardToTop();
     };
     const handleNextStep = () => {
         if (validateStep(currentStep)) {
             if (currentStep < totalSteps) {
                 setCurrentStep(currentStep + 1);
-                window.scrollTo({ top: 0, behavior: "smooth" });
+                scrollWizardToTop();
             }
         }
         else {
@@ -583,7 +631,7 @@ export function AddApartment() {
     const handlePrevStep = () => {
         if (currentStep > 1) {
             setCurrentStep(currentStep - 1);
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            scrollWizardToTop();
         }
     };
     const handleSubmit = async (e) => {
@@ -610,7 +658,7 @@ export function AddApartment() {
         if (!validation.isValid) {
             setCurrentStep(validation.firstStep);
             toast.error("Please complete all required fields before submitting.");
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            scrollWizardToTop();
             return;
         }
         const submittedAmenities = getSubmittedAmenities();
@@ -785,7 +833,7 @@ export function AddApartment() {
     if (user?.role !== "landlord") {
         return <Navigate to="/dashboard" replace />;
     }
-    return (
+    const content = (
         <main className="landlord-add-property">
             <div className="add-property-page">
                 <header className="add-property-heading">
@@ -1464,5 +1512,10 @@ export function AddApartment() {
                 </div>
             )}
         </main>
+    );
+    return (
+        <LandlordAddPropertyShell user={user} logout={logout} navigate={navigate}>
+            {content}
+        </LandlordAddPropertyShell>
     );
 }
