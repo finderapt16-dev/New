@@ -48,6 +48,35 @@ beforeEach(() => {
 });
 
 describe("landlord create account wizard", () => {
+    it("keeps every landlord signup step email-only and preserves email confirmation", async () => {
+        mocks.signup.mockResolvedValueOnce({
+            success: true,
+            signup: { requiresEmailVerification: true, emailConfirmation: { state: "sent" } },
+        });
+        const user = userEvent.setup();
+        renderDialog();
+        await openLandlordSignup(user);
+        expect(screen.queryByRole("button", { name: /google/i })).not.toBeInTheDocument();
+
+        await fillAccountDetails(user);
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+        expect(screen.queryByRole("button", { name: /google/i })).not.toBeInTheDocument();
+
+        await fillPersonalInformation(user);
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+        expect(screen.queryByRole("button", { name: /google/i })).not.toBeInTheDocument();
+
+        await user.click(screen.getByRole("checkbox"));
+        await user.click(screen.getByRole("button", { name: /^create account$/i }));
+        expect(mocks.signup).toHaveBeenCalledWith(expect.objectContaining({
+            email: "james@gmail.com",
+            password: "Landlord#2026",
+            role: "landlord",
+        }));
+        expect(await screen.findByText(/a verification link was sent to james@gmail\.com/i)).toBeInTheDocument();
+        expect(mocks.google).not.toHaveBeenCalled();
+    });
+
     it("walks the three steps: account details, personal information, review", async () => {
         const user = userEvent.setup();
         renderDialog();
