@@ -1,5 +1,7 @@
 import "./LandlordSettingsPage.css";
 import { Button } from "@/components/ui/button";
+import { UpdateBusinessPermitModal } from "@/landlord/UpdateBusinessPermitModal";
+import { fetchApartmentVerificationDocuments } from "@/services/verificationDocumentsService";
 import { FileText, Lock, Pencil, ShieldAlert, Trash2, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -10,15 +12,36 @@ const formatDate = (value) => {
     return Number.isNaN(date.getTime()) ? "Not provided" : date.toLocaleDateString("en-PH", { year: "numeric", month: "long", day: "numeric" });
 };
 
-const permitFileName = (apartments) => {
-    for (const apartment of apartments ?? []) {
-        const features = apartment?.features && !Array.isArray(apartment.features) ? apartment.features : {};
-        const verification = features.verification && typeof features.verification === "object" ? features.verification : {};
-        const permit = typeof verification.businessPermit === "string" ? verification.businessPermit : "";
-        if (permit)
-            return decodeURIComponent(permit.split("/").pop() || permit);
-    }
-    return "";
+const verificationFromApartment = (apartment) => {
+    const features = apartment?.features && !Array.isArray(apartment.features) ? apartment.features : {};
+    const verification = features.verification && typeof features.verification === "object" && !Array.isArray(features.verification) ? features.verification : {};
+    return verification;
+};
+
+const hasVerificationData = (apartment) => Object.values(verificationFromApartment(apartment))
+    .some((value) => typeof value === "string" && value.trim().length > 0);
+
+// Permit display order: admin-verified properties first, then properties with
+// submitted permit details, then the most recently added property.
+const permitSourceCandidates = (apartments) => (apartments ?? [])
+    .filter((apartment) => apartment?.id)
+    .slice()
+    .sort((a, b) => {
+        const approvedDiff = (a.approvalStatus === "approved" ? 0 : 1) - (b.approvalStatus === "approved" ? 0 : 1);
+        if (approvedDiff !== 0)
+            return approvedDiff;
+        const dataDiff = (hasVerificationData(a) ? 0 : 1) - (hasVerificationData(b) ? 0 : 1);
+        if (dataDiff !== 0)
+            return dataDiff;
+        return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime();
+    });
+
+const isImageFile = (mimeType, url) => {
+    if (typeof mimeType === "string" && mimeType.startsWith("image/"))
+        return true;
+    if (mimeType)
+        return false;
+    return /\.(png|jpe?g|webp|gif|bmp)$/i.test(String(url ?? "").split("?")[0] ?? "");
 };
 
 function EditableField({ label, required, hint, type = "text", value, onChange, readOnly, placeholder, autoComplete }) {
@@ -75,12 +98,47 @@ export function LandlordSettingsPage({
     handleDeleteAccount,
     myApartments,
     landlordProfile,
+    user,
+    onPermitSaved,
 }) {
     const [profileDirty, setProfileDirty] = useState(false);
+    const [permitDocuments, setPermitDocuments] = useState([]);
+    const [permitModalOpen, setPermitModalOpen] = useState(false);
+    const [permitReloadKey, setPermitReloadKey] = useState(0);
     const trackChange = (patch) => {
         setProfileDirty(true);
         updateProfile(patch);
     };
+    useEffect(() => {
+        let active = true;
+        const loadPermitDocuments = async () => {
+            const candidates = permitSourceCandidates(myApartments);
+            if (candidates.length === 0) {
+                setPermitDocuments([]);
+                return;
+            }
+            try {
+                for (const apartment of candidates) {
+                    const documents = await fetchApartmentVerificationDocuments(apartment.id);
+                    if (!active)
+                        return;
+                    if (documents.length > 0) {
+                        setPermitDocuments(documents);
+                        return;
+                    }
+                }
+                setPermitDocuments([]);
+            }
+            catch {
+                if (active)
+                    setPermitDocuments([]);
+            }
+        };
+        void loadPermitDocuments();
+        return () => {
+            active = false;
+        };
+    }, [myApartments, permitReloadKey]);
     const cancelProfile = () => {
         updateProfile(() => ({ ...savedProfile }));
         setProfileDirty(false);
@@ -89,8 +147,17 @@ export function LandlordSettingsPage({
         await handleUpdateProfile();
         setProfileDirty(false);
     };
-    const fileName = permitFileName(myApartments);
-    const permitNumber = landlordProfile?.business_permit_number || landlordProfile?.permit_number || "";
+    const permitCandidates = permitSourceCandidates(myApartments);
+    const permitApartment = permitCandidates.find(hasVerificationData) ?? permitCandidates[0] ?? null;
+    const propertyVerification = verificationFromApartment(permitApartment);
+    const permitDocument = permitDocuments.find((document) => document.documentType === "mayors_business_permit") ?? permitDocuments[0] ?? null;
+    const profilePermitUrl = typeof landlordProfile?.verification_document_url === "string" ? landlordProfile.verification_document_url : "";
+    const permitFileUrl = permitDocument?.previewUrl || profilePermitUrl;
+    const permitFileLabel = permitDocument?.fileName || (profilePermitUrl ? "Business permit document" : "");
+    const permitIsImage = isImageFile(permitDocument?.mimeType ?? "", permitFileUrl);
+    const permitNumber = String(propertyVerification.businessPermit ?? "").trim() || landlordProfile?.business_permit_number || landlordProfile?.permit_number || "";
+    const permitExpiry = propertyVerification.permitExpiry || landlordProfile?.permit_expiry || "";
+    const isPermitVerified = permitApartment?.approvalStatus === "approved";
     const cancelPassword = () => setPasswordState((current) => ({ ...current, current: "", new: "", confirm: "" }));
     return (<div className="ls-page">
       <header className="ls-card ls-header">
@@ -147,14 +214,29 @@ export function LandlordSettingsPage({
             <h2>Business Information</h2>
             <p>Manage your business verification and permit details.</p>
           </div>
-          <span className="ls-readonly-badge"><Lock className="ls-readonly-icon"/>READ-ONLY</span>
+          <div className="ls-section-head-actions">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={!permitApartment}
+              title={permitApartment ? "View or update your business permit details" : "Add a property first to manage permit details"}
+              onClick={() => setPermitModalOpen(true)}
+              className="ls-permit-update"
+            >
+              View / Update Permit
+            </Button>
+            <span className="ls-readonly-badge"><Lock className="ls-readonly-icon"/>READ-ONLY</span>
+          </div>
         </div>
-        {fileName ? (<div className="ls-permit-file">
-            <span className="ls-permit-file-icon"><FileText/></span>
+        {permitFileUrl ? (<div className="ls-permit-file">
+            {permitIsImage ? (<a className="ls-permit-thumb" href={permitFileUrl} target="_blank" rel="noopener noreferrer" title="View business permit image">
+                <img src={permitFileUrl} alt="Business permit document"/>
+              </a>) : (<a className="ls-permit-file-icon" href={permitFileUrl} target="_blank" rel="noopener noreferrer" title="View business permit document"><FileText/></a>)}
             <span>
-              <strong className="ls-permit-file-name">{fileName}</strong>
-              <small className="ls-permit-file-meta">Submitted for verification</small>
+              <strong className="ls-permit-file-name">{permitFileLabel}</strong>
+              <small className="ls-permit-file-meta">{isPermitVerified ? "Verified — approved by admin" : "Submitted for verification"}</small>
             </span>
+            <a className="ls-permit-view" href={permitFileUrl} target="_blank" rel="noopener noreferrer">View</a>
           </div>) : (<p className="ls-empty">No business permit document has been submitted yet.</p>)}
         <div className="ls-grid-3">
           <div>
@@ -167,7 +249,7 @@ export function LandlordSettingsPage({
           </div>
           <div>
             <p className="ls-meta-label">Expiry Date</p>
-            <p className="ls-meta-value">{formatDate(landlordProfile?.permit_expiry)}</p>
+            <p className="ls-meta-value">{formatDate(permitExpiry)}</p>
           </div>
         </div>
       </section>
@@ -217,5 +299,17 @@ export function LandlordSettingsPage({
           Delete Account
         </Button>
       </section>
+
+      {permitModalOpen && (<UpdateBusinessPermitModal
+        apartments={myApartments ?? []}
+        initialPermitNumber={permitNumber}
+        initialExpiryDate={permitExpiry}
+        actorUserId={user?.id}
+        onSaved={() => {
+            setPermitReloadKey((current) => current + 1);
+            onPermitSaved?.();
+        }}
+        onClose={() => setPermitModalOpen(false)}
+      />)}
     </div>);
 }

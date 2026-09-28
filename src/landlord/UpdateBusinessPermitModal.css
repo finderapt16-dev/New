@@ -1,0 +1,263 @@
+/* Update Business Permit modal (form + submitted success state) */
+.ubp-overlay {
+  z-index: 120;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.ubp-overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.ubp-card {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 440px;
+  margin-block: 16px;
+  background: #ffffff;
+  border: 1px solid #eef2f7;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  color: #111111;
+}
+
+.ubp-title {
+  margin: 0 0 18px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ubp-field {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ubp-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #5b7b9c;
+}
+
+.ubp-label strong {
+  color: #334155;
+  font-weight: 700;
+}
+
+.ubp-input {
+  width: 100%;
+  border: 1px solid #d7dee7;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #111111;
+  background: #ffffff;
+  outline: none;
+}
+
+.ubp-input:focus {
+  border-color: #16a5e1;
+  box-shadow: 0 0 0 3px rgba(22, 165, 225, 0.15);
+}
+
+.ubp-file-input {
+  display: none;
+}
+
+.ubp-dropzone {
+  border: 1.5px dashed #c9d6e4;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.ubp-dropzone button {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 30px 16px;
+  cursor: pointer;
+  color: #475569;
+}
+
+.ubp-dropzone strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.ubp-dropzone span {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.ubp-file-list {
+  display: grid;
+  gap: 8px;
+}
+
+.ubp-file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #fbfcfd;
+}
+
+.ubp-file-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  object-fit: contain;
+  background: #ffffff;
+  flex-shrink: 0;
+}
+
+.ubp-file-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #eef4f9;
+  color: #16a5e1;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.ubp-file-info {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+
+.ubp-file-info strong {
+  font-size: 11px;
+  color: #334155;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ubp-file-info select {
+  border: 1px solid #d7dee7;
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 11px;
+  color: #334155;
+  background: #ffffff;
+}
+
+.ubp-file-remove {
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.ubp-file-remove:hover {
+  color: #ef4444;
+}
+
+.ubp-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.ubp-actions .ubp-close,
+.ubp-actions .ubp-submit {
+  flex: 1;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ubp-close {
+  background: #ffffff;
+  border: 1px solid #d7dee7;
+  color: #334155;
+}
+
+.ubp-submit {
+  background: #16a5e1;
+  color: #ffffff;
+}
+
+.ubp-submit:hover {
+  background: #1391c8;
+}
+
+/* Success state */
+.ubp-card-success {
+  text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.ubp-close-x {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  display: grid;
+  place-items: center;
+}
+
+.ubp-success-icon {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: #8ee7c3;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  margin: 8px 0 4px;
+}
+
+.ubp-success-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ubp-success-text {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #64748b;
+  max-width: 340px;
+}
+
+.ubp-card-success .ubp-submit {
+  width: 100%;
+  margin-top: 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
