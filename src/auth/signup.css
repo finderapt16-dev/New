@@ -1292,3 +1292,67 @@
   font-size: .75rem;
   font-weight: 400;
 }
+
+/* ── Compact landlord wizard ────────────────────────────────────
+   The wizard renders inside a 760px dialog, so the detail steps use
+   two columns and tighter rhythm. This keeps Account Details and
+   Personal Information fully visible instead of forcing a scrollbar. */
+.signup-landlord-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .875rem 1rem;
+  align-items: start;
+}
+
+.signup-landlord-field-wide {
+  grid-column: 1 / -1;
+}
+
+/* The wide field is not a .signup-account-field, so give its hint spacing. */
+.signup-landlord-field-wide > .signup-account-hint {
+  margin-block: .5rem 0;
+  padding-inline: .25rem;
+}
+
+.signup-landlord-hint-row {
+  margin: 0;
+}
+
+/* Tighter vertical rhythm only inside the landlord wizard. */
+.signup-landlord-wizard .signup-landlord-stepper {
+  margin-bottom: 1rem;
+}
+
+.signup-landlord-wizard .signup-landlord-panel {
+  gap: .75rem;
+}
+
+.signup-landlord-wizard .signup-landlord-panel-title {
+  margin-bottom: 0;
+  font-size: 1.125rem;
+}
+
+.signup-landlord-wizard .signup-password-help {
+  gap: .25rem;
+  padding: .75rem .875rem;
+  font-size: .8125rem;
+}
+
+.signup-landlord-wizard .signup-password-help span {
+  font-size: .75rem;
+}
+
+.signup-landlord-wizard .signup-landlord-actions {
+  margin-top: 0;
+}
+
+.signup-landlord-wizard .signup-landlord-back,
+.signup-landlord-wizard .signup-landlord-continue {
+  min-height: 2.75rem;
+}
+
+@media (width <= 40rem) {
+  .signup-landlord-fields {
+    grid-template-columns: 1fr;
+  }
+}

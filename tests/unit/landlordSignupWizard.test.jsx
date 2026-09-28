@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -142,7 +142,7 @@ describe("landlord create account wizard", () => {
         expect(await screen.findByText(/mobile number is required/i)).toBeInTheDocument();
     });
 
-    it("returns to the edited step from the review cards and submits the landlord payload", async () => {
+    it("edits account and personal details in place, then submits the landlord payload", async () => {
         const user = userEvent.setup();
         renderDialog();
         await openLandlordSignup(user);
@@ -151,13 +151,35 @@ describe("landlord create account wizard", () => {
         await fillPersonalInformation(user);
         await user.click(screen.getByRole("button", { name: /^continue$/i }));
 
+        // Account Details edit dialog: seeded with the current values.
         const [accountEdit, personalEdit] = screen.getAllByRole("button", { name: /edit/i });
         await user.click(accountEdit);
-        expect(await screen.findByRole("heading", { name: /account details/i })).toBeInTheDocument();
-        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+        const accountDialog = await screen.findByTestId("signup-edit-dialog");
+        expect(within(accountDialog).getByRole("heading", { name: /create your account/i })).toBeInTheDocument();
+        expect(within(accountDialog).getByLabelText(/^username/i)).toHaveValue("jamesreidthefirst");
+        expect(within(accountDialog).getByLabelText(/recovery email/i)).toHaveValue("james@gmail.com");
+
+        const editUsername = within(accountDialog).getByLabelText(/^username/i);
+        await user.clear(editUsername);
+        await user.type(editUsername, "jamesreid");
+        await user.click(within(accountDialog).getByRole("button", { name: /save changes/i }));
+        expect(await within(accountDialog).findByText(/account details updated/i)).toBeInTheDocument();
+        await user.click(within(accountDialog).getByRole("button", { name: /^ok$/i }));
+
+        // Personal Information edit dialog.
         await user.click(personalEdit);
-        expect(await screen.findByRole("heading", { name: /personal information/i })).toBeInTheDocument();
-        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+        const personalDialog = await screen.findByTestId("signup-edit-dialog");
+        expect(within(personalDialog).getByRole("heading", { name: /personal information/i })).toBeInTheDocument();
+        const editMobile = within(personalDialog).getByLabelText(/mobile number/i);
+        await user.clear(editMobile);
+        await user.type(editMobile, "+63 917 000 1111");
+        await user.click(within(personalDialog).getByRole("button", { name: /save changes/i }));
+        expect(await within(personalDialog).findByText(/personal information updated/i)).toBeInTheDocument();
+        await user.click(within(personalDialog).getByRole("button", { name: /^ok$/i }));
+
+        // The review screen reflects both edits.
+        expect(screen.getByText("jamesreid")).toBeInTheDocument();
+        expect(screen.getByText("+63 917 000 1111")).toBeInTheDocument();
 
         // The agreement has to be accepted before the account can be created.
         await user.click(screen.getByRole("button", { name: /^create account$/i }));
@@ -169,17 +191,75 @@ describe("landlord create account wizard", () => {
 
         expect(mocks.signup).toHaveBeenCalledWith(expect.objectContaining({
             name: "James R. Reid",
-            username: "jamesreidthefirst",
+            username: "jamesreid",
             email: "james@gmail.com",
             password: "Landlord#2026",
             role: "landlord",
             middleInitial: "R",
-            mobileNumber: "+63 917 123 6767",
+            mobileNumber: "+63 917 000 1111",
             businessName: "James Apartment",
             termsAccepted: true,
             landlordVerificationAccepted: true,
         }));
         expect(mocks.signup.mock.calls[0][0]).not.toHaveProperty("permitNumber");
         expect(mocks.signup.mock.calls[0][0]).not.toHaveProperty("address");
+    });
+
+    it("rejects an invalid edit in the dialog and leaves the review values untouched", async () => {
+        const user = userEvent.setup();
+        renderDialog();
+        await openLandlordSignup(user);
+        await fillAccountDetails(user);
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+        await fillPersonalInformation(user);
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+
+        const [accountEdit] = screen.getAllByRole("button", { name: /edit/i });
+        await user.click(accountEdit);
+        const dialog = await screen.findByTestId("signup-edit-dialog");
+        const editUsername = within(dialog).getByLabelText(/^username/i);
+        await user.clear(editUsername);
+        await user.type(editUsername, "no");
+        await user.click(within(dialog).getByRole("button", { name: /save changes/i }));
+
+        expect(await within(dialog).findByRole("alert")).toHaveTextContent(/username must be 4–30 characters/i);
+        expect(within(dialog).queryByText(/account details updated/i)).not.toBeInTheDocument();
+    });
+
+    it("discards a cancelled edit and keeps the original value", async () => {
+        const user = userEvent.setup();
+        renderDialog();
+        await openLandlordSignup(user);
+        await fillAccountDetails(user);
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+        await fillPersonalInformation(user);
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+
+        const [accountEdit] = screen.getAllByRole("button", { name: /edit/i });
+        await user.click(accountEdit);
+        let dialog = await screen.findByTestId("signup-edit-dialog");
+        const editEmail = within(dialog).getByLabelText(/recovery email/i);
+        await user.clear(editEmail);
+        await user.type(editEmail, "changed@gmail.com");
+        await user.click(within(dialog).getByRole("button", { name: /cancel/i }));
+
+        // Reopening reseeds the draft from the wizard state, so the edit is gone.
+        await user.click(accountEdit);
+        dialog = await screen.findByTestId("signup-edit-dialog");
+        expect(within(dialog).getByLabelText(/recovery email/i)).toHaveValue("james@gmail.com");
+    });
+
+    it("advances a step when Enter is pressed in a wizard field", async () => {
+        const user = userEvent.setup();
+        renderDialog();
+        await openLandlordSignup(user);
+        await fillAccountDetails(user);
+        await user.type(screen.getByLabelText(/^confirm password/i), "{Enter}");
+        expect(await screen.findByRole("heading", { name: /personal information/i })).toBeInTheDocument();
+
+        await fillPersonalInformation(user);
+        await user.type(screen.getByLabelText(/business name/i), "{Enter}");
+        expect(await screen.findByRole("heading", { name: /^review$/i })).toBeInTheDocument();
+        expect(mocks.signup).not.toHaveBeenCalled();
     });
 });
