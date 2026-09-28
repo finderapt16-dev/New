@@ -63,7 +63,7 @@ export function PropertyLocationPicker({ lat, lng, onLocationChange, addressQuer
                 setMatchedAddress(location.label);
                 updateGeocodeStatus("found");
                 coordinatesRef.current = { lat: newLat, lng: newLng };
-                onLocationChangeRef.current(newLat, newLng);
+                onLocationChangeRef.current(newLat, newLng, "map");
                 onMapAddressChangeRef.current?.(location.label);
             }
             catch (error) {
@@ -119,7 +119,7 @@ export function PropertyLocationPicker({ lat, lng, onLocationChange, addressQuer
                 const location = await geocodeLocationWithinLaPaz(query, controller.signal);
                 updateGeocodeStatus("found");
                 setMatchedAddress(location.label);
-                onLocationChangeRef.current(location.lat, location.lng);
+                onLocationChangeRef.current(location.lat, location.lng, "geocode");
             }
             catch (error) {
                 if (error instanceof DOMException && error.name === "AbortError")

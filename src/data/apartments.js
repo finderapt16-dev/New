@@ -254,6 +254,7 @@ export const apartmentFormValuesToInsertRow = (values, landlordId) => {
         is_published: false,
         status: values.status ?? 'available',
         features: {
+            ...(values.featureMetadata && typeof values.featureMetadata === 'object' && !Array.isArray(values.featureMetadata) ? values.featureMetadata : {}),
             availableDate: values.availableDate,
             customFeatures,
             verification,

@@ -8,7 +8,6 @@ import { LandlordNotifications } from "@/landlord/LandlordNotifications";
 import { LandlordOverview } from "@/landlord/LandlordOverview";
 import { LandlordSettings } from "@/landlord/LandlordSettings";
 import { LandlordSidebar } from "@/landlord/LandlordSidebar";
-import { ApartmentListingGuidelinesModal } from "@/landlord/ApartmentListingGuidelinesModal";
 import { AlertsTab } from "@/landlord/AlertsTab";
 import { BusinessTab } from "@/landlord/BusinessTab";
 import { ProfileTab } from "@/landlord/ProfileTab";
@@ -34,7 +33,6 @@ export function LandlordDashboard() {
     const requestedSection = searchParams.get("section") ?? "overview";
     const [activeSection, setActiveSection] = useState(() => LANDLORD_DASHBOARD_SECTIONS.has(requestedSection) ? requestedSection : "overview");
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [showGuidelinesModal, setShowGuidelinesModal] = useState(false);
     const [supportSubmitted, setSupportSubmitted] = useState(false);
     const [isSubmittingSupport, setIsSubmittingSupport] = useState(false);
     const [apartmentsRefresh, setApartmentsRefresh] = useState(0);
@@ -1116,7 +1114,7 @@ export function LandlordDashboard() {
         }
     };
     const sectionMap = {
-        overview: () => (<LandlordOverview myApartments={myApartments} user={user} availableCount={availableCount} landlordVerified={landlordVerified} landlordPermit={landlordPermit} setSettingsTab={setSettingsTab} setActiveSection={setActiveSection} isLoadingApartments={isLoadingApartments} ratingSummary={ratingSummary} viewRows={landlordViewRows} favoriteRows={landlordFavoriteRows} ratingRows={ratingRows} ratingsLoading={ratingsLoading} openViewers={openViewers} aptViews={aptViews} openFavoriters={openFavoriters} aptFavs={aptFavs} setEditingApartment={setEditingApartment} editingApartment={editingApartment} handleSaveApartment={handleSaveEditedApartment} handleTogglePublication={handleTogglePublication} deletingApartmentId={deletingApartmentId} handleDeleteApartment={handleDeleteApartment} onAddProperty={() => setShowGuidelinesModal(true)}/>),
+        overview: () => (<LandlordOverview myApartments={myApartments} user={user} availableCount={availableCount} landlordVerified={landlordVerified} landlordPermit={landlordPermit} setSettingsTab={setSettingsTab} setActiveSection={setActiveSection} isLoadingApartments={isLoadingApartments} ratingSummary={ratingSummary} viewRows={landlordViewRows} favoriteRows={landlordFavoriteRows} ratingRows={ratingRows} ratingsLoading={ratingsLoading} openViewers={openViewers} aptViews={aptViews} openFavoriters={openFavoriters} aptFavs={aptFavs} setEditingApartment={setEditingApartment} editingApartment={editingApartment} handleSaveApartment={handleSaveEditedApartment} handleTogglePublication={handleTogglePublication} deletingApartmentId={deletingApartmentId} handleDeleteApartment={handleDeleteApartment} onAddProperty={() => navigate("/add-apartment")}/>),
         activity: () => (<LandlordActivity activityRange={activityRange} landlordViewRows={landlordViewRows} landlordFavoriteRows={landlordFavoriteRows} ratingRows={ratingRows} propertyIds={propertyIds} myApartments={myApartments} getViewWeight={getViewWeight} setActivityRange={setActivityRange} isLoadingApartments={isLoadingApartments} isLoadingActivityData={isLoadingActivityData}/>),
         notifications: () => (<LandlordNotifications notifications={notifications} notifSearch={notifSearch} notifCategory={notifCategory} notifSort={notifSort} isMarkingAllNotifs={isMarkingAllNotifs} markAllLandlordNotificationsRead={markAllLandlordNotificationsRead} setNotifCategory={setNotifCategory} setNotifSearch={setNotifSearch} setNotifSort={setNotifSort} isLoadingNotifications={isLoadingNotifications} handleNotificationClick={handleNotificationClick} setOpenNotifMenuId={setOpenNotifMenuId} openNotifMenuId={openNotifMenuId} toggleNotifReadStatus={toggleNotifReadStatus} deletingNotifId={deletingNotifId} deleteNotif={deleteNotif} landlordAppeals={landlordAppeals} getAppealMetadata={getAppealMetadata}/>),
         settings: () => (<LandlordSettings settingsTab={settingsTab} setSettingsTab={setSettingsTab} profileTab={<ProfileTab profile={profile} isUploadingProfilePhoto={isUploadingProfilePhoto} profilePhotoInputRef={profilePhotoInputRef} handleRemoveProfilePhoto={handleRemoveProfilePhoto} handleProfilePhoto={handleProfilePhoto} updateProfile={updateProfile} setProfile={setProfile} savedProfile={savedProfile} handleUpdateProfile={handleUpdateProfile} isUpdatingProfile={isUpdatingProfile}/>} alertsTab={<AlertsTab alerts={alerts} setA={setA} handleSaveAlerts={handleSaveAlerts}/>} businessTab={<BusinessTab business={business} setB={setB} myApartments={myApartments} allRooms={allRooms} availableCount={availableCount} setEditingApartment={setEditingApartment} setBusiness={setBusiness} savedBusiness={savedBusiness} handleSaveBusiness={handleSaveBusiness}/>} securityTab={<SecurityTab security={security} passwordState={passwordState} setPasswordState={setPasswordState} handlePasswordChange={handlePasswordChange} twoFAState={twoFAState} handleSetup2FA={handleSetup2FA} updateSecurity={updateSecurity} setTwoFAState={setTwoFAState} handleCancel2FASetup={handleCancel2FASetup} handleVerify2FA={handleVerify2FA} handleSaveSecurity={handleSaveSecurity} handleDeleteAccount={handleDeleteAccount}/>}/>),
@@ -1126,7 +1124,7 @@ export function LandlordDashboard() {
       <div className="app-shell-frame">
 
         <aside className="app-shell-sidebar">
-          <LandlordSidebar user={user} verified={landlordVerified} activeSection={activeSection} unreadNotifications={unreadNotificationCount} onSectionChange={setActiveSection} onClose={() => setSidebarOpen(false)} onLogout={handleLogout} onAddProperty={() => setShowGuidelinesModal(true)}/>
+          <LandlordSidebar user={user} verified={landlordVerified} activeSection={activeSection} unreadNotifications={unreadNotificationCount} onSectionChange={setActiveSection} onClose={() => setSidebarOpen(false)} onLogout={handleLogout} onAddProperty={() => navigate("/add-apartment")}/>
         </aside>
 
         {sidebarOpen && (<div className="app-sidebar-overlay" onClick={() => setSidebarOpen(false)}/>)}
@@ -1135,7 +1133,7 @@ export function LandlordDashboard() {
           <button onClick={() => setSidebarOpen(false)} aria-label="Close navigation" className="app-sidebar-close">
             <X className="landlord-dashboard-x-icon"/>
           </button>
-          <LandlordSidebar user={user} verified={landlordVerified} activeSection={activeSection} unreadNotifications={unreadNotificationCount} onSectionChange={setActiveSection} onClose={() => setSidebarOpen(false)} onLogout={handleLogout} onAddProperty={() => setShowGuidelinesModal(true)}/>
+          <LandlordSidebar user={user} verified={landlordVerified} activeSection={activeSection} unreadNotifications={unreadNotificationCount} onSectionChange={setActiveSection} onClose={() => setSidebarOpen(false)} onLogout={handleLogout} onAddProperty={() => navigate("/add-apartment")}/>
         </aside>
 
         <button onClick={() => setSidebarOpen(true)} aria-label="Open navigation" className="app-sidebar-trigger">
@@ -1155,13 +1153,5 @@ export function LandlordDashboard() {
 
       {appealModal.open && <AppealModal closeAppealModal={closeAppealModal} appealModal={appealModal} isSubmittingAppeal={isSubmittingAppeal} appealMessage={appealMessage} setAppealMessage={setAppealMessage} appealContact={appealContact} setAppealContact={setAppealContact} appealEvidence={appealEvidence} setAppealEvidence={setAppealEvidence} handleSubmitAppeal={handleSubmitAppeal}/>}
 
-      <ApartmentListingGuidelinesModal
-        open={showGuidelinesModal}
-        onClose={() => setShowGuidelinesModal(false)}
-        onProceed={() => {
-          setShowGuidelinesModal(false);
-          navigate("/add-apartment");
-        }}
-      />
     </div>);
 }
