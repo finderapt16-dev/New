@@ -67,7 +67,7 @@ const METRIC_DEFS = [
 // selected period, with the change compared to the previous period. One card
 // is rendered per property the landlord owns.
 export function PropertyEngagement({ apartment, viewRows = [], favoriteRows = [], ratingRows = [] }) {
-  const [period, setPeriod] = useState("thisWeek");
+  const [period, setPeriod] = useState("thisMonth");
   const title = apartment.title || "Untitled property";
 
   const metrics = useMemo(() => {
@@ -79,16 +79,10 @@ export function PropertyEngagement({ apartment, viewRows = [], favoriteRows = []
     };
 
     const today = dayStart(new Date());
-    let windowStart; let windowEnd; let previousStart;
-    if (period === "thisWeek") {
-      const monday = new Date(today); monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
-      windowStart = monday.getTime(); windowEnd = windowStart + 7 * DAY_MS; previousStart = windowStart - 7 * DAY_MS;
-    } else {
-      const offset = period === "lastMonth" ? -1 : 0;
-      windowStart = new Date(today.getFullYear(), today.getMonth() + offset, 1).getTime();
-      windowEnd = new Date(today.getFullYear(), today.getMonth() + offset + 1, 1).getTime();
-      previousStart = new Date(today.getFullYear(), today.getMonth() + offset - 1, 1).getTime();
-    }
+    const offset = period === "lastMonth" ? -1 : 0;
+    const windowStart = new Date(today.getFullYear(), today.getMonth() + offset, 1).getTime();
+    const windowEnd = new Date(today.getFullYear(), today.getMonth() + offset + 1, 1).getTime();
+    const previousStart = new Date(today.getFullYear(), today.getMonth() + offset - 1, 1).getTime();
     const days = Math.round((windowEnd - windowStart) / DAY_MS);
     const buckets = Array.from({ length: days }, (_, index) => {
       const date = new Date(windowStart); date.setDate(date.getDate() + index);
@@ -129,7 +123,7 @@ export function PropertyEngagement({ apartment, viewRows = [], favoriteRows = []
     });
   }, [apartment.id, period, favoriteRows, ratingRows, viewRows]);
 
-  const changeLabel = period === "thisWeek" ? "last week" : "previous month";
+  const changeLabel = "previous month";
 
   return (
     <section className="pe-card">
@@ -141,7 +135,6 @@ export function PropertyEngagement({ apartment, viewRows = [], favoriteRows = []
         <label className="pe-period">
           <CalendarDays size={14} />
           <select value={period} onChange={(event) => setPeriod(event.target.value)} aria-label={`Engagement period for ${title}`}>
-            <option value="thisWeek">This Week</option>
             <option value="thisMonth">This Month</option>
             <option value="lastMonth">Last Month</option>
           </select>
