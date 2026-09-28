@@ -91,8 +91,8 @@ describe("Add Property wizard", () => {
     await user.click(screen.getByRole("button", { name: "Upload a test photo" }));
     await user.type(screen.getByLabelText(/Property Name/), "Sunset Residences");
     await user.type(screen.getByLabelText("Description *"), "A comfortable apartment near the university.");
-    await user.type(screen.getByLabelText("Minimum Price *"), "5000");
-    await user.type(screen.getByLabelText("Maximum Price *"), "10000");
+    expect(screen.queryByLabelText(/Minimum Price/)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Maximum Price/)).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Next" }));
 
     expect(screen.getByRole("heading", { name: "Location Details" })).toBeInTheDocument();

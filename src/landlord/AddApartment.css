@@ -356,22 +356,6 @@
   line-height: 1.35;
 }
 
-.add-property-price-range {
-  min-width: 0;
-  margin: 1px 0 0;
-  border: 1px solid #d8dde5;
-  border-radius: 7px;
-  padding: 8px 9px 9px;
-}
-
-.add-property-price-range legend {
-  padding: 0 3px;
-  color: #344256;
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
 .add-property-fields {
   display: grid;
   gap: 11px 14px;
@@ -384,10 +368,6 @@
 
 .add-property-fields--three {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.add-property-price-range .add-property-fields {
-  gap: 10px 14px;
 }
 
 .add-property-uploader .multi-image-dropzone {
