@@ -26,6 +26,14 @@
 .runtime-update-button { flex-shrink:0; border-radius:.5rem; background:#f97316; padding:.5rem 1rem; font-size:.875rem; font-weight:700; color:#fff; }
 .runtime-update-button:hover { background:#ea580c; }
 .app-root { position:relative; min-height:100vh; overflow-x:hidden; background:#f8fafc; }
+/* overflow-x:hidden forces overflow-y to compute as auto, which turns .app-root into a
+   scroll container that never scrolls itself (the body does). Every position:sticky inside
+   it then resolves against that inert scrollport and simply scrolls away with the page —
+   that is why the admin sidebar travelled with the apartment review content. clip keeps the
+   horizontal clipping without creating a scroll container, so sticky sidebars and headers
+   (admin portal, apartment review, auth pages) pin again. hidden stays as the fallback for
+   browsers without overflow:clip. */
+@supports (overflow-x:clip){ .app-root { overflow-x:clip; } }
 .app-root-ambient { pointer-events:none; position:fixed; inset:0; z-index:-10; overflow:hidden; }
 .app-root-orb { position:absolute; border-radius:9999px; filter:blur(64px); }
 .app-root-orb-top { top:-6rem; right:8%; width:18rem; height:18rem; background:rgba(254,215,170,.3); }

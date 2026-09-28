@@ -6,12 +6,8 @@ import { LandlordActivity } from "@/landlord/LandlordActivity";
 import { LandlordHelpSupport } from "@/landlord/LandlordHelpSupport";
 import { LandlordNotifications } from "@/landlord/LandlordNotifications";
 import { LandlordOverview } from "@/landlord/LandlordOverview";
-import { LandlordSettings } from "@/landlord/LandlordSettings";
+import { LandlordSettingsPage } from "@/landlord/LandlordSettingsPage";
 import { LandlordSidebar } from "@/landlord/LandlordSidebar";
-import { AlertsTab } from "@/landlord/AlertsTab";
-import { BusinessTab } from "@/landlord/BusinessTab";
-import { ProfileTab } from "@/landlord/ProfileTab";
-import { SecurityTab } from "@/landlord/SecurityTab";
 import { getRoomStatus, getApartmentStatus } from "@/landlord/landlordStatus";
 import { useAuth } from "@/contexts/AuthContext";
 import { deleteApartment as deleteApartmentInDb, fetchApartmentsForLandlord, persistApartmentImages, updateApartment, updateApartmentPublication, } from "@/data/apartments";
@@ -616,6 +612,7 @@ export function LandlordDashboard() {
         };
     });
     const [savedProfile, setSavedProfile] = useState(profile);
+    const [landlordProfile, setLandlordProfile] = useState(null);
     const [savedBusiness, setSavedBusiness] = useState(business);
     const profilePhotoInputRef = useRef(null);
     const [isUploadingProfilePhoto, setIsUploadingProfilePhoto] = useState(false);
@@ -632,6 +629,7 @@ export function LandlordDashboard() {
             ]);
             if (!active)
                 return;
+            setLandlordProfile(landlordRow ?? null);
             const fullName = (userRow?.name || user.name || "").trim().split(/\s+/).filter(Boolean);
             const nextProfile = {
                 firstName: fullName[0] || "",
@@ -1134,7 +1132,7 @@ export function LandlordDashboard() {
                 deleteNotif={deleteNotif}
             />
         ),
-        settings: () => (<LandlordSettings settingsTab={settingsTab} setSettingsTab={setSettingsTab} profileTab={<ProfileTab profile={profile} isUploadingProfilePhoto={isUploadingProfilePhoto} profilePhotoInputRef={profilePhotoInputRef} handleRemoveProfilePhoto={handleRemoveProfilePhoto} handleProfilePhoto={handleProfilePhoto} updateProfile={updateProfile} setProfile={setProfile} savedProfile={savedProfile} handleUpdateProfile={handleUpdateProfile} isUpdatingProfile={isUpdatingProfile}/>} alertsTab={<AlertsTab alerts={alerts} setA={setA} handleSaveAlerts={handleSaveAlerts}/>} businessTab={<BusinessTab business={business} setB={setB} myApartments={myApartments} allRooms={allRooms} availableCount={availableCount} setEditingApartment={setEditingApartment} setBusiness={setBusiness} savedBusiness={savedBusiness} handleSaveBusiness={handleSaveBusiness}/>} securityTab={<SecurityTab security={security} passwordState={passwordState} setPasswordState={setPasswordState} handlePasswordChange={handlePasswordChange} twoFAState={twoFAState} handleSetup2FA={handleSetup2FA} updateSecurity={updateSecurity} setTwoFAState={setTwoFAState} handleCancel2FASetup={handleCancel2FASetup} handleVerify2FA={handleVerify2FA} handleSaveSecurity={handleSaveSecurity} handleDeleteAccount={handleDeleteAccount}/>}/>),
+        settings: () => (<LandlordSettingsPage profile={profile} updateProfile={updateProfile} savedProfile={savedProfile} handleUpdateProfile={handleUpdateProfile} isUpdatingProfile={isUpdatingProfile} isUploadingProfilePhoto={isUploadingProfilePhoto} profilePhotoInputRef={profilePhotoInputRef} handleProfilePhoto={handleProfilePhoto} handleRemoveProfilePhoto={handleRemoveProfilePhoto} passwordState={passwordState} setPasswordState={setPasswordState} handlePasswordChange={handlePasswordChange} handleDeleteAccount={handleDeleteAccount} myApartments={myApartments} landlordProfile={landlordProfile}/>), 
         help: () => (<LandlordHelpSupport navigate={navigate} setSettingsTab={setSettingsTab} supportSubmitted={supportSubmitted} setSupportSubmitted={setSupportSubmitted} supportForm={supportForm} setSupportForm={setSupportForm} handleSupportSubmit={handleSupportSubmit} isSubmittingSupport={isSubmittingSupport}/>),
     };
     return (<div className="app-shell landlord-shell">

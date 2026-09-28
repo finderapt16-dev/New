@@ -348,18 +348,30 @@
   flex: 1;
 }
 
+/* The review page flows with the document, exactly like the admin dashboard
+   (see admin-theme.css, section 1). Do NOT turn this shell back into
+   `position: fixed; inset: 0; overflow: hidden`: admin-theme.css — which always
+   wins for `.admin-apartment-detail-main-2` — sets that column back to
+   `overflow: visible`, so a trapped viewport shell leaves the page with no
+   scrollable region at all and the inspection view freezes. Because this file
+   and admin-theme.css are injected by lazy chunks, their order changes with
+   navigation (dashboard first = this file last), so the two must agree here
+   instead of relying on the cascade. */
 .admin-apartment-detail {
-  z-index: 50;
   background-color: #f8fafc;
   display: flex;
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
+  min-height: 100dvh;
 }
 
+/* Sticky inside the flowing shell: the sidebar holds still while the document
+   scrolls instead of travelling with the review content. The column is the same
+   16rem the dashboard sidebar uses, so the .app-sidebar inside (16rem wide) no
+   longer spills over the first pixels of the review content. */
 .admin-apartment-detail-aside {
-  height: 100%;
-  width: calc(var(--spacing, .25rem) * 60);
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  width: calc(var(--spacing, .25rem) * 64);
   border-color: #d9d9d9;
   border-right-style: solid;
   border-right-width: 1px;
@@ -420,11 +432,12 @@
   translate: -100%;
 }
 
+/* The document is the scroller for this page, so the content column must not
+   become its own scroll region (that is what froze the first inspection view). */
 .admin-apartment-detail-main-2 {
   min-width: 0;
   padding-bottom: calc(var(--spacing, .25rem) * 8);
   flex: 1;
-  overflow-y: auto;
 }
 
 .admin-apartment-detail-container {
