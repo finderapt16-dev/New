@@ -46,7 +46,7 @@ Run `scripts/database/diagnose_email_confirmation.sql` in the SQL Editor to see,
 
 ## Google sign-in (Continue with Google)
 
-The sign-in and create-account views show **Continue with Google** (`src/auth/GoogleAuthButton.jsx`), which calls `supabase.auth.signInWithOAuth({ provider: 'google' })`. Google returns to the same `/auth/callback` page as email verification. That page keeps Google sign-in sessions (email-confirmation links are still signed out, as before), and a first-time Google user must start from Create Account, select Tenant or Landlord, and accept the terms before their AptFindr profile is created. Finishing a Google registration signs the session out and returns to the sign-in page with an "account created" notice, so Google sign-up ends the same way as email sign-up. Google signup rejects an existing AptFindr profile (matched by auth ID or email), signs out the session, and asks the user to sign in instead. Google sign-in requires an existing AptFindr profile; an unregistered user is signed out and prompted to create an account first. Missing or expired signup intent also requires restarting from Create Account. Existing accounts can use Google right away: Supabase links the Google identity to the user with the same email ([identity linking](https://supabase.com/docs/guides/auth/auth-identity-linking)).
+The sign-in view and the **tenant** create-account view show **Continue with Google** (`src/auth/GoogleAuthButton.jsx`), which calls `supabase.auth.signInWithOAuth({ provider: 'google' })`. The landlord create-account view does not: landlords register with email, so their Google journey starts on the sign-in view. Google returns to the same `/auth/callback` page as email verification. That page keeps Google sign-in sessions (email-confirmation links are still signed out, as before), and a first-time Google user selects Tenant or Landlord and accepts the terms there before their AptFindr profile is created. Finishing a Google registration signs the session out and returns to the sign-in page with an "account created" notice, so Google sign-up ends the same way as email sign-up. Google signup rejects an existing AptFindr profile (matched by auth ID or email), signs out the session, and asks the user to sign in instead. Google sign-in requires an existing AptFindr profile; an unregistered user is signed out and prompted to create an account first. Missing or expired signup intent also requires restarting from the sign-in view. Existing accounts can use Google right away: Supabase links the Google identity to the user with the same email ([identity linking](https://supabase.com/docs/guides/auth/auth-identity-linking)).
 
 One-time setup:
 
@@ -58,6 +58,16 @@ One-time setup:
 4. **Database** — run `scripts/database/google_oauth_signup.sql` in the SQL Editor after the master migration (and after `repair_signup_profile_setup.sql` if you use it; re-run it whenever either of those is run again). Without it, the signup trigger rejects brand-new Google users and Supabase answers *Database error saving new user*.
 
 While Google is disabled in Supabase, the button says it is unavailable instead of opening Supabase's error page.
+
+## Landlord create account
+
+Landlord registration in `src/auth/Signup.jsx` is a three-step wizard that follows the same stepper pattern as the rest of the create-account flow:
+
+1. **Account Details** — username, recovery email, password and confirm password, with the password rule box (`At least 8 characters, an uppercase and lowercase letter, a number, and a special character (e.g. !@#$%).`). The step does not advance until every rule passes and both passwords match.
+2. **Personal Information** — first name, last name, middle initial (optional), mobile number, and an optional business name.
+3. **Review** — Account Details and Personal Information cards with per-card **Edit** links that jump back to their step, the Terms of Service and Privacy Policy checkbox, and **Create Account**.
+
+Business permit number, home address, and verification document uploads are no longer collected while signing up. Verification documents are per property (Add Property → verification uploader) and the business name, permits, and expiry are managed later in landlord settings → Business (`src/landlord/BusinessTab.jsx`, stored in `landlord_profiles.business_name`). A business name typed during signup is passed to `signupUser` and written to `landlord_profiles` when a session exists; with email confirmation on, the profile row is created by the signup trigger and the landlord can set the name in settings. **Continue with Google is not offered on the landlord create-account view** — landlords register with email, and a first-time Google user who picks Landlord finishes on `/auth/callback` (`src/auth/CompleteGoogleSignup.jsx`). Tenant registration is unchanged and still allows a 6-character password. `tests/unit/landlordSignupWizard.test.jsx` walks the three steps and asserts the submitted payload.
 
 ## Landlord file layout
 

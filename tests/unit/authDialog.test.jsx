@@ -100,15 +100,17 @@ describe("floating auth dialog", () => {
         expect(screen.getByRole("button", { name: /^sign in$/i })).toBeInTheDocument();
     });
 
-    it("offers Continue with Google on the create-account view and passes the chosen role", async () => {
+    it("does not offer Google on the landlord create-account view", async () => {
         mocks.google.mockReturnValue(new Promise(() => {}));
         renderDialog("signup");
-
         expect(screen.queryByRole("button", { name: /with google/i })).not.toBeInTheDocument();
-        await userEvent.click(screen.getByRole("button", { name: /landlord/i }));
-        await userEvent.click(screen.getByRole("button", { name: /sign up with google/i }));
 
-        expect(mocks.google).toHaveBeenCalledWith({ intent: "signup", role: "landlord", redirectTo: null });
+        await userEvent.click(screen.getByRole("button", { name: /landlord/i }));
+
+        // Landlords register with email only; Google stays on the sign-in view.
+        expect(screen.queryByRole("button", { name: /with google/i })).not.toBeInTheDocument();
+        expect(screen.getByRole("heading", { name: /account details/i })).toBeInTheDocument();
+        expect(mocks.google).not.toHaveBeenCalled();
     });
 
     it("places Google below Create Account after choosing Tenant", async () => {
@@ -124,26 +126,18 @@ describe("floating auth dialog", () => {
         expect(mocks.signup).not.toHaveBeenCalled();
     });
 
-    it("places Google above the landlord wizard so it stays visible after choosing Landlord", async () => {
-        mocks.google.mockReturnValue(new Promise(() => {}));
+    it("keeps tenant signup blocked until the terms are accepted", async () => {
+        mocks.signup.mockResolvedValue({ success: true, signup: { requiresEmailVerification: false } });
         renderDialog("signup");
-        expect(screen.queryByRole("button", { name: /with google/i })).not.toBeInTheDocument();
 
-        await userEvent.click(screen.getByRole("button", { name: /landlord/i }));
-        const google = screen.getByRole("button", { name: /sign up with google/i });
+        await userEvent.click(await screen.findByRole("button", { name: /tenant/i }));
+        await userEvent.type(screen.getByLabelText(/^username/i), "tenant_one");
+        await userEvent.type(screen.getByLabelText(/email address/i), "tenant@example.com");
+        await userEvent.type(screen.getByLabelText(/^password/i), "password123");
+        await userEvent.type(screen.getByLabelText(/^confirm password/i), "password123");
+        await userEvent.click(screen.getByRole("button", { name: /^create account$/i }));
 
-        // Google comes before the wizard's step content ("Personal Information")
-        // instead of below the whole multi-step form, where it would be buried.
-        const personalHeading = screen.getByRole("heading", { name: /personal information/i });
-        expect(google.compareDocumentPosition(personalHeading)
-            & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-        // ...and before the wizard's Continue button, right under the role cards.
-        const wizardContinue = screen.getByRole("button", { name: /^continue$/i });
-        expect(google.compareDocumentPosition(wizardContinue)
-            & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-
-        await userEvent.click(google);
-        expect(mocks.google).toHaveBeenCalledWith({ intent: "signup", role: "landlord", redirectTo: null });
+        expect(await screen.findByText(/must agree to the terms of use and privacy policy/i)).toBeInTheDocument();
         expect(mocks.signup).not.toHaveBeenCalled();
     });
 

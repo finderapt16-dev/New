@@ -1,0 +1,156 @@
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { createMemoryRouter, RouterProvider } from "react-router-dom";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const mocks = vi.hoisted(() => ({ login: vi.fn(), signup: vi.fn(), google: vi.fn() }));
+vi.mock("@/contexts/AuthContext", () => ({ useAuth: () => ({ login: mocks.login, signup: mocks.signup, user: null }) }));
+vi.mock("@/services/authService", () => ({
+    resendSignupVerification: vi.fn(),
+    requestPasswordResetEmail: vi.fn(),
+    isTenantRole: (role) => role === "tenant",
+    signInWithGoogle: (...args) => mocks.google(...args),
+}));
+
+const { AuthDialog } = await import("@/auth/AuthDialog");
+
+const renderDialog = () => {
+    const router = createMemoryRouter([
+        { path: "/", element: <AuthDialog defaultView="signup" open onOpenChange={() => {}} redirectTo={null} /> },
+        { path: "/terms-of-service", element: <p>TERMS</p> },
+        { path: "/privacy-policy", element: <p>PRIVACY</p> },
+    ], { initialEntries: ["/"] });
+    render(<RouterProvider router={router} />);
+};
+
+const openLandlordSignup = async (user) => {
+    await user.click(await screen.findByRole("button", { name: /landlord/i }));
+};
+
+const fillAccountDetails = async (user, { password = "Landlord#2026", confirm = password } = {}) => {
+    await user.type(screen.getByLabelText(/^username/i), "jamesreidthefirst");
+    await user.type(screen.getByLabelText(/email address/i), "james@gmail.com");
+    await user.type(screen.getByLabelText(/^password/i), password);
+    await user.type(screen.getByLabelText(/^confirm password/i), confirm);
+};
+
+const fillPersonalInformation = async (user) => {
+    await user.type(screen.getByLabelText(/first name/i), "James");
+    await user.type(screen.getByLabelText(/last name/i), "Reid");
+    await user.type(screen.getByLabelText(/middle initial/i), "R");
+    await user.type(screen.getByLabelText(/mobile number/i), "+63 917 123 6767");
+    await user.type(screen.getByLabelText(/business name/i), "James Apartment");
+};
+
+beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.signup.mockResolvedValue({ success: true, signup: { requiresEmailVerification: false } });
+});
+
+describe("landlord create account wizard", () => {
+    it("walks the three steps: account details, personal information, review", async () => {
+        const user = userEvent.setup();
+        renderDialog();
+        await openLandlordSignup(user);
+
+        expect(await screen.findByRole("heading", { name: /account details/i })).toBeInTheDocument();
+        await fillAccountDetails(user);
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+
+        expect(await screen.findByRole("heading", { name: /personal information/i })).toBeInTheDocument();
+        await fillPersonalInformation(user);
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+
+        expect(await screen.findByRole("heading", { name: /^review$/i })).toBeInTheDocument();
+        expect(screen.getByText("jamesreidthefirst")).toBeInTheDocument();
+        expect(screen.getByText("james@gmail.com")).toBeInTheDocument();
+        expect(screen.getByText("James R. Reid")).toBeInTheDocument();
+        expect(screen.getByText("+63 917 123 6767")).toBeInTheDocument();
+        expect(screen.getByText("James Apartment")).toBeInTheDocument();
+    });
+
+    it("requires a strong password before leaving account details", async () => {
+        const user = userEvent.setup();
+        renderDialog();
+        await openLandlordSignup(user);
+        await fillAccountDetails(user, { password: "password123", confirm: "password123" });
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+
+        expect(await screen.findByText(/password must contain: at least 8 characters/i)).toBeInTheDocument();
+        expect(screen.getByRole("heading", { name: /account details/i })).toBeInTheDocument();
+        expect(mocks.signup).not.toHaveBeenCalled();
+    });
+
+    it("rejects mismatched passwords and an invalid username", async () => {
+        const user = userEvent.setup();
+        renderDialog();
+        await openLandlordSignup(user);
+        await fillAccountDetails(user, { confirm: "Landlord#2027" });
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+        // The wizard error alert spells the message with a period; the inline
+        // field hint does not, so this only matches the alert.
+        expect(await screen.findByText(/passwords do not match\./i)).toBeInTheDocument();
+
+        await user.clear(screen.getByLabelText(/^username/i));
+        await user.type(screen.getByLabelText(/^username/i), "no");
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+        expect(await screen.findByText(/username must be 4–30 characters/i)).toBeInTheDocument();
+    });
+
+    it("keeps the wizard on personal information until name and mobile are filled", async () => {
+        const user = userEvent.setup();
+        renderDialog();
+        await openLandlordSignup(user);
+        await fillAccountDetails(user);
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+        expect(await screen.findByText(/full name is required/i)).toBeInTheDocument();
+
+        await user.type(screen.getByLabelText(/first name/i), "James");
+        await user.type(screen.getByLabelText(/last name/i), "Reid");
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+        expect(await screen.findByText(/mobile number is required/i)).toBeInTheDocument();
+    });
+
+    it("returns to the edited step from the review cards and submits the landlord payload", async () => {
+        const user = userEvent.setup();
+        renderDialog();
+        await openLandlordSignup(user);
+        await fillAccountDetails(user);
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+        await fillPersonalInformation(user);
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+
+        const [accountEdit, personalEdit] = screen.getAllByRole("button", { name: /edit/i });
+        await user.click(accountEdit);
+        expect(await screen.findByRole("heading", { name: /account details/i })).toBeInTheDocument();
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+        await user.click(personalEdit);
+        expect(await screen.findByRole("heading", { name: /personal information/i })).toBeInTheDocument();
+        await user.click(screen.getByRole("button", { name: /^continue$/i }));
+
+        // The agreement has to be accepted before the account can be created.
+        await user.click(screen.getByRole("button", { name: /^create account$/i }));
+        expect(await screen.findByText(/must agree to the terms of use and landlord verification policy/i)).toBeInTheDocument();
+        expect(mocks.signup).not.toHaveBeenCalled();
+
+        await user.click(screen.getByRole("checkbox"));
+        await user.click(screen.getByRole("button", { name: /^create account$/i }));
+
+        expect(mocks.signup).toHaveBeenCalledWith(expect.objectContaining({
+            name: "James R. Reid",
+            username: "jamesreidthefirst",
+            email: "james@gmail.com",
+            password: "Landlord#2026",
+            role: "landlord",
+            middleInitial: "R",
+            mobileNumber: "+63 917 123 6767",
+            businessName: "James Apartment",
+            termsAccepted: true,
+            landlordVerificationAccepted: true,
+        }));
+        expect(mocks.signup.mock.calls[0][0]).not.toHaveProperty("permitNumber");
+        expect(mocks.signup.mock.calls[0][0]).not.toHaveProperty("address");
+    });
+});
