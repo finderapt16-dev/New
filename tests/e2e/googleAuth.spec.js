@@ -121,12 +121,15 @@ test("an existing account signs in with Google from the sign-in view and stays s
     expect(await page.evaluate(() => sessionStorage.getItem("aptfindr:oauth-intent"))).toBeNull();
 });
 
-test("a new landlord continues with Google from Create account and finishes their profile", async ({ page }) => {
+// Landlords register with email only, so their Google journey starts on the
+// sign-in view and finishes on the callback screen.
+test("a new landlord continues with Google from the sign-in view and finishes their profile", async ({ page }) => {
     const supabase = await mockSupabaseAuth(page);
-    await page.goto("/signup");
+    await page.goto("/login");
 
-    await page.getByRole("button", { name: /Landlord/ }).first().click();
-    await page.getByRole("button", { name: "Sign Up with Google" }).click();
+    await page.getByRole("button", { name: "Continue with Google" }).click();
+    // People click the whole Landlord card; the radio inside it is visually hidden.
+    await page.getByText("Manage listings").click();
 
     await expect(page.getByRole("heading", { name: "Finish setting up your account" })).toBeVisible();
     await expect(page.getByText("juan.delacruz@gmail.com")).toBeVisible();
