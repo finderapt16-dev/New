@@ -192,6 +192,12 @@
   line-height: var(--text-sm--line-height, calc(1.25 / .875));
   font-weight: var(--font-weight-semibold, 600);
   color: #111111;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
   transition-property: all;
   transition-timing-function: var(--default-transition-timing-function, cubic-bezier(.4, 0, .2, 1));
   transition-duration: var(--default-transition-duration, .15s);

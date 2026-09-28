@@ -1,0 +1,155 @@
+.ld-guidelines-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: ldGuidelinesFadeIn 0.15s ease-out;
+}
+
+@keyframes ldGuidelinesFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ld-guidelines-modal {
+  position: relative;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 530px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px 28px;
+  box-sizing: border-box;
+}
+
+.ld-guidelines-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.ld-guidelines-close-btn:hover {
+  color: #1e293b;
+  background-color: #f1f5f9;
+}
+
+.ld-guidelines-header {
+  padding-right: 28px;
+}
+
+.ld-guidelines-header h2 {
+  font-size: 19px;
+  font-weight: 700;
+  color: #172033;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.ld-guidelines-subtitle {
+  font-size: 12px;
+  color: #8a96a8;
+  margin: 4px 0 0;
+}
+
+.ld-guidelines-intro {
+  font-size: 12.5px;
+  color: #475569;
+  line-height: 1.45;
+  margin: 14px 0 14px;
+}
+
+.ld-guidelines-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.ld-guideline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 10px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #ffffff;
+  transition: border-color 0.15s ease;
+}
+
+.ld-guideline-item:hover {
+  border-color: #cbd5e1;
+}
+
+.ld-guideline-icon-wrapper {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 8px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ld-guideline-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.ld-guideline-text h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #172033;
+  margin: 0 0 2px;
+}
+
+.ld-guideline-text p {
+  font-size: 11.5px;
+  color: #64748b;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.ld-guidelines-footer {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.ld-guidelines-accept-btn {
+  background: #00a8e8;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 11px 28px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  min-width: 220px;
+}
+
+.ld-guidelines-accept-btn:hover {
+  background: #0096d1;
+}
