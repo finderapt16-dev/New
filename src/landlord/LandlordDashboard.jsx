@@ -1132,7 +1132,7 @@ export function LandlordDashboard() {
                 deleteNotif={deleteNotif}
             />
         ),
-        settings: () => (<LandlordSettingsPage profile={profile} updateProfile={updateProfile} savedProfile={savedProfile} handleUpdateProfile={handleUpdateProfile} isUpdatingProfile={isUpdatingProfile} isUploadingProfilePhoto={isUploadingProfilePhoto} profilePhotoInputRef={profilePhotoInputRef} handleProfilePhoto={handleProfilePhoto} handleRemoveProfilePhoto={handleRemoveProfilePhoto} passwordState={passwordState} setPasswordState={setPasswordState} handlePasswordChange={handlePasswordChange} handleDeleteAccount={handleDeleteAccount} myApartments={myApartments} landlordProfile={landlordProfile}/>), 
+        settings: () => (<LandlordSettingsPage profile={profile} updateProfile={updateProfile} savedProfile={savedProfile} handleUpdateProfile={handleUpdateProfile} isUpdatingProfile={isUpdatingProfile} isUploadingProfilePhoto={isUploadingProfilePhoto} profilePhotoInputRef={profilePhotoInputRef} handleProfilePhoto={handleProfilePhoto} handleRemoveProfilePhoto={handleRemoveProfilePhoto} passwordState={passwordState} setPasswordState={setPasswordState} handlePasswordChange={handlePasswordChange} handleDeleteAccount={handleDeleteAccount} myApartments={myApartments} landlordProfile={landlordProfile} user={user} onPermitSaved={refreshApartments}/>), 
         help: () => (<LandlordHelpSupport navigate={navigate} setSettingsTab={setSettingsTab} supportSubmitted={supportSubmitted} setSupportSubmitted={setSupportSubmitted} supportForm={supportForm} setSupportForm={setSupportForm} handleSupportSubmit={handleSupportSubmit} isSubmittingSupport={isSubmittingSupport}/>),
     };
     return (<div className="app-shell landlord-shell">

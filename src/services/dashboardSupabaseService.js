@@ -1610,6 +1610,27 @@ export async function fetchLandlordProfile(landlordId) {
 }
 
 /**
+ * Persist business permit details on the landlord profile so admin landlord
+ * views and settings fallbacks stay in sync with the property records.
+ */
+export async function updateLandlordPermitProfile(landlordId, { permitNumber, permitExpiry } = {}) {
+    if (!landlordId)
+        throw new Error("Landlord ID is required to save permit details.");
+    const profilePayload = { user_id: landlordId };
+    if (typeof permitNumber === "string" && permitNumber.trim()) {
+        const trimmed = permitNumber.trim();
+        profilePayload.permit_number = trimmed;
+        profilePayload.business_permit_number = trimmed;
+    }
+    if (typeof permitExpiry === "string" && permitExpiry.trim())
+        profilePayload.permit_expiry = permitExpiry.trim();
+    const { error } = await supabase.from("landlord_profiles").upsert(profilePayload, { onConflict: "user_id" });
+    if (error)
+        throw new Error(error.message || "Unable to save business permit details.");
+    return profilePayload;
+}
+
+/**
  * Fetch complete landlord details with all relationships
  * Returns landlord info, profile, properties, violations, reports, and statistics
  */

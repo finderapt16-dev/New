@@ -1,5 +1,6 @@
 import "./LandlordSettingsPage.css";
 import { Button } from "@/components/ui/button";
+import { UpdateBusinessPermitModal } from "@/landlord/UpdateBusinessPermitModal";
 import { fetchApartmentVerificationDocuments } from "@/services/verificationDocumentsService";
 import { FileText, Lock, Pencil, ShieldAlert, Trash2, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -97,9 +98,13 @@ export function LandlordSettingsPage({
     handleDeleteAccount,
     myApartments,
     landlordProfile,
+    user,
+    onPermitSaved,
 }) {
     const [profileDirty, setProfileDirty] = useState(false);
     const [permitDocuments, setPermitDocuments] = useState([]);
+    const [permitModalOpen, setPermitModalOpen] = useState(false);
+    const [permitReloadKey, setPermitReloadKey] = useState(0);
     const trackChange = (patch) => {
         setProfileDirty(true);
         updateProfile(patch);
@@ -133,7 +138,7 @@ export function LandlordSettingsPage({
         return () => {
             active = false;
         };
-    }, [myApartments]);
+    }, [myApartments, permitReloadKey]);
     const cancelProfile = () => {
         updateProfile(() => ({ ...savedProfile }));
         setProfileDirty(false);
@@ -209,7 +214,19 @@ export function LandlordSettingsPage({
             <h2>Business Information</h2>
             <p>Manage your business verification and permit details.</p>
           </div>
-          <span className="ls-readonly-badge"><Lock className="ls-readonly-icon"/>READ-ONLY</span>
+          <div className="ls-section-head-actions">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={!permitApartment}
+              title={permitApartment ? "View or update your business permit details" : "Add a property first to manage permit details"}
+              onClick={() => setPermitModalOpen(true)}
+              className="ls-permit-update"
+            >
+              View / Update Permit
+            </Button>
+            <span className="ls-readonly-badge"><Lock className="ls-readonly-icon"/>READ-ONLY</span>
+          </div>
         </div>
         {permitFileUrl ? (<div className="ls-permit-file">
             {permitIsImage ? (<a className="ls-permit-thumb" href={permitFileUrl} target="_blank" rel="noopener noreferrer" title="View business permit image">
@@ -282,5 +299,17 @@ export function LandlordSettingsPage({
           Delete Account
         </Button>
       </section>
+
+      {permitModalOpen && (<UpdateBusinessPermitModal
+        apartments={myApartments ?? []}
+        initialPermitNumber={permitNumber}
+        initialExpiryDate={permitExpiry}
+        actorUserId={user?.id}
+        onSaved={() => {
+            setPermitReloadKey((current) => current + 1);
+            onPermitSaved?.();
+        }}
+        onClose={() => setPermitModalOpen(false)}
+      />)}
     </div>);
 }

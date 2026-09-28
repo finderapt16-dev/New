@@ -8,6 +8,20 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@/services/verificationDocumentsService", () => ({
   fetchApartmentVerificationDocuments: mocks.fetchApartmentVerificationDocuments,
+  uploadVerificationDocuments: vi.fn(),
+  VERIFICATION_DOCUMENT_TYPES: [
+    { key: "mayors_business_permit", label: "Mayor’s / Business Permit" },
+    { key: "proof_of_ownership", label: "Proof of Ownership or Authority" },
+    { key: "business_registration", label: "Business Registration" },
+    { key: "barangay_clearance", label: "Barangay Clearance" },
+    { key: "additional_supporting_documents", label: "Additional Supporting Documents" },
+  ],
+}));
+vi.mock("@/data/apartments", () => ({
+  updateApartment: vi.fn(),
+}));
+vi.mock("@/services/dashboardSupabaseService", () => ({
+  updateLandlordPermitProfile: vi.fn(),
 }));
 
 const permitDocument = {
