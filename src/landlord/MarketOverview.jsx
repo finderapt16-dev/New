@@ -1,5 +1,5 @@
 import "./MarketOverview.css";
-import { CalendarDays, Check, Eye, Heart, MapPin, Menu, Star, X } from "lucide-react";
+import { CalendarDays, Check, Eye, Heart, MapPin, Menu, Star, TrendingUp, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
@@ -14,9 +14,10 @@ import { getApartmentImageUrl } from "@/utils/images";
 import { isTenantVisibleApartment } from "@/utils/listingVisibility";
 
 const TRENDS = [
-  { id: "views", label: "Most Viewed" },
-  { id: "favorites", label: "Most Favorited" },
-  { id: "ratings", label: "Highest Rated" },
+  { id: "demand", label: "Demand", icon: TrendingUp },
+  { id: "views", label: "Most Viewed", icon: Eye },
+  { id: "favorites", label: "Most Favorited", icon: Heart },
+  { id: "ratings", label: "Highest Rated", icon: Star },
 ];
 const apartmentIdFrom = row => row.apartment_id ?? row.apartmentId;
 const propertyImage = apartment => getApartmentImageUrl(apartment);
@@ -51,7 +52,7 @@ export function MarketOverview() {
   const { apartments = [], isLoading } = useApartmentsContext();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [period, setPeriod] = useState("thisMonth");
-  const [trendType, setTrendType] = useState("views");
+  const [trendType, setTrendType] = useState("demand");
   const [views, setViews] = useState([]);
   const [favorites, setFavorites] = useState([]);
   const [ratings, setRatings] = useState([]);
@@ -100,18 +101,33 @@ export function MarketOverview() {
     const propertyViews = matches(views);
     const propertyRatings = matches(ratings);
     const ratingCount = propertyRatings.length;
+    const viewTotal = propertyViews.reduce((total, row) => total + Math.max(0, Number(row.view_count) || 1), 0);
+    const favoriteCount = matches(favorites).length;
+    const ratingAverage = ratingCount
+      ? propertyRatings.reduce((total, row) => total + Number(row.rating || 0), 0) / ratingCount
+      : null;
+    // Demand score blends all engagement signals: every view counts 1, a
+    // favorite is worth 3 (a deliberate save), and a rating is worth 5.
+    const demand = viewTotal + favoriteCount * 3 + ratingCount * 5;
     return {
       apartment,
-      views: propertyViews.reduce((total, row) => total + Math.max(0, Number(row.view_count) || 1), 0),
-      favorites: matches(favorites).length,
+      views: viewTotal,
+      favorites: favoriteCount,
       ratingCount,
-      ratingAverage: ratingCount
-        ? propertyRatings.reduce((total, row) => total + Number(row.rating || 0), 0) / ratingCount
-        : null,
+      ratingAverage,
+      demand,
     };
   }), [favorites, period, properties, ratings, views]);
 
   const selectedTrend = useMemo(() => {
+    if (trendType === "demand") return {
+      heading: "Highest Demand Apartments",
+      description: "Properties are ranked by a demand score combining views, favorites, and ratings (views + favorites ×3 + ratings ×5).",
+      column: "Demand",
+      empty: "No tenant demand recorded yet.",
+      value: item => item.demand ?? 0,
+      renderValue: item => <span className="market-demand"><TrendingUp size={15}/>{item.demand ?? 0}</span>,
+    };
     if (trendType === "favorites") return {
       heading: "Most Favorited Apartments",
       description: "Properties are ranked by the number of tenant favorites.",
@@ -164,7 +180,7 @@ export function MarketOverview() {
           </header>
           {!isLoading && properties.length === 0 ? <div className="market-trends-empty">No properties available for Market Trends yet.</div> : <>
             <div className="market-trend-tabs" role="tablist" aria-label="Market trend type">
-              {TRENDS.map(({ id, label }) => <button key={id} type="button" role="tab" aria-selected={trendType === id} className={`market-trend-tab ${trendType === id ? "is-active" : ""}`} onClick={() => setTrendType(id)}>{label}</button>)}
+              {TRENDS.map(({ id, label, icon: Icon }) => <button key={id} type="button" role="tab" aria-selected={trendType === id} className={`market-trend-tab ${trendType === id ? "is-active" : ""}`} onClick={() => setTrendType(id)}><Icon size={14} aria-hidden="true"/>{label}</button>)}
             </div>
             <section className="market-details">
               <header>
