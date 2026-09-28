@@ -1,6 +1,7 @@
 import { AuthField } from "./AuthField";
 import { GoogleAuthOption } from "./GoogleAuthButton";
 import { SignupEditDetailsDialog } from "./SignupEditDetailsDialog";
+import { TermsPrivacyDialog } from "./TermsPrivacyDialog";
 import "./signup.css";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,8 @@ export function Signup({
   const [editPanel, setEditPanel] = useState(null);
   const [tenantTermsAccepted, setTenantTermsAccepted] = useState(false);
   const [landlordAgreementAccepted, setLandlordAgreementAccepted] = useState(false);
+  const [showTermsDialog, setShowTermsDialog] = useState(false);
+  const [showPrivacyDialog, setShowPrivacyDialog] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -386,8 +389,15 @@ export function Signup({
                       />
                       <span>
                         <strong>
-                          I agree to the <Link to="/terms-of-service" className="signup-agreement-link">Terms of Service</Link> and{" "}
-                          <Link to="/privacy-policy" className="signup-agreement-link">Privacy Policy</Link>.
+                          I agree to the{" "}
+                          <button type="button" onClick={() => setShowTermsDialog(true)} className="signup-agreement-link">
+                            Terms of Service
+                          </button>{" "}
+                          and{" "}
+                          <button type="button" onClick={() => setShowPrivacyDialog(true)} className="signup-agreement-link">
+                            Privacy Policy
+                          </button>
+                          .
                         </strong>
                       </span>
                     </label>
@@ -667,8 +677,15 @@ export function Signup({
                           />
                           <span>
                             <strong>
-                              I agree to the <Link to="/terms-of-service" className="signup-agreement-link">Terms of Service</Link> and{" "}
-                              <Link to="/privacy-policy" className="signup-agreement-link">Privacy Policy</Link>.
+                              I agree to the{" "}
+                              <button type="button" onClick={() => setShowTermsDialog(true)} className="signup-agreement-link">
+                                Terms of Service
+                              </button>{" "}
+                              and{" "}
+                              <button type="button" onClick={() => setShowPrivacyDialog(true)} className="signup-agreement-link">
+                                Privacy Policy
+                              </button>
+                              .
                             </strong>
                           </span>
                         </label>
@@ -709,6 +726,19 @@ export function Signup({
           </div>
         </div>
       </div>
+
+      <TermsPrivacyDialog
+        open={showTermsDialog}
+        onOpenChange={setShowTermsDialog}
+        role={formData.role || "tenant"}
+        type="terms"
+      />
+      <TermsPrivacyDialog
+        open={showPrivacyDialog}
+        onOpenChange={setShowPrivacyDialog}
+        role={formData.role || "tenant"}
+        type="privacy"
+      />
     </div>
   );
 }
