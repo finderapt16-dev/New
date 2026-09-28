@@ -12,7 +12,7 @@ const accountItems = [
     { label: "Settings", section: "settings", icon: Settings },
     { label: "Help & Support", section: "help", icon: HelpCircle },
 ];
-export function LandlordSidebar({ user, verified = false, activeSection, unreadNotifications = 0, onSectionChange, onClose, onLogout }) {
+export function LandlordSidebar({ user, verified = false, activeSection, unreadNotifications = 0, onSectionChange, onClose, onLogout, onAddProperty }) {
     const selectSection = (section) => {
         onSectionChange(section);
         onClose?.();
@@ -32,7 +32,7 @@ export function LandlordSidebar({ user, verified = false, activeSection, unreadN
       </div>
 
       <nav className="landlord-sidebar-nav"><p className="landlord-sidebar-main">Main<span className="landlord-sidebar-main-2"/></p><div className="landlord-sidebar-panel-2">{mainItems.map(({ label, section, icon: Icon, to }) => to ? <Link key={section} to={to} onClick={onClose} aria-current={activeSection === section ? "page" : undefined} className={navClass(activeSection === section)}><Icon className="landlord-sidebar-icon-icon"/>{label}</Link> : <button key={section} aria-current={activeSection === section ? "page" : undefined} onClick={() => selectSection(section)} className={navClass(activeSection === section)}><Icon className="landlord-sidebar-icon-icon"/>{label}{section === "notifications" && unreadNotifications > 0 && <span className="app-sidebar-badge">{unreadNotifications}</span>}</button>)}</div></nav>
-      <nav className="landlord-sidebar-nav-2"><p className="landlord-sidebar-manage">Manage<span className="landlord-sidebar-manage-2"/></p><Link to="/add-apartment" onClick={onClose} className="landlord-sidebar-add-property"><ListPlus className="landlord-sidebar-list-plus-icon"/>Add Property</Link></nav>
+      <nav className="landlord-sidebar-nav-2"><p className="landlord-sidebar-manage">Manage<span className="landlord-sidebar-manage-2"/></p>{onAddProperty ? (<button type="button" onClick={() => { onClose?.(); onAddProperty(); }} className="landlord-sidebar-add-property"><ListPlus className="landlord-sidebar-list-plus-icon"/>Add Property</button>) : (<Link to="/add-apartment" onClick={onClose} className="landlord-sidebar-add-property"><ListPlus className="landlord-sidebar-list-plus-icon"/>Add Property</Link>)}</nav>
       <nav className="landlord-sidebar-nav-2"><p className="landlord-sidebar-account">Account<span className="landlord-sidebar-account-2"/></p><div className="landlord-sidebar-panel-2">{accountItems.map(({ label, section, icon: Icon }) => <button key={section} aria-current={activeSection === section ? "page" : undefined} onClick={() => selectSection(section)} className={navClass(activeSection === section)}><Icon className="landlord-sidebar-icon-icon"/>{label}</button>)}</div></nav>
       <div className="landlord-sidebar-panel-3"/>
       <div className="landlord-sidebar-panel-4"><LogoutConfirmation onConfirm={onLogout}><button className="app-sidebar-logout"><LogOut className="landlord-sidebar-log-out-icon"/>Log Out</button></LogoutConfirmation></div>

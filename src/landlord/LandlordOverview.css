@@ -5,6 +5,29 @@
   color: #172033;
 }
 
+.ld-dashboard-header-card {
+  background: #ffffff;
+  border: 1px solid #dce3ea;
+  border-radius: 8px;
+  padding: 22px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+.ld-dashboard-header-card h1 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #172033;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.ld-dashboard-header-card p {
+  font-size: 13px;
+  color: #8a96a8;
+  margin: 6px 0 0;
+}
+
 .ld-simple-heading {
   margin: 0 0 22px;
 }
@@ -18,7 +41,8 @@
 
 .ld-simple-heading p,
 .ld-section-title p,
-.ld-properties-header p {
+.ld-properties-header p,
+.ld-properties-header-empty p {
   font-size: 12px;
   color: #8a96a8;
   margin: 7px 0 0;
@@ -69,10 +93,12 @@
 }
 
 .ld-section-title h2,
-.ld-properties-header h2 {
+.ld-properties-header h2,
+.ld-properties-header-empty h2 {
   font-size: 14px;
   font-weight: 800;
   margin: 0;
+  color: #172033;
 }
 
 .ld-performance-grid {
@@ -148,6 +174,77 @@
   padding: 20px;
 }
 
+.ld-properties-card-empty {
+  padding: 24px 28px 36px;
+}
+
+.ld-properties-header-empty {
+  margin-bottom: 8px;
+}
+
+.ld-empty-state-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px 20px;
+  text-align: center;
+}
+
+.ld-empty-illustration-svg {
+  max-width: 400px;
+  width: 100%;
+  height: auto;
+  margin-bottom: 8px;
+}
+
+.ld-empty-state-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #172033;
+  margin: 16px 0 6px;
+}
+
+.ld-empty-state-desc {
+  font-size: 13px;
+  color: #64748b;
+  max-width: 440px;
+  margin: 0 0 18px;
+  line-height: 1.45;
+}
+
+.ld-empty-state-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #00a8e8;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.ld-empty-state-btn:hover {
+  background: #0096d1;
+  color: #ffffff;
+}
+
+.ld-empty-review-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 18px;
+  font-size: 12px;
+  color: #64748b;
+}
+
 .ld-properties-header {
   display: flex;
   justify-content: space-between;
@@ -168,6 +265,8 @@
   font-size: 13px;
   line-height: 1.4;
   font-weight: 700;
+  border: none;
+  cursor: pointer;
 }
 
 .ld-add-button {
