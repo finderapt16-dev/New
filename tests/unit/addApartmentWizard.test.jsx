@@ -42,10 +42,27 @@ vi.mock("@/data/apartments", () => ({
 }));
 vi.mock("@/services/supabaseClient", () => ({ supabase: { from: vi.fn() } }));
 vi.mock("@/landlord/PropertyLocationPicker", () => ({
-  PropertyLocationPicker: ({ onLocationChange }) => (
-    <button type="button" onClick={() => onLocationChange(10.72, 122.562)}>
-      Choose map point
-    </button>
+  PropertyLocationPicker: ({ onLocationChange, onMapAddressChange }) => (
+    <>
+      <button type="button" onClick={() => onLocationChange(10.72, 122.562)}>
+        Choose map point
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          onLocationChange(10.7201, 122.5621, "map");
+          onMapAddressChange?.("Luna Street, Nabitasan, La Paz, Iloilo City", {
+            lat: 10.7201,
+            lng: 122.5621,
+            label: "Luna Street, Nabitasan, La Paz, Iloilo City",
+            barangay: "Nabitasan",
+            street: "Luna Street",
+          });
+        }}
+      >
+        Pin exact location
+      </button>
+    </>
   ),
 }));
 vi.mock("@/components/MultiImageUploader", () => ({
@@ -111,5 +128,46 @@ describe("Add Property wizard", () => {
     expect(screen.getByDisplayValue("Sunset Residences")).toBeInTheDocument();
     expect(screen.getByDisplayValue(/Luna St\., Brgy\. Nabitasan/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Submit" })).toBeInTheDocument();
+  });
+
+  it("fills the barangay and street fields from the pinned map location", async () => {
+    const user = userEvent.setup();
+    render(<MemoryRouter><AddApartment /></MemoryRouter>);
+
+    await user.click(screen.getByRole("button", { name: "Upload a test photo" }));
+    await user.type(screen.getByLabelText(/Property Name/), "Pin Drop Residences");
+    await user.type(screen.getByLabelText("Description *"), "Located exactly where the map pin was dropped.");
+    await user.click(screen.getByRole("button", { name: "Next" }));
+
+    const barangayInput = screen.getByLabelText("Barangay *");
+    const streetInput = screen.getByLabelText("Street *");
+    expect(barangayInput).toHaveValue("");
+    expect(streetInput).toHaveValue("");
+
+    await user.click(screen.getByRole("button", { name: "Pin exact location" }));
+
+    expect(barangayInput).toHaveValue("Nabitasan");
+    expect(streetInput).toHaveValue("Luna Street");
+    expect(screen.getByText(/Auto-filled from the pinned map location/)).toBeInTheDocument();
+  });
+
+  it("keeps a hand-typed street when the pin resolves a different one", async () => {
+    const user = userEvent.setup();
+    render(<MemoryRouter><AddApartment /></MemoryRouter>);
+
+    await user.click(screen.getByRole("button", { name: "Upload a test photo" }));
+    await user.type(screen.getByLabelText(/Property Name/), "Typed Address Residences");
+    await user.type(screen.getByLabelText("Description *"), "The landlord typed the street by hand.");
+    await user.click(screen.getByRole("button", { name: "Next" }));
+
+    await user.type(screen.getByLabelText("Street *"), "My Own Street");
+    await user.click(screen.getByRole("button", { name: "Pin exact location" }));
+
+    expect(screen.getByLabelText("Street *")).toHaveValue("My Own Street");
+    expect(screen.getByLabelText("Barangay *")).toHaveValue("Nabitasan");
+
+    await user.click(screen.getByRole("button", { name: "Use pin address" }));
+
+    expect(screen.getByLabelText("Street *")).toHaveValue("Luna Street");
   });
 });

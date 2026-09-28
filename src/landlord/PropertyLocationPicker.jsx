@@ -10,6 +10,12 @@ L.Icon.Default.mergeOptions({
     iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png",
     shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png",
 });
+/*
+  onMapAddressChange(label, details) fires only when the landlord moves the
+  pin (map click or drag). `details` carries the structured address parts
+  resolved for that point so callers can auto-fill their address fields:
+  { lat, lng, label, barangay, street, city, province, zip }.
+*/
 export function PropertyLocationPicker({ lat, lng, onLocationChange, addressQuery = "", geocodeRequestKey = 0, onGeocodeStatusChange, onMapAddressChange, }) {
     const mapRef = useRef(null);
     const mapInstanceRef = useRef(null);
@@ -64,7 +70,12 @@ export function PropertyLocationPicker({ lat, lng, onLocationChange, addressQuer
                 updateGeocodeStatus("found");
                 coordinatesRef.current = { lat: newLat, lng: newLng };
                 onLocationChangeRef.current(newLat, newLng, "map");
-                onMapAddressChangeRef.current?.(location.label);
+                onMapAddressChangeRef.current?.(location.label, {
+                    lat: newLat,
+                    lng: newLng,
+                    label: location.label,
+                    ...(location.address ?? {}),
+                });
             }
             catch (error) {
                 if (error instanceof DOMException && error.name === "AbortError")

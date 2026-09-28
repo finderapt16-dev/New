@@ -1022,6 +1022,368 @@ export async function geocodeLocationWithinLaPaz(
 
 
 /* =========================================================
+   REVERSE GEOCODING ADDRESS PARTS
+
+   Nominatim returns a free-form `address` object. These
+   helpers translate it into the fields used by the property
+   forms (Barangay + Street) so that dropping the map pin can
+   fill the address fields automatically.
+
+   IMPORTANT:
+   The La Paz reference points are proximity anchors, not
+   official barangay boundaries, so they are only used to
+   name a barangay when OpenStreetMap has no barangay-like
+   value for the pinned point.
+========================================================= */
+
+const BARANGAY_ADDRESS_KEYS = [
+    "barangay",
+    "suburb",
+    "village",
+    "neighbourhood",
+    "neighborhood",
+    "quarter",
+    "hamlet",
+    "city_district",
+];
+
+const STREET_ADDRESS_KEYS = [
+    "road",
+    "pedestrian",
+    "footway",
+    "residential",
+    "living_street",
+    "path",
+    "street",
+    "square",
+];
+
+/* Anchored at the end of the segment so that places such as
+   "St. Clement's Church" are not mistaken for "St." streets. */
+const STREET_NAME_PATTERN =
+    /\b(?:st|street|ave|avenue|rd|road|dr|drive|ln|lane|blvd|boulevard|hwy|highway|ext|extension)\b\.?$/i;
+
+const GENERIC_AREA_NAMES =
+    new Set([
+        "lapaz",
+        "la paz",
+        "iloilo",
+        "iloilo city",
+        "philippines",
+        "western visayas",
+        "region vi western visayas",
+    ]);
+
+const METERS_PER_LATITUDE_DEGREE =
+    110574;
+
+const NEAREST_BARANGAY_MAX_METERS =
+    1800;
+
+
+const distanceInMeters =
+    (origin, target) => {
+        const latitudeDelta =
+            (Number(target.lat) -
+                Number(origin.lat)) *
+            METERS_PER_LATITUDE_DEGREE;
+
+        const longitudeDelta =
+            (Number(target.lng) -
+                Number(origin.lng)) *
+            METERS_PER_LATITUDE_DEGREE *
+            Math.cos(
+                (
+                    (Number(target.lat) +
+                        Number(origin.lat)) /
+                    2
+                ) *
+                    (Math.PI / 180)
+            );
+
+        return Math.sqrt(
+            latitudeDelta ** 2 +
+            longitudeDelta ** 2
+        );
+    };
+
+
+/* =========================================================
+   MATCH A KNOWN LA PAZ BARANGAY
+
+   "Nabitasan" -> Nabitasan
+   "Brgy. Magsaysay" -> Magsaysay Village
+========================================================= */
+
+const matchKnownBarangay =
+    (value) => {
+        const normalized =
+            normalizePlaceName(value);
+
+        if (
+            normalized.length < 3
+        ) {
+            return null;
+        }
+
+        const exact =
+            findAreaFallback(
+                normalized
+            );
+
+        if (
+            exact
+        ) {
+            return exact;
+        }
+
+        return (
+            LA_PAZ_AREA_FALLBACKS.find(
+                (area) =>
+                    [
+                        area.canonicalName,
+                        ...area.aliases,
+                    ].some(
+                        (alias) => {
+                            const normalizedAlias =
+                                normalizePlaceName(
+                                    alias
+                                );
+
+                            return (
+                                normalizedAlias.length >=
+                                    4 &&
+                                normalized.includes(
+                                    normalizedAlias
+                                )
+                            );
+                        }
+                    )
+            ) ?? null
+        );
+    };
+
+
+const findNearestBarangay =
+    (lat, lng) => {
+        const point = {
+            lat: Number(lat),
+            lng: Number(lng),
+        };
+
+        if (
+            !Number.isFinite(
+                point.lat
+            ) ||
+            !Number.isFinite(
+                point.lng
+            )
+        ) {
+            return null;
+        }
+
+        const nearest =
+            LA_PAZ_AREA_FALLBACKS.reduce(
+                (best, area) => {
+                    const distance =
+                        distanceInMeters(
+                            point,
+                            area
+                        );
+
+                    return (
+                        !best ||
+                        distance <
+                            best.distance
+                    )
+                        ? {
+                              area,
+                              distance,
+                          }
+                        : best;
+                },
+                null
+            );
+
+        return (
+            nearest &&
+            nearest.distance <=
+                NEAREST_BARANGAY_MAX_METERS
+        )
+            ? nearest.area
+            : null;
+    };
+
+
+const buildBarangay =
+    (address, lat, lng) => {
+        const candidates = [
+            address.barangay,
+            ...BARANGAY_ADDRESS_KEYS.map(
+                (key) =>
+                    address[key]
+            ),
+        ]
+            .map(
+                (value) =>
+                    String(
+                        value ?? ""
+                    ).trim()
+            )
+            .filter(
+                Boolean
+            );
+
+        for (
+            const candidate of
+            candidates
+        ) {
+            const match =
+                matchKnownBarangay(
+                    candidate
+                );
+
+            if (
+                match
+            ) {
+                return match.canonicalName;
+            }
+        }
+
+        const named =
+            candidates.find(
+                (candidate) =>
+                    !GENERIC_AREA_NAMES.has(
+                        normalizePlaceName(
+                            candidate
+                        )
+                    )
+            );
+
+        if (
+            named
+        ) {
+            return named;
+        }
+
+        return (
+            findNearestBarangay(
+                lat,
+                lng
+            )?.canonicalName ?? ""
+        );
+    };
+
+
+const buildStreet =
+    (address, label) => {
+        const houseNumber =
+            String(
+                address.house_number ??
+                ""
+            ).trim();
+
+        for (
+            const key of
+            STREET_ADDRESS_KEYS
+        ) {
+            const value =
+                String(
+                    address[key] ??
+                    ""
+                ).trim();
+
+            if (
+                !value
+            ) {
+                continue;
+            }
+
+            return houseNumber
+                ? `${houseNumber} ${value}`
+                : value;
+        }
+
+
+        /* =========================
+           FALLBACK
+
+           Some points only expose the
+           street through the display
+           name, for example:
+
+           "Luna Street, Nabitasan,
+            La Paz, Iloilo City"
+        ========================= */
+
+        return (
+            String(
+                label ?? ""
+            )
+                .split(",")
+                .map(
+                    (segment) =>
+                        segment.trim()
+                )
+                .find(
+                    (segment) =>
+                        STREET_NAME_PATTERN.test(
+                            segment
+                        )
+                ) ?? ""
+        );
+    };
+
+
+const buildAddressParts =
+    (row, label, lat, lng) => {
+        const address =
+            row &&
+            typeof row.address ===
+                "object" &&
+            row.address
+                ? row.address
+                : {};
+
+        return {
+            barangay:
+                buildBarangay(
+                    address,
+                    lat,
+                    lng
+                ),
+
+            street:
+                buildStreet(
+                    address,
+                    label
+                ),
+
+            city:
+                String(
+                    address.city ??
+                    address.town ??
+                    address.municipality ??
+                    ""
+                ).trim(),
+
+            province:
+                String(
+                    address.state ??
+                    address.province ??
+                    ""
+                ).trim(),
+
+            zip:
+                String(
+                    address.postcode ??
+                    ""
+                ).trim(),
+        };
+    };
+
+
+/* =========================================================
    REVERSE GEOCODING
 ========================================================= */
 
@@ -1149,6 +1511,16 @@ export async function reverseGeocodeWithinLaPaz(
             lat,
             lng,
             label,
+
+            /* Structured parts so the property forms can
+               auto-fill Barangay and Street from the pin. */
+            address:
+                buildAddressParts(
+                    row,
+                    label,
+                    lat,
+                    lng
+                ),
         };
 
 

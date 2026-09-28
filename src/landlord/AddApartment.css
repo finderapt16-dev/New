@@ -492,6 +492,29 @@
   font-size: 9px;
 }
 
+.add-property-autofill-note {
+  margin: 0;
+  color: #047857;
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.add-property-autofill-note--offer {
+  color: #a35b13;
+}
+
+.add-property-autofill-action {
+  margin-left: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #1d4ed8;
+  font-size: 9px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .add-property-coordinates {
   margin-top: 3px;
 }
