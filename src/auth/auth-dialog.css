@@ -12,22 +12,9 @@
   box-shadow: 0 28px 90px rgba(16, 35, 27, 0.3);
 }
 .auth-dialog-content--signup {
-  width: min(480px, calc(100vw - 32px));
-  max-width: 480px;
-  max-height: min(92vh, 900px);
-}
-/* The landlord wizard needs room for its three-step header. */
-.auth-dialog-content--signup:has(.signup-landlord-wizard) {
-  width: min(760px, calc(100vw - 32px));
-  max-width: 760px;
-}
-/* The wizard lays its fields out in two columns, so it fits without
-   scrolling. Trim the surrounding chrome to buy back vertical space. */
-.auth-dialog-content--signup:has(.signup-landlord-wizard) .signup-content {
-  padding: 28px 32px 24px;
-}
-.auth-dialog-content--signup:has(.signup-landlord-wizard) .signup-form-heading {
-  margin-bottom: 1rem;
+  width: min(420px, calc(100vw - 32px));
+  max-width: 420px;
+  max-height: min(88vh, 820px);
 }
 .auth-dialog-content > .ui-dialog-close { z-index: 5; }
 .auth-dialog-accessible-title,
