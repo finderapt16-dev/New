@@ -4,27 +4,12 @@ import "./signup.css";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { AlertCircle, BadgeCheck, Building2, Check, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, Eye, EyeOff, Key, Lock, Mail, MapPin, Phone, ShieldCheck, Upload, User, Users } from "lucide-react";
+import { AlertCircle, Building2, ChevronLeft, ChevronRight, Eye, EyeOff, Pencil, Users } from "lucide-react";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-/* ─── Password strength ────────────────────────────────────── */
-function getStrength(p) {
-    let s = 0;
-    if (p.length >= 6)
-        s++;
-    if (p.length >= 10)
-        s++;
-    if (/[A-Z]/.test(p))
-        s++;
-    if (/[0-9]/.test(p))
-        s++;
-    if (/[^A-Za-z0-9]/.test(p))
-        s++;
-    return s;
-}
-const strengthLabel = ["", "Weak", "Fair", "Good", "Strong", "Very strong"];
-const strengthColor = ["", "signup-strength-fill-weak", "signup-strength-fill-fair", "signup-strength-fill-good", "signup-strength-fill-strong", "signup-strength-fill-very-strong"];
-const strengthText = ["", "signup-strength-text-weak", "signup-strength-text-fair", "signup-strength-text-good", "signup-strength-text-strong", "signup-strength-text-very-strong"];
+/* ─── Landlord signup password policy ────────────────────── */
+const PASSWORD_RULE = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$/;
+const PASSWORD_REQUIREMENTS = "At least 8 characters, an uppercase and lowercase letter, a number, and a special character (e.g. !@#$%).";
 /**
  * Floating registration form. Always rendered inside AuthDialog - the result
  * is handed to the floating sign-in view instead of navigating pages.
@@ -39,23 +24,18 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
     const submissionInFlightRef = useRef(false);
     const [showPass, setShowPass] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    // Landlord signup is a three-step wizard: account credentials, personal and
+    // business details, then a review screen before the account is created.
     const [landlordStep, setLandlordStep] = useState(1);
-    const permitRef = useRef(null);
-    const idRef = useRef(null);
-    const [permitFile, setPermitFile] = useState(null);
-    const [idFile, setIdFile] = useState(null);
     const [tenantTermsAccepted, setTenantTermsAccepted] = useState(false);
     const [landlordAgreementAccepted, setLandlordAgreementAccepted] = useState(false);
     const [formData, setFormData] = useState({
         firstName: "", lastName: "", middleInitial: "",
-        username: "", email: "", mobileNumber: "", address: "",
+        username: "", email: "", mobileNumber: "", businessName: "",
         password: "", confirmPassword: "",
         role: "",
-        permitNumber: "",
     });
     const set = (key, value) => setFormData((p) => ({ ...p, [key]: value }));
-    const strength = getStrength(formData.password);
-    /* ── Section completion checks ─────────────────────────── */
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (submissionInFlightRef.current)
@@ -63,10 +43,6 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
         setError("");
         if (!formData.role) {
             setError("Please select a role.");
-            return;
-        }
-        if (formData.role === "landlord" && !formData.permitNumber.trim()) {
-            setError("Business permit number is required.");
             return;
         }
         if (formData.role === "tenant" && !tenantTermsAccepted) {
@@ -80,10 +56,6 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
         if (formData.role === "landlord") {
             if (!formData.firstName || !formData.lastName) {
                 setError("Full name is required.");
-                return;
-            }
-            if (!formData.address) {
-                setError("Home address is required.");
                 return;
             }
             if (!formData.mobileNumber) {
@@ -103,8 +75,13 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
             setError("Enter a valid recovery email address.");
             return;
         }
-        if (formData.password.length < 6) {
-            setError("Password must be at least 6 characters.");
+        const passwordIsValid = formData.role === "landlord"
+            ? PASSWORD_RULE.test(formData.password)
+            : formData.password.length >= 6;
+        if (!passwordIsValid) {
+            setError(formData.role === "landlord"
+                ? `Password must contain: ${PASSWORD_REQUIREMENTS}`
+                : "Password must be at least 6 characters.");
             return;
         }
         if (formData.password !== formData.confirmPassword) {
@@ -124,11 +101,8 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                 password: formData.password,
                 role: formData.role,
                 middleInitial: formData.role === "landlord" ? formData.middleInitial : "",
-                address: formData.role === "landlord" ? formData.address : "",
                 mobileNumber: formData.role === "landlord" ? formData.mobileNumber : "",
-                permitNumber: formData.role === "landlord" ? formData.permitNumber : undefined,
-                permitDocument: permitFile ?? undefined,
-                idDocument: idFile ?? undefined,
+                businessName: formData.role === "landlord" ? formData.businessName : undefined,
                 termsAccepted: formData.role === "tenant" ? tenantTermsAccepted : landlordAgreementAccepted,
                 landlordVerificationAccepted: formData.role === "landlord" ? landlordAgreementAccepted : undefined,
             });
@@ -181,24 +155,6 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
     const nextLandlordStep = () => {
         setError("");
         if (landlordStep === 1) {
-            if (!formData.firstName.trim() || !formData.lastName.trim()) {
-                setError("Full name is required.");
-                return;
-            }
-            if (!formData.address.trim()) {
-                setError("Home address is required.");
-                return;
-            }
-        }
-        if (landlordStep === 2 && !formData.mobileNumber.trim()) {
-            setError("Mobile number is required.");
-            return;
-        }
-        if (landlordStep === 3 && !formData.permitNumber.trim()) {
-            setError("Business permit number is required.");
-            return;
-        }
-        if (landlordStep === 4) {
             if (!/^[A-Za-z0-9_]{4,30}$/.test(formData.username.trim()) || formData.username.includes("@")) {
                 setError("Username must be 4–30 characters using only letters, numbers, or underscores.");
                 return;
@@ -207,8 +163,8 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                 setError("Enter a valid recovery email address.");
                 return;
             }
-            if (formData.password.length < 6) {
-                setError("Password must be at least 6 characters.");
+            if (!PASSWORD_RULE.test(formData.password)) {
+                setError(`Password must contain: ${PASSWORD_REQUIREMENTS}`);
                 return;
             }
             if (formData.password !== formData.confirmPassword) {
@@ -216,7 +172,17 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                 return;
             }
         }
-        setLandlordStep((step) => Math.min(step + 1, 5));
+        if (landlordStep === 2) {
+            if (!formData.firstName.trim() || !formData.lastName.trim()) {
+                setError("Full name is required.");
+                return;
+            }
+            if (!formData.mobileNumber.trim()) {
+                setError("Mobile number is required.");
+                return;
+            }
+        }
+        setLandlordStep((step) => Math.min(step + 1, 3));
     };
     const previousLandlordStep = () => {
         setError("");
@@ -319,13 +285,7 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
 
               {signupStep === "form" && formData.role === "landlord" && (<div className="signup-landlord-wizard">
                   <div className="signup-landlord-stepper">
-                    {[
-                "Personal Information",
-                "Contact Information",
-                "Landlord Verification",
-                "Account Security",
-                "Review",
-            ].map((label, index) => {
+                    {["Account Details", "Personal Information", "Review"].map((label, index) => {
                 const stepNumber = index + 1;
                 const active = landlordStep === stepNumber;
                 const complete = landlordStep > stepNumber;
@@ -340,24 +300,54 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                           <span className={`signup-landlord-step-text ${active ? "signup-landlord-step-text-active" : ""}`}>
                             {label}
                           </span>
-                          {stepNumber < 5 && (<div className={`signup-landlord-step-connector ${complete ? "signup-landlord-step-connector-complete" : ""}`}/>)}
+                          {stepNumber < 3 && (<div className={`signup-landlord-step-connector ${complete ? "signup-landlord-step-connector-complete" : ""}`}/>)}
                         </div>);
             })}
                   </div>
 
                   {landlordStep === 1 && (<div className="signup-landlord-panel">
-                      <h2 className="signup-landlord-panel-title">Personal Information</h2>
+                      <h2 className="signup-landlord-panel-title">Account Details</h2>
 
-                      <div className="signup-name-grid">
-                        <AuthField id="firstName" label="First Name" value={formData.firstName} onChange={(v) => set("firstName", v)} required icon={<User className="signup-icon-small"/>}/>
-                        <AuthField id="lastName" label="Last Name" value={formData.lastName} onChange={(v) => set("lastName", v)} required/>
+                      <div className="signup-account-field">
+                        <AuthField id="username" label="Username" value={formData.username} onChange={(v) => set("username", v)} required placeholder="Enter your username"/>
+                        <p className="signup-account-hint">
+                          You will use this username when signing in. Use 4–30 letters,
+                          numbers, or underscores with no spaces.
+                        </p>
                       </div>
 
-                      <AuthField id="middleInitial" label="Middle Initial (optional)" value={formData.middleInitial} onChange={(v) => set("middleInitial", v)}/>
+                      <div className="signup-account-field">
+                        <AuthField id="email" label="Email Address" type="email" value={formData.email} onChange={(v) => set("email", v)} required placeholder="Enter your email address"/>
+                        <p className="signup-account-hint">
+                          Used for account verification, password recovery, and important
+                          account notices.
+                        </p>
+                      </div>
 
-                      <AuthField id="address" label="Home Address" value={formData.address} onChange={(v) => set("address", v)} required icon={<MapPin className="signup-icon-small"/>}/>
+                      <div className="signup-account-field">
+                        <AuthField id="password" label="Password" type={showPass ? "text" : "password"} value={formData.password} onChange={(v) => set("password", v)} required placeholder="Enter your password" suffix={<button type="button" onClick={() => setShowPass(!showPass)} className="auth-password-toggle signup-password-toggle" aria-label={showPass ? "Hide password" : "Show password"}>
+                              {showPass ? (<EyeOff className="signup-icon-small"/>) : (<Eye className="signup-icon-small"/>)}
+                            </button>}/>
+                      </div>
 
-                      <div className="signup-landlord-actions signup-landlord-actions-end">
+                      <div className="signup-account-field">
+                        <AuthField id="confirm" label="Confirm Password" type={showConfirm ? "text" : "password"} value={formData.confirmPassword} onChange={(v) => set("confirmPassword", v)} required placeholder="Confirm your password" suffix={<button type="button" onClick={() => setShowConfirm(!showConfirm)} className="auth-password-toggle signup-password-toggle" aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}>
+                              {showConfirm ? (<EyeOff className="signup-icon-small"/>) : (<Eye className="signup-icon-small"/>)}
+                            </button>}/>
+
+                        {formData.confirmPassword &&
+                    formData.password !== formData.confirmPassword && (<p className="signup-mismatch-message">
+                              <AlertCircle className="signup-validation-icon"/>
+                              Passwords do not match
+                            </p>)}
+                      </div>
+
+                      <div className="signup-password-help">
+                        <strong>Password must contain:</strong>
+                        <span>{PASSWORD_REQUIREMENTS}</span>
+                      </div>
+
+                      <div className="signup-landlord-actions">
                         <button type="button" onClick={nextLandlordStep} className="signup-landlord-continue">
                           Continue
                           <ChevronRight className="signup-next-icon"/>
@@ -366,12 +356,27 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                     </div>)}
 
                   {landlordStep === 2 && (<div className="signup-landlord-panel">
-                      <h2 className="signup-landlord-panel-title">Contact Information</h2>
+                      <h2 className="signup-landlord-panel-title">Personal Information</h2>
 
-                      <AuthField id="mobile" label="Mobile Number" type="tel" value={formData.mobileNumber} onChange={(v) => set("mobileNumber", v)} required icon={<Phone className="signup-icon-small"/>}/>
+                      <div className="signup-name-grid">
+                        <AuthField id="firstName" label="First Name" value={formData.firstName} onChange={(v) => set("firstName", v)} required placeholder="Enter your first name"/>
+                        <AuthField id="lastName" label="Last Name" value={formData.lastName} onChange={(v) => set("lastName", v)} required placeholder="Enter your last name"/>
+                      </div>
+
+                      <AuthField id="middleInitial" label="Middle Initial (Optional)" value={formData.middleInitial} onChange={(v) => set("middleInitial", v)} placeholder="e.g. R"/>
+
+                      <AuthField id="mobile" label="Mobile Number" type="tel" value={formData.mobileNumber} onChange={(v) => set("mobileNumber", v)} required placeholder="Enter your mobile number"/>
+
+                      <div className="signup-account-field">
+                        <AuthField id="businessName" label="Business Name" value={formData.businessName} onChange={(v) => set("businessName", v)} placeholder="e.g. Santos Apartments"/>
+                        <p className="signup-account-hint">
+                          Optional. Shown on your listings; leave blank to use your personal name.
+                        </p>
+                      </div>
 
                       <div className="signup-landlord-actions">
                         <button type="button" onClick={previousLandlordStep} className="signup-landlord-back">
+                          <ChevronLeft className="signup-next-icon"/>
                           Back
                         </button>
                         <button type="button" onClick={nextLandlordStep} className="signup-landlord-continue">
@@ -382,202 +387,13 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                     </div>)}
 
                   {landlordStep === 3 && (<div className="signup-landlord-panel">
-                      <h2 className="signup-landlord-panel-title">Landlord Verification</h2>
-
-                      <div className="signup-verification-fields">
-                        <AuthField id="permitNumber" label="Business Permit Number" value={formData.permitNumber} onChange={(v) => set("permitNumber", v)} required icon={<ClipboardList className="signup-icon-small"/>}/>
-
-                        <div className="signup-documents-grid">
-                          {[
-                    { label: "Business Permit", ref: permitRef, file: permitFile, setFile: setPermitFile },
-                    { label: "Valid ID", ref: idRef, file: idFile, setFile: setIdFile },
-                ].map(({ label, ref, file, setFile }) => (<div key={label}>
-                              <p className="signup-document-label">{label}</p>
-                              <p className="signup-document-description">
-                                Optional during signup — required for verification
-                              </p>
-                              <button type="button" onClick={() => ref.current?.click()} className={`signup-document-upload ${file
-                        ? "signup-document-upload-active"
-                        : "signup-document-upload-idle"}`}>
-                                {file ? (<>
-                                    <CheckCircle2 className="signup-document-icon"/>
-                                    <span className="signup-document-name">{file.name}</span>
-                                  </>) : (<>
-                                    <Upload className="signup-upload-icon"/>
-                                    <span className="signup-upload-hint">Upload file</span>
-                                  </>)}
-                              </button>
-                              <input ref={ref} type="file" accept="image/*,.pdf" className="signup-file-input" onChange={(e) => setFile(e.target.files?.[0] || null)}/>
-                            </div>))}
-                        </div>
-
-                        <div className="signup-verification-notice">
-                          <ShieldCheck className="signup-notice-icon"/>
-                          <p className="signup-notice-text">
-                            You may upload your verification documents now or complete them later.
-                            Your apartment listings cannot be published until your landlord
-                            verification is approved.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="signup-landlord-actions">
-                        <button type="button" onClick={previousLandlordStep} className="signup-landlord-back">
-                          Back
-                        </button>
-                        <button type="button" onClick={nextLandlordStep} className="signup-landlord-continue">
-                          Continue
-                          <ChevronRight className="signup-next-icon"/>
-                        </button>
-                      </div>
-                    </div>)}
-
-                  {landlordStep === 4 && (<div className="signup-landlord-panel">
-                      <h2 className="signup-landlord-panel-title">Account Security</h2>
-
-                      <div className="signup-account-field">
-                        <AuthField id="username" label="Username" value={formData.username} onChange={(v) => set("username", v)} required placeholder="Choose a unique username" icon={<User className="signup-icon-small"/>}/>
-                        <p className="signup-account-hint">
-                          You will use this username when signing in. Use 4–30 letters,
-                          numbers, or underscores with no spaces.
-                        </p>
-                      </div>
-
-                      <div className="signup-account-field">
-                        <AuthField id="email" label="Recovery Email" type="email" value={formData.email} onChange={(v) => set("email", v)} required placeholder="you@example.com" icon={<Mail className="signup-icon-small"/>}/>
-                        <p className="signup-account-hint">
-                          Used for account verification, password recovery, and important
-                          account notices.
-                        </p>
-                      </div>
-
-                      <div>
-                        <AuthField id="password" label="Password" type={showPass ? "text" : "password"} value={formData.password} onChange={(v) => set("password", v)} required icon={<Key className="signup-icon-small"/>} suffix={<button type="button" onClick={() => setShowPass(!showPass)} className="auth-password-toggle signup-password-toggle" aria-label={showPass ? "Hide password" : "Show password"}>
-                              {showPass ? (<EyeOff className="signup-icon-small"/>) : (<Eye className="signup-icon-small"/>)}
-                            </button>}/>
-
-                        {formData.password && (<div className="signup-strength">
-                            <div className="signup-strength-bars">
-                              {[1, 2, 3, 4, 5].map((i) => (<div key={i} className={`signup-strength-segment ${i <= strength
-                            ? strengthColor[strength]
-                            : "signup-strength-segment-idle"}`}/>))}
-                            </div>
-                            <p className={`signup-strength-label ${strengthText[strength]}`}>
-                              {strengthLabel[strength]}
-                            </p>
-                          </div>)}
-                      </div>
-
-                      <AuthField id="confirm" label="Confirm Password" type={showConfirm ? "text" : "password"} value={formData.confirmPassword} onChange={(v) => set("confirmPassword", v)} required icon={<Lock className="signup-icon-small"/>} suffix={<button type="button" onClick={() => setShowConfirm(!showConfirm)} className="auth-password-toggle signup-password-toggle" aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}>
-                            {showConfirm ? (<EyeOff className="signup-icon-small"/>) : (<Eye className="signup-icon-small"/>)}
-                          </button>}/>
-
-                      {formData.confirmPassword &&
-                    formData.password !== formData.confirmPassword && (<p className="signup-mismatch-message">
-                            <AlertCircle className="signup-validation-icon"/>
-                            Passwords do not match
-                          </p>)}
-
-                      {formData.confirmPassword &&
-                    formData.password === formData.confirmPassword &&
-                    formData.password.length >= 6 && (<p className="signup-match-message">
-                            <CheckCircle2 className="signup-validation-icon"/>
-                            Passwords match
-                          </p>)}
-
-                      <div className="signup-requirements">
-                        {[
-                    { label: "At least 6 characters", met: formData.password.length >= 6 },
-                    { label: "Uppercase strengthens it", met: /[A-Z]/.test(formData.password) },
-                    { label: "Number strengthens it", met: /[0-9]/.test(formData.password) },
-                    {
-                        label: "Passwords match",
-                        met: !!formData.password &&
-                            formData.password === formData.confirmPassword,
-                    },
-                ].map(({ label, met }) => (<div key={label} className={`signup-requirement ${met ? "signup-requirement-active" : "signup-requirement-idle"}`}>
-                            <div className={`signup-requirement-marker ${met
-                        ? "signup-requirement-marker-active"
-                        : "signup-requirement-marker-idle"}`}>
-                              {met && <Check className="signup-requirement-check"/>}
-                            </div>
-                            {label}
-                          </div>))}
-                      </div>
-
-                      <div className="signup-landlord-actions">
-                        <button type="button" onClick={previousLandlordStep} className="signup-landlord-back">
-                          Back
-                        </button>
-                        <button type="button" onClick={nextLandlordStep} className="signup-landlord-continue">
-                          Continue
-                          <ChevronRight className="signup-next-icon"/>
-                        </button>
-                      </div>
-                    </div>)}
-
-                  {landlordStep === 5 && (<div className="signup-landlord-panel">
                       <h2 className="signup-landlord-panel-title">Review</h2>
 
                       <div className="signup-landlord-review-card">
                         <div className="signup-landlord-review-heading">
-                          <strong>Personal Information</strong>
+                          <strong>Account Details</strong>
                           <button type="button" onClick={() => setLandlordStep(1)}>
-                            Edit
-                          </button>
-                        </div>
-                        <div className="signup-landlord-review-row">
-                          <span>Name</span>
-                          <b>
-                            {`${formData.firstName} ${formData.middleInitial
-                    ? `${formData.middleInitial}. `
-                    : ""}${formData.lastName}`.trim()}
-                          </b>
-                        </div>
-                        <div className="signup-landlord-review-row">
-                          <span>Home Address</span>
-                          <b>{formData.address}</b>
-                        </div>
-                      </div>
-
-                      <div className="signup-landlord-review-card">
-                        <div className="signup-landlord-review-heading">
-                          <strong>Contact Information</strong>
-                          <button type="button" onClick={() => setLandlordStep(2)}>
-                            Edit
-                          </button>
-                        </div>
-                        <div className="signup-landlord-review-row">
-                          <span>Mobile Number</span>
-                          <b>{formData.mobileNumber}</b>
-                        </div>
-                      </div>
-
-                      <div className="signup-landlord-review-card">
-                        <div className="signup-landlord-review-heading">
-                          <strong>Landlord Verification</strong>
-                          <button type="button" onClick={() => setLandlordStep(3)}>
-                            Edit
-                          </button>
-                        </div>
-                        <div className="signup-landlord-review-row">
-                          <span>Business Permit Number</span>
-                          <b>{formData.permitNumber}</b>
-                        </div>
-                        <div className="signup-landlord-review-row">
-                          <span>Business Permit</span>
-                          <b>{permitFile?.name || "Not uploaded yet"}</b>
-                        </div>
-                        <div className="signup-landlord-review-row">
-                          <span>Valid ID</span>
-                          <b>{idFile?.name || "Not uploaded yet"}</b>
-                        </div>
-                      </div>
-
-                      <div className="signup-landlord-review-card">
-                        <div className="signup-landlord-review-heading">
-                          <strong>Account Security</strong>
-                          <button type="button" onClick={() => setLandlordStep(4)}>
+                            <Pencil className="signup-review-edit-icon"/>
                             Edit
                           </button>
                         </div>
@@ -591,33 +407,48 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                         </div>
                       </div>
 
+                      <div className="signup-landlord-review-card">
+                        <div className="signup-landlord-review-heading">
+                          <strong>Personal Information</strong>
+                          <button type="button" onClick={() => setLandlordStep(2)}>
+                            <Pencil className="signup-review-edit-icon"/>
+                            Edit
+                          </button>
+                        </div>
+                        <div className="signup-landlord-review-row">
+                          <span>Name</span>
+                          <b>
+                            {`${formData.firstName} ${formData.middleInitial
+                    ? `${formData.middleInitial}. `
+                    : ""}${formData.lastName}`.trim()}
+                          </b>
+                        </div>
+                        <div className="signup-landlord-review-row">
+                          <span>Mobile Number</span>
+                          <b>{formData.mobileNumber}</b>
+                        </div>
+                        <div className="signup-landlord-review-row">
+                          <span>Business Name</span>
+                          <b>{formData.businessName.trim() || "Not provided"}</b>
+                        </div>
+                      </div>
+
                       <label className="signup-agreement">
                         <input type="checkbox" checked={landlordAgreementAccepted} onChange={(event) => setLandlordAgreementAccepted(event.target.checked)} className="signup-checkbox"/>
                         <span>
                           <strong>
-                            I agree to AptFindr&apos;s <Link to="/terms-of-service" className="signup-agreement-link">Terms of Use</Link>,{" "}
-                            <Link to="/privacy-policy" className="signup-agreement-link">Privacy Policy</Link>,
-                            and Landlord Verification Policy.
-                          </strong>{" "}
-                          I understand that my Business Permit Number and submitted
-                          verification information may be reviewed by the administrator,
-                          and that my apartment listings cannot be published until my
-                          landlord account is verified.
+                            I agree to the <Link to="/terms-of-service" className="signup-agreement-link">Terms of Service</Link> and{" "}
+                            <Link to="/privacy-policy" className="signup-agreement-link">Privacy Policy</Link>.
+                          </strong>
                         </span>
                       </label>
 
-                      <div className="signup-landlord-actions">
-                        <button type="button" onClick={previousLandlordStep} className="signup-landlord-back">
-                          Back
-                        </button>
-
-                        <Button type="submit" disabled={loading} className="signup-submit-button signup-landlord-final-submit">
-                          {loading ? (<>
-                              <div className="signup-spinner"/>
-                              Creating your account...
-                            </>) : ("Create Account")}
-                        </Button>
-                      </div>
+                      <Button type="submit" disabled={loading} className="signup-submit-button">
+                        {loading ? (<>
+                            <div className="signup-spinner"/>
+                            Creating your account...
+                          </>) : ("Create Account")}
+                      </Button>
                     </div>)}
                 </div>)}
 

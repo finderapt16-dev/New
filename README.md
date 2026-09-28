@@ -59,6 +59,16 @@ One-time setup:
 
 While Google is disabled in Supabase, the button says it is unavailable instead of opening Supabase's error page.
 
+## Landlord create account
+
+Landlord registration in `src/auth/Signup.jsx` is a three-step wizard that follows the same stepper pattern as the rest of the create-account flow:
+
+1. **Account Details** — username, recovery email, password and confirm password, with the password rule box (`At least 8 characters, an uppercase and lowercase letter, a number, and a special character (e.g. !@#$%).`). The step does not advance until every rule passes and both passwords match.
+2. **Personal Information** — first name, last name, middle initial (optional), mobile number, and an optional business name.
+3. **Review** — Account Details and Personal Information cards with per-card **Edit** links that jump back to their step, the Terms of Service and Privacy Policy checkbox, and **Create Account**.
+
+Business permit number, home address, and verification document uploads are no longer collected while signing up. Verification documents are per property (Add Property → verification uploader) and the business name, permits, and expiry are managed later in landlord settings → Business (`src/landlord/BusinessTab.jsx`, stored in `landlord_profiles.business_name`). A business name typed during signup is passed to `signupUser` and written to `landlord_profiles` when a session exists; with email confirmation on, the profile row is created by the signup trigger and the landlord can set the name in settings. Tenant registration is unchanged and still allows a 6-character password. `tests/unit/landlordSignupWizard.test.jsx` walks the three steps and asserts the submitted payload.
+
 ## Landlord file layout
 
 Keep `src/landlord/` **flat, without feature subfolders**. All landlord JSX, CSS, and shared JS helpers live directly in this one directory so every file is visible together. Each JSX file has its same-named CSS alongside it, such as `LandlordDashboard.jsx` / `LandlordDashboard.css` and `ManageRooms.jsx` / `ManageRooms.css`.

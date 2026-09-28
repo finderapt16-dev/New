@@ -187,6 +187,8 @@ async function ensureRoleProfile(userId, role, input) {
             payload.permit_number = nonEmptyString(input.permitNumber);
             payload.business_permit_number = nonEmptyString(input.permitNumber);
         }
+        if (typeof input.businessName === 'string')
+            payload.business_name = nonEmptyString(input.businessName);
         if (typeof input.isVerified === 'boolean')
             payload.is_verified = input.isVerified;
     }
@@ -340,6 +342,7 @@ async function ensureProfileForAuthUser(authUser, { createIfMissing = true } = {
     const profile = normalizeUser(data);
     await ensureRoleProfile(profile.id, profile.role, {
         permitNumber: typeof authUser.user_metadata?.permitNumber === 'string' ? authUser.user_metadata.permitNumber : undefined,
+        businessName: typeof authUser.user_metadata?.businessName === 'string' ? authUser.user_metadata.businessName : undefined,
         isVerified: profile.isVerified,
     });
     return profile;
@@ -491,6 +494,7 @@ export async function signupUser(input) {
                 middleInitial: input.middleInitial,
                 address: input.address,
                 permitNumber: role === 'landlord' ? input.permitNumber : undefined,
+                businessName: role === 'landlord' ? input.businessName : undefined,
                 termsAccepted: true,
                 landlordVerificationAccepted: role === 'landlord' ? true : undefined,
                 requires_email_verification: true,

@@ -124,6 +124,21 @@ describe("floating auth dialog", () => {
         expect(mocks.signup).not.toHaveBeenCalled();
     });
 
+    it("keeps tenant signup blocked until the terms are accepted", async () => {
+        mocks.signup.mockResolvedValue({ success: true, signup: { requiresEmailVerification: false } });
+        renderDialog("signup");
+
+        await userEvent.click(await screen.findByRole("button", { name: /tenant/i }));
+        await userEvent.type(screen.getByLabelText(/^username/i), "tenant_one");
+        await userEvent.type(screen.getByLabelText(/email address/i), "tenant@example.com");
+        await userEvent.type(screen.getByLabelText(/^password/i), "password123");
+        await userEvent.type(screen.getByLabelText(/^confirm password/i), "password123");
+        await userEvent.click(screen.getByRole("button", { name: /^create account$/i }));
+
+        expect(await screen.findByText(/must agree to the terms of use and privacy policy/i)).toBeInTheDocument();
+        expect(mocks.signup).not.toHaveBeenCalled();
+    });
+
     it("places Google above the landlord wizard so it stays visible after choosing Landlord", async () => {
         mocks.google.mockReturnValue(new Promise(() => {}));
         renderDialog("signup");
@@ -132,10 +147,10 @@ describe("floating auth dialog", () => {
         await userEvent.click(screen.getByRole("button", { name: /landlord/i }));
         const google = screen.getByRole("button", { name: /sign up with google/i });
 
-        // Google comes before the wizard's step content ("Personal Information")
+        // Google comes before the wizard's step content ("Account Details")
         // instead of below the whole multi-step form, where it would be buried.
-        const personalHeading = screen.getByRole("heading", { name: /personal information/i });
-        expect(google.compareDocumentPosition(personalHeading)
+        const stepHeading = screen.getByRole("heading", { name: /account details/i });
+        expect(google.compareDocumentPosition(stepHeading)
             & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
         // ...and before the wizard's Continue button, right under the role cards.
         const wizardContinue = screen.getByRole("button", { name: /^continue$/i });

@@ -1,56 +1,4 @@
 
-.signup-strength-segment-idle { scale: .3 1; }
-
-.signup-strength-fill-weak {
-  background-color: #ff667f;
-  background-color: lab(64.4124% 63.0291 19.2068);
-}
-
-.signup-strength-fill-fair {
-  background-color: #ff8b1a;
-  background-color: lab(70.0429% 42.5156 75.8207);
-}
-
-.signup-strength-fill-good {
-  background-color: #8cc6fa;
-  background-color: lab(80.1641% 16.6016 99.2089);
-}
-
-.signup-strength-fill-strong {
-  background-color: #80cd00;
-  background-color: lab(75.3197% -46.6547 86.1778);
-}
-
-.signup-strength-fill-very-strong {
-  background-color: #00bb7f;
-  background-color: lab(66.9756% -58.27 19.5419);
-}
-
-.signup-strength-text-weak {
-  color: #ff2357;
-  color: lab(56.101% 79.4329 31.4532);
-}
-
-.signup-strength-text-fair {
-  color: #fe6e00;
-  color: lab(64.272% 57.1788 90.3583);
-}
-
-.signup-strength-text-good {
-  color: #2f9bf4;
-  color: #2f9bf4;
-}
-
-.signup-strength-text-strong {
-  color: #62a400;
-  color: lab(61.1055% -41.0235 73.1483);
-}
-
-.signup-strength-text-very-strong {
-  color: #009767;
-  color: lab(55.0481% -49.9246 15.93);
-}
-
 .signup-icon-small {
   width: 1rem;
   height: 1rem;
@@ -624,145 +572,6 @@
   height: .875rem;
 }
 
-:where(.signup-verification-fields > :not(:last-child)) {
-  margin-block: 0 1rem;
-}
-
-.signup-documents-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: .75rem;
-  display: grid;
-}
-
-.signup-document-label {
-  color: #45556c;
-  color: lab(35.5623% -1.74978 -15.4316);
-  margin-bottom: .375rem;
-  font-size: .75rem;
-  font-weight: 600;
-  line-height: 1.33333;
-}
-
-.signup-document-description {
-  color: #62748e;
-  color: lab(48.0876% -2.03595 -16.5814);
-  margin-bottom: .5rem;
-  font-size: 11px;
-  font-weight: 500;
-}
-
-.signup-document-upload {
-  text-align: center;
-  border-style: dashed;
-  border-width: 2px;
-  border-radius: 1rem;
-  flex-direction: column;
-  align-items: center;
-  gap: .375rem;
-  width: 100%;
-  padding: 1rem;
-  transition-property: all;
-  transition-duration: .15s;
-  transition-timing-function: cubic-bezier(.4, 0, .2, 1);
-  display: flex;
-}
-
-.signup-document-upload-active {
-  background-color: #fffbeb;
-  background-color: lab(98.6252% -.635982 8.42309);
-  border-color: #8cc6fa;
-  border-color: lab(80.1641% 16.6016 99.2089);
-}
-
-.signup-document-upload-idle {
-  background-color: #f8fafc;
-  background-color: lab(98.1434% -.369549 -1.05968);
-  border-color: #e2e8f0;
-  border-color: lab(91.7353% -.998765 -4.76968);
-}
-
-@media (hover: hover) {
-  .signup-document-upload-idle:hover {
-    border-color: #ffd236;
-    border-color: lab(86.4156% 6.13147 78.3961);
-  }
-}
-
-@media (hover: hover) {
-  .signup-document-upload-idle:hover {
-    background-color: #fffbeb80;
-  }
-
-  @supports (color: color-mix(in lab, red, red)) {
-    .signup-document-upload-idle:hover {
-      background-color: lab(98.6252% -.635982 8.42309 / .5);
-    }
-  }
-}
-
-.signup-document-icon {
-  color: #5aabf7;
-  color: lab(72.7183% 31.8672 97.9407);
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-.signup-document-name {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: #1a8bef;
-  color: #1a8bef;
-  width: 100%;
-  font-size: 10px;
-  font-weight: 600;
-  overflow: hidden;
-}
-
-.signup-upload-icon {
-  color: #90a1b9;
-  color: lab(65.5349% -2.25151 -14.5072);
-  width: 1.25rem;
-  height: 1.25rem;
-}
-
-.signup-upload-hint {
-  color: #90a1b9;
-  color: lab(65.5349% -2.25151 -14.5072);
-  font-size: 11px;
-}
-
-.signup-file-input {
-  display: none;
-}
-
-.signup-verification-notice {
-  background-color: #fff1f2;
-  background-color: lab(96.2369% 4.94152 1.28012);
-  border: 1px solid #ffccd3;
-  border: 1px solid lab(86.806% 19.1909 4.07754);
-  border-radius: 1rem;
-  gap: .75rem;
-  padding: .875rem;
-  display: flex;
-}
-
-.signup-notice-icon {
-  color: #ff2357;
-  color: lab(56.101% 79.4329 31.4532);
-  flex-shrink: 0;
-  width: 1rem;
-  height: 1rem;
-  margin-top: .125rem;
-}
-
-.signup-notice-text {
-  color: #c20039;
-  color: lab(41.1651% 71.6251 30.3087);
-  font-size: .75rem;
-  font-weight: 500;
-  line-height: 1.625;
-}
-
 :where(.signup-account-field > :not(:last-child)) {
   margin-block: 0 .5rem;
 }
@@ -791,39 +600,6 @@
   }
 }
 
-.signup-strength {
-  margin-top: .5rem;
-}
-
-:where(.signup-strength > :not(:last-child)) {
-  margin-block: 0 .375rem;
-}
-
-.signup-strength-bars {
-  gap: .25rem;
-  display: flex;
-}
-
-.signup-strength-segment {
-  border-radius: 3.40282e38px;
-  flex: 1;
-  height: .25rem;
-  transition-property: all;
-  transition-duration: .3s;
-  transition-timing-function: cubic-bezier(.4, 0, .2, 1);
-}
-
-.signup-strength-segment-idle {
-  background-color: #e2e8f0;
-  background-color: lab(91.7353% -.998765 -4.76968);
-}
-
-.signup-strength-label {
-  font-size: .75rem;
-  font-weight: 600;
-  line-height: 1.33333;
-}
-
 .signup-mismatch-message {
   color: #ff2357;
   color: lab(56.101% 79.4329 31.4532);
@@ -838,75 +614,6 @@
 .signup-validation-icon {
   width: .875rem;
   height: .875rem;
-}
-
-.signup-match-message {
-  color: #00bb7f;
-  color: lab(66.9756% -58.27 19.5419);
-  align-items: center;
-  gap: .25rem;
-  font-size: .75rem;
-  font-weight: 500;
-  line-height: 1.33333;
-  display: flex;
-}
-
-.signup-requirements {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: .375rem;
-  margin-top: .25rem;
-  display: grid;
-}
-
-.signup-requirement {
-  align-items: center;
-  gap: .375rem;
-  font-size: .75rem;
-  font-weight: 500;
-  line-height: 1.33333;
-  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke;
-  transition-duration: .15s;
-  transition-timing-function: cubic-bezier(.4, 0, .2, 1);
-  display: flex;
-}
-
-.signup-requirement-active {
-  color: #009767;
-  color: lab(55.0481% -49.9246 15.93);
-}
-
-.signup-requirement-idle {
-  color: #90a1b9;
-  color: lab(65.5349% -2.25151 -14.5072);
-}
-
-.signup-requirement-marker {
-  border-radius: 3.40282e38px;
-  flex-shrink: 0;
-  justify-content: center;
-  align-items: center;
-  width: .875rem;
-  height: .875rem;
-  transition-property: all;
-  transition-duration: .15s;
-  transition-timing-function: cubic-bezier(.4, 0, .2, 1);
-  display: flex;
-}
-
-.signup-requirement-marker-active {
-  background-color: #00bb7f;
-  background-color: lab(66.9756% -58.27 19.5419);
-}
-
-.signup-requirement-marker-idle {
-  background-color: #e2e8f0;
-  background-color: lab(91.7353% -.998765 -4.76968);
-}
-
-.signup-requirement-check {
-  color: #fff;
-  width: .5rem;
-  height: .5rem;
 }
 
 .signup-agreement-link {
@@ -1225,6 +932,26 @@
   line-height: 1.5;
 }
 
+/* Shared password requirement box (tenant and landlord signup) */
+.signup-password-help {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  padding: 1rem;
+  background-color: #f2f6fa;
+  border: 1px solid #d9d9d9;
+  border-radius: .5rem;
+  color: #111111;
+  font-size: .875rem;
+  line-height: 1.5;
+}
+
+.signup-password-help span {
+  color: #666666;
+  font-size: .75rem;
+  line-height: 1.5;
+}
+
 @media (width <= 30rem) {
   .signup-tenant-simple-form {
     gap: .875rem;
@@ -1242,7 +969,7 @@
 
 .signup-landlord-stepper {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   margin-bottom: 1.75rem;
 }
 
@@ -1321,10 +1048,6 @@
   margin-top: .25rem;
 }
 
-.signup-landlord-actions-end {
-  justify-content: flex-end;
-}
-
 .signup-landlord-back,
 .signup-landlord-continue {
   min-height: 3rem;
@@ -1336,6 +1059,10 @@
 
 .signup-landlord-back {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
   border: 1px solid #616161;
   background: #ffffff;
   color: #111111;
@@ -1355,10 +1082,6 @@
 .signup-landlord-continue:hover {
   border-color: #1a8bef;
   background: #1a8bef;
-}
-
-.signup-landlord-actions-end .signup-landlord-continue {
-  max-width: 12rem;
 }
 
 .signup-landlord-review-card {
@@ -1382,12 +1105,20 @@
 }
 
 .signup-landlord-review-heading button {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
   border: 0;
   background: transparent;
   color: #2f9bf4;
   font-size: .75rem;
   font-weight: 600;
   cursor: pointer;
+}
+
+.signup-review-edit-icon {
+  width: .875rem;
+  height: .875rem;
 }
 
 .signup-landlord-review-row {
@@ -1409,14 +1140,10 @@
   overflow-wrap: anywhere;
 }
 
-.signup-landlord-final-submit {
-  flex: 1;
-}
-
 @media (width <= 40rem) {
   .signup-landlord-stepper {
     overflow-x: auto;
-    grid-template-columns: repeat(5, minmax(4.5rem, 1fr));
+    grid-template-columns: repeat(3, minmax(4.5rem, 1fr));
     padding-bottom: .25rem;
   }
 
@@ -1424,18 +1151,11 @@
     flex-direction: column;
   }
 
-  .signup-landlord-actions-end .signup-landlord-continue {
-    max-width: none;
-  }
-
   .signup-landlord-review-row {
     grid-template-columns: 1fr;
     gap: .125rem;
   }
 
-  .signup-documents-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* ── Redesigned create-account flow (role screen → form screen) ── */
