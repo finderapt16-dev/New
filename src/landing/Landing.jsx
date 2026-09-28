@@ -73,11 +73,6 @@ export function Landing() {
             </Link>
 
             <nav className="landing-header-nav">
-              {[
-            { to: "/browse", label: "Browse", protected: true },
-        ].map(({ to, label, protected: isProtected, icon }) => (<Link key={to} to={to} onClick={isProtected ? handleProtectedAction : undefined} className="landing-nav-link">
-                  {icon}{label}
-                </Link>))}
               <div className="landing-account-nav">
                 {!user ? (<>
                     <LoginDialog trigger={<Button variant="ghost" size="sm" className="landing-login-button">Login</Button>} />

@@ -49,10 +49,12 @@ describe("landing floating auth", () => {
         expect(screen.getByPlaceholderText(/search by area/i)).toBeInTheDocument();
     });
 
-    it("opens the floating sign-in when Browse is clicked while logged out", async () => {
+    it("opens the floating sign-in when a browse entry point is clicked while logged out", async () => {
         renderLanding();
 
-        await userEvent.click(screen.getByRole("link", { name: /^browse$/i }));
+        // The header nav no longer carries a Browse link, so the landing
+        // listings CTA is the entry point that guards the route.
+        await userEvent.click(screen.getByRole("link", { name: /browse listings/i }));
 
         expect(await screen.findByLabelText(/^username/i)).toBeInTheDocument();
         expect(screen.queryByText("OLD LOGIN PAGE")).not.toBeInTheDocument();

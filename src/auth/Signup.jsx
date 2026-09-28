@@ -1,5 +1,6 @@
 import { AuthField } from "./AuthField";
 import { GoogleAuthOption } from "./GoogleAuthButton";
+import { SignupEditDetailsDialog } from "./SignupEditDetailsDialog";
 import "./signup.css";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,8 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
     // Landlord signup is a three-step wizard: account credentials, personal and
     // business details, then a review screen before the account is created.
     const [landlordStep, setLandlordStep] = useState(1);
+    // Which review card is being corrected inside the edit dialog.
+    const [editPanel, setEditPanel] = useState(null);
     const [tenantTermsAccepted, setTenantTermsAccepted] = useState(false);
     const [landlordAgreementAccepted, setLandlordAgreementAccepted] = useState(false);
     const [formData, setFormData] = useState({
@@ -188,6 +191,17 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
         setError("");
         setLandlordStep((step) => Math.max(step - 1, 1));
     };
+    /** Persist a corrected section straight back into the wizard form state. */
+    const applyEdit = (patch) => {
+        setFormData((previous) => ({ ...previous, ...patch }));
+    };
+    /** Enter inside a wizard field moves to the next step instead of submitting. */
+    const handleLandlordKeyDown = (event) => {
+        if (event.key !== "Enter" || event.shiftKey || landlordStep > 2)
+            return;
+        event.preventDefault();
+        nextLandlordStep();
+    };
     return (<div className="auth-palette signup-page">
 
       <div className="signup-content">
@@ -278,7 +292,7 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                   </div>
                 </div>)}
 
-              {signupStep === "form" && formData.role === "landlord" && (<div className="signup-landlord-wizard">
+              {signupStep === "form" && formData.role === "landlord" && (<div className="signup-landlord-wizard" onKeyDown={handleLandlordKeyDown}>
                   <div className="signup-landlord-stepper">
                     {["Account Details", "Personal Information", "Review"].map((label, index) => {
                 const stepNumber = index + 1;
@@ -303,39 +317,35 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                   {landlordStep === 1 && (<div className="signup-landlord-panel">
                       <h2 className="signup-landlord-panel-title">Account Details</h2>
 
-                      <div className="signup-account-field">
-                        <AuthField id="username" label="Username" value={formData.username} onChange={(v) => set("username", v)} required placeholder="Enter your username"/>
-                        <p className="signup-account-hint">
-                          You will use this username when signing in. Use 4–30 letters,
-                          numbers, or underscores with no spaces.
-                        </p>
-                      </div>
+                      {/* Two columns so the whole step stays visible without scrolling. */}
+                      <div className="signup-landlord-fields">
+                        <AuthField id="username" label="Username" value={formData.username} onChange={(v) => set("username", v)} required placeholder="Enter your username" autoComplete="username"/>
 
-                      <div className="signup-account-field">
-                        <AuthField id="email" label="Email Address" type="email" value={formData.email} onChange={(v) => set("email", v)} required placeholder="Enter your email address"/>
-                        <p className="signup-account-hint">
-                          Used for account verification, password recovery, and important
-                          account notices.
-                        </p>
-                      </div>
+                        <AuthField id="email" label="Email Address" type="email" value={formData.email} onChange={(v) => set("email", v)} required placeholder="Enter your email address" autoComplete="email"/>
 
-                      <div className="signup-account-field">
-                        <AuthField id="password" label="Password" type={showPass ? "text" : "password"} value={formData.password} onChange={(v) => set("password", v)} required placeholder="Enter your password" suffix={<button type="button" onClick={() => setShowPass(!showPass)} className="auth-password-toggle signup-password-toggle" aria-label={showPass ? "Hide password" : "Show password"}>
+                        <div className="signup-account-field">
+                          <AuthField id="password" label="Password" type={showPass ? "text" : "password"} value={formData.password} onChange={(v) => set("password", v)} required placeholder="Enter your password" autoComplete="new-password" suffix={<button type="button" onClick={() => setShowPass(!showPass)} className="auth-password-toggle signup-password-toggle" aria-label={showPass ? "Hide password" : "Show password"}>
                               {showPass ? (<EyeOff className="signup-icon-small"/>) : (<Eye className="signup-icon-small"/>)}
                             </button>}/>
-                      </div>
+                        </div>
 
-                      <div className="signup-account-field">
-                        <AuthField id="confirm" label="Confirm Password" type={showConfirm ? "text" : "password"} value={formData.confirmPassword} onChange={(v) => set("confirmPassword", v)} required placeholder="Confirm your password" suffix={<button type="button" onClick={() => setShowConfirm(!showConfirm)} className="auth-password-toggle signup-password-toggle" aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}>
+                        <div className="signup-account-field">
+                          <AuthField id="confirm" label="Confirm Password" type={showConfirm ? "text" : "password"} value={formData.confirmPassword} onChange={(v) => set("confirmPassword", v)} required placeholder="Confirm your password" autoComplete="new-password" suffix={<button type="button" onClick={() => setShowConfirm(!showConfirm)} className="auth-password-toggle signup-password-toggle" aria-label={showConfirm ? "Hide confirm password" : "Show confirm password"}>
                               {showConfirm ? (<EyeOff className="signup-icon-small"/>) : (<Eye className="signup-icon-small"/>)}
                             </button>}/>
 
-                        {formData.confirmPassword &&
+                          {formData.confirmPassword &&
                     formData.password !== formData.confirmPassword && (<p className="signup-mismatch-message">
                               <AlertCircle className="signup-validation-icon"/>
                               Passwords do not match
                             </p>)}
+                        </div>
                       </div>
+
+                      <p className="signup-account-hint signup-landlord-hint-row">
+                        Username: 4–30 letters, numbers, or underscores with no spaces.
+                        Your email is used for verification, password recovery, and account notices.
+                      </p>
 
                       <div className="signup-password-help">
                         <strong>Password must contain:</strong>
@@ -353,20 +363,21 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                   {landlordStep === 2 && (<div className="signup-landlord-panel">
                       <h2 className="signup-landlord-panel-title">Personal Information</h2>
 
-                      <div className="signup-name-grid">
-                        <AuthField id="firstName" label="First Name" value={formData.firstName} onChange={(v) => set("firstName", v)} required placeholder="Enter your first name"/>
-                        <AuthField id="lastName" label="Last Name" value={formData.lastName} onChange={(v) => set("lastName", v)} required placeholder="Enter your last name"/>
-                      </div>
+                      <div className="signup-landlord-fields">
+                        <AuthField id="firstName" label="First Name" value={formData.firstName} onChange={(v) => set("firstName", v)} required placeholder="Enter your first name" autoComplete="given-name"/>
 
-                      <AuthField id="middleInitial" label="Middle Initial (Optional)" value={formData.middleInitial} onChange={(v) => set("middleInitial", v)} placeholder="e.g. R"/>
+                        <AuthField id="lastName" label="Last Name" value={formData.lastName} onChange={(v) => set("lastName", v)} required placeholder="Enter your last name" autoComplete="family-name"/>
 
-                      <AuthField id="mobile" label="Mobile Number" type="tel" value={formData.mobileNumber} onChange={(v) => set("mobileNumber", v)} required placeholder="Enter your mobile number"/>
+                        <AuthField id="middleInitial" label="Middle Initial (Optional)" value={formData.middleInitial} onChange={(v) => set("middleInitial", v)} placeholder="e.g. R" maxLength={1}/>
 
-                      <div className="signup-account-field">
-                        <AuthField id="businessName" label="Business Name" value={formData.businessName} onChange={(v) => set("businessName", v)} placeholder="e.g. Santos Apartments"/>
-                        <p className="signup-account-hint">
-                          Optional. Shown on your listings; leave blank to use your personal name.
-                        </p>
+                        <AuthField id="mobile" label="Mobile Number" type="tel" value={formData.mobileNumber} onChange={(v) => set("mobileNumber", v)} required placeholder="Enter your mobile number" inputMode="tel"/>
+
+                        <div className="signup-landlord-field-wide">
+                          <AuthField id="businessName" label="Business Name" value={formData.businessName} onChange={(v) => set("businessName", v)} placeholder="e.g. Santos Apartments"/>
+                          <p className="signup-account-hint">
+                            Optional. Shown on your listings; leave blank to use your personal name.
+                          </p>
+                        </div>
                       </div>
 
                       <div className="signup-landlord-actions">
@@ -387,7 +398,7 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                       <div className="signup-landlord-review-card">
                         <div className="signup-landlord-review-heading">
                           <strong>Account Details</strong>
-                          <button type="button" onClick={() => setLandlordStep(1)}>
+                          <button type="button" onClick={() => setEditPanel("account")}>
                             <Pencil className="signup-review-edit-icon"/>
                             Edit
                           </button>
@@ -405,7 +416,7 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                       <div className="signup-landlord-review-card">
                         <div className="signup-landlord-review-heading">
                           <strong>Personal Information</strong>
-                          <button type="button" onClick={() => setLandlordStep(2)}>
+                          <button type="button" onClick={() => setEditPanel("personal")}>
                             <Pencil className="signup-review-edit-icon"/>
                             Edit
                           </button>
@@ -446,6 +457,16 @@ export function Signup({ onSwitchToLogin, onSwitchToForgot, redirectTo = null, }
                       </Button>
                     </div>)}
                 </div>)}
+
+              {/* Correcting a section from the review screen happens in place, so a
+                  landlord never has to walk back through the wizard. */}
+              {signupStep === "form" && formData.role === "landlord" && (<SignupEditDetailsDialog
+                  open={editPanel !== null}
+                  variant={editPanel ?? "account"}
+                  formData={formData}
+                  onSave={applyEdit}
+                  onOpenChange={(next) => { if (!next) setEditPanel(null); }}
+                />)}
 
               {signupStep === "form" && formData.role === "tenant" && (<label className="signup-agreement">
                   <input type="checkbox" checked={tenantTermsAccepted} onChange={(event) => setTenantTermsAccepted(event.target.checked)} className="signup-checkbox"/>
