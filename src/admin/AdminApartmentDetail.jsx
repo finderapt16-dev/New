@@ -294,6 +294,17 @@ export function AdminApartmentDetail() {
             void supabase.removeChannel(channel);
         };
     }, [id]);
+    // Opening a review keeps whatever scroll offset the apartments list had, so the page
+    // used to arrive mid-listing while a refresh arrived at the top. The document body is
+    // this page's scroller (html/body are pinned to the viewport height), so reset it
+    // directly instead of relying on window.scrollY.
+    useEffect(() => {
+        if (routeLocation.hash.startsWith("#admin-"))
+            return;
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+        window.scrollTo(0, 0);
+    }, [id, routeLocation.hash]);
     useEffect(() => {
         const sectionId = routeLocation.hash.replace(/^#/, "");
         if (isLoading || !sectionId.startsWith("admin-"))

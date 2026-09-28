@@ -67,8 +67,14 @@
 }
 
 /* The standalone Apartment Review page has its own copy of the same trapped
-   viewport — give it the same flow treatment. */
-.admin-apartment-detail {
+   viewport — give it the same flow treatment. AdminApartmentDetail.css now ships
+   the flowed layout too, so the two files agree; the selector is scoped under
+   .app-root on purpose. Lazy chunks inject their CSS when they first load, so on
+   a client-side navigation from the dashboard this theme file is already in the
+   head and the page stylesheet is appended after it. A same-specificity tie would
+   then flip back to the trapped shell and the review page could not scroll at all
+   until a manual refresh. */
+.app-root .admin-apartment-detail {
   position: static;
   inset: auto;
   height: auto;
