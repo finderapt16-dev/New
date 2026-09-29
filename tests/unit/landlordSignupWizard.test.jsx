@@ -12,7 +12,7 @@ vi.mock("@/services/authService", () => ({
     signInWithGoogle: (...args) => mocks.google(...args),
 }));
 
-const { AuthDialog } = await import("@/auth/AuthDialog");
+const { AuthDialog } = await import("@/auth/Signin");
 
 const renderDialog = () => {
     const router = createMemoryRouter([

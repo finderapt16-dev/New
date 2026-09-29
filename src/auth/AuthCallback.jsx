@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { clearOAuthIntent, describeGoogleSignInError, exchangeAuthCode, getAuthSession, getAuthUser, getCurrentAuthenticatedUser, getPostSignInPath, isOAuthSession, readOAuthIntent, signOutAuthSession } from "@/services/authService";
-import { CompleteGoogleSignup } from "./CompleteGoogleSignup";
-import "./auth_callback.css";
+import { CompleteGoogleSignup } from "./Signup";
+import "./auth.css";
 
 const INVALID_LINK_MESSAGE = "This verification link is invalid or has expired. Request a new verification email and try again.";
 
