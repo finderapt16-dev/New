@@ -1,12 +1,14 @@
 import { AuthField } from "./AuthField";
-import { GoogleAuthOption } from "./GoogleAuthButton";
+import { GoogleAuthOption, Signup } from "./Signup";
+import { ForgotPassword } from "./ForgotPassword";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { isTenantRole, resendSignupVerification } from "@/services/authService";
 import { AlertCircle, CheckCircle2, Eye, EyeOff, House, } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./signin.css";
 
 /**
@@ -190,4 +192,148 @@ export function Login({ initialMessage = null, redirectTo: redirectToProp = null
         </div>
       </div>
     </div>);
+}
+
+/* ═══ Floating auth panel: sign-in / sign-up / forgot-password switch views
+   inside one dialog (merged from AuthDialog.jsx) ═══ */
+const VIEW_META = {
+  login: {
+    title: "Sign in to AptFindr",
+    description: "Sign in to browse apartments or manage your property listings.",
+  },
+  signup: {
+    title: "Create your AptFindr account",
+    description: "Choose Tenant or Landlord to see the matching registration form.",
+  },
+  forgot: {
+    title: "Reset your AptFindr password",
+    description: "Enter your account email to request password reset instructions.",
+  },
+};
+
+/**
+ * The one and only auth UI: a floating panel where sign-in, sign-up and
+ * forgot-password switch views in the same dialog. Used by the landing page
+ * and by the /login, /signup and /forgot-password routes.
+ */
+export function AuthDialog({
+  trigger,
+  defaultView = "login",
+  open: controlledOpen,
+  onOpenChange,
+  initialLoginMessage = null,
+  redirectTo = null,
+  showBackToHome = false,
+}) {
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
+  const setOpen = onOpenChange ?? setUncontrolledOpen;
+  const [view, setView] = useState(defaultView);
+  // Message shown by the sign-in view (protected-page notice or the result
+  // handed over by the signup view).
+  const [loginMessage, setLoginMessage] = useState(initialLoginMessage);
+
+  const handleOpenChange = (next) => {
+    if (next) {
+      setView(defaultView);
+      setLoginMessage(initialLoginMessage);
+    }
+    setOpen(next);
+  };
+
+  const switchToLogin = (state) => {
+    setLoginMessage(state ?? null);
+    setView("login");
+  };
+
+  const meta = VIEW_META[view] ?? VIEW_META.login;
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
+      <DialogContent className={`auth-dialog-content auth-dialog-content--${view}`}>
+        <DialogTitle className="auth-dialog-accessible-title">{meta.title}</DialogTitle>
+        <DialogDescription className="auth-dialog-accessible-description">{meta.description}</DialogDescription>
+        {view === "login" && (
+          <Login
+            initialMessage={loginMessage}
+            redirectTo={redirectTo}
+            onSwitchToSignup={() => setView("signup")}
+            onSwitchToForgot={() => setView("forgot")}
+          />
+        )}
+        {view === "signup" && (
+          <Signup
+            redirectTo={redirectTo}
+            onSwitchToLogin={switchToLogin}
+            onSwitchToForgot={() => setView("forgot")}
+          />
+        )}
+        {view === "forgot" && (
+          <ForgotPassword onSwitchToLogin={() => switchToLogin()} />
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/* ═══ Standalone /login, /signup and /forgot-password route page
+   (merged from AuthPage.jsx) ═══ */
+/**
+ * The /login, /signup and /forgot-password routes render the same floating
+ * auth panel (used for direct links, bookmarks and protected-page redirects).
+ * Closing the panel returns to the landing page.
+ */
+export function AuthPage({ view = "login" }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const redirect = new URLSearchParams(location.search).get("redirect");
+  const state = location.state;
+  const initialLoginMessage = state?.message
+    ? {
+        message: state.message,
+        verificationEmail:
+          typeof state.verificationEmail === "string" ? state.verificationEmail : undefined,
+        verificationHelp: state.verificationHelp === true,
+      }
+    : null;
+
+  return (
+    <div className="auth-page-backdrop">
+      <AuthDialog
+        defaultView={view}
+        open
+        showBackToHome
+        onOpenChange={(next) => {
+          if (!next) navigate("/", { replace: true });
+        }}
+        initialLoginMessage={initialLoginMessage}
+        redirectTo={redirect}
+      />
+    </div>
+  );
+}
+
+/* ═══ Thin default-view wrappers around AuthDialog
+   (merged from LoginDialog.jsx, SignupDialog.jsx and ForgotPasswordDialog.jsx) ═══ */
+/**
+ * Floating sign-in panel used by the public landing page.
+ * "Create account" and "Forgot password?" switch views inside this same
+ * floating dialog instead of navigating to the old full-page routes.
+ */
+export function LoginDialog(props) {
+  return <AuthDialog defaultView="login" {...props} />;
+}
+
+/**
+ * Floating registration panel; the signup screen reveals the selected
+ * role's form. "Sign in here" switches back to the floating sign-in view.
+ */
+export function SignupDialog(props) {
+  return <AuthDialog defaultView="signup" {...props} />;
+}
+
+/** Floating password-recovery panel; "Back to Sign In" returns to the sign-in view. */
+export function ForgotPasswordDialog(props) {
+  return <AuthDialog defaultView="forgot" {...props} />;
 }

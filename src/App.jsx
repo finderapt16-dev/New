@@ -11,7 +11,7 @@ const NotFound = lazy(() => import("./landing/NotFound").then((module) => ({ def
 const PrivacyPolicy = lazy(() => import("./landing/PrivacyPolicy").then((module) => ({ default: module.PrivacyPolicy })));
 const TermsOfService = lazy(() => import("./landing/TermsOfService").then((module) => ({ default: module.TermsOfService })));
 // Authentication and shared account pages
-const AuthPage = lazy(() => import("./auth/AuthPage").then((module) => ({ default: module.AuthPage })));
+const AuthPage = lazy(() => import("./auth/Signin").then((module) => ({ default: module.AuthPage })));
 const ResetPassword = lazy(() => import("./auth/ResetPassword").then((module) => ({ default: module.ResetPassword })));
 const AuthCallback = lazy(() => import("./auth/AuthCallback").then((module) => ({ default: module.AuthCallback })));
 const Dashboard = lazy(() => import("./auth/Dashboard").then((module) => ({ default: module.Dashboard })));

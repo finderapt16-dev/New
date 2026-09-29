@@ -1,7 +1,5 @@
 import { AppLogo } from "@/components/AppLogo";
-import { AuthDialog } from "@/auth/AuthDialog";
-import { LoginDialog } from "@/auth/LoginDialog";
-import { SignupDialog } from "@/auth/SignupDialog";
+import { AuthDialog, LoginDialog, SignupDialog } from "@/auth/Signin";
 import { LandingListingsSection } from "./LandingApartmentPreview";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetTitle, SheetTrigger, } from "@/components/ui/sheet";
