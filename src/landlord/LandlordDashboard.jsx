@@ -5,7 +5,7 @@ import { PeopleModal } from "@/landlord/PeopleModal";
 import { LandlordActivity } from "@/landlord/LandlordActivity";
 import { LandlordHelpSupport } from "@/landlord/LandlordHelpSupport";
 import { LandlordNotifications } from "@/landlord/LandlordNotifications";
-import { LandlordOverview } from "@/landlord/LandlordOverview";
+import { MyProperties } from "@/landlord/MyProperties";
 import { LandlordSettingsPage } from "@/landlord/LandlordSettingsPage";
 import { LandlordSidebar } from "@/landlord/LandlordSidebar";
 import { getRoomStatus, getApartmentStatus } from "@/landlord/landlordStatus";
@@ -1114,7 +1114,7 @@ export function LandlordDashboard() {
         }
     };
     const sectionMap = {
-        overview: () => (<LandlordOverview myApartments={myApartments} user={user} availableCount={availableCount} landlordVerified={landlordVerified} landlordPermit={landlordPermit} setSettingsTab={setSettingsTab} setActiveSection={setActiveSection} isLoadingApartments={isLoadingApartments} ratingSummary={ratingSummary} viewRows={landlordViewRows} favoriteRows={landlordFavoriteRows} ratingRows={ratingRows} ratingsLoading={ratingsLoading} openViewers={openViewers} aptViews={aptViews} openFavoriters={openFavoriters} aptFavs={aptFavs} setEditingApartment={setEditingApartment} editingApartment={editingApartment} handleSaveApartment={handleSaveEditedApartment} handleTogglePublication={handleTogglePublication} deletingApartmentId={deletingApartmentId} handleDeleteApartment={handleDeleteApartment} onAddProperty={() => navigate("/add-apartment")}/>),
+        overview: () => (<MyProperties myApartments={myApartments} user={user} availableCount={availableCount} landlordVerified={landlordVerified} landlordPermit={landlordPermit} setSettingsTab={setSettingsTab} setActiveSection={setActiveSection} isLoadingApartments={isLoadingApartments} ratingSummary={ratingSummary} viewRows={landlordViewRows} favoriteRows={landlordFavoriteRows} ratingRows={ratingRows} ratingsLoading={ratingsLoading} openViewers={openViewers} aptViews={aptViews} openFavoriters={openFavoriters} aptFavs={aptFavs} setEditingApartment={setEditingApartment} editingApartment={editingApartment} handleSaveApartment={handleSaveEditedApartment} handleTogglePublication={handleTogglePublication} deletingApartmentId={deletingApartmentId} handleDeleteApartment={handleDeleteApartment} onAddProperty={() => navigate("/add-apartment")}/>),
         activity: () => (<LandlordActivity activityRange={activityRange} landlordViewRows={landlordViewRows} landlordFavoriteRows={landlordFavoriteRows} ratingRows={ratingRows} propertyIds={propertyIds} myApartments={myApartments} getViewWeight={getViewWeight} setActivityRange={setActivityRange} isLoadingApartments={isLoadingApartments} isLoadingActivityData={isLoadingActivityData}/>),
         notifications: () => (
             <LandlordNotifications

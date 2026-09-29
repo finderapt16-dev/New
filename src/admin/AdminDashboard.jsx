@@ -1,4 +1,4 @@
-import "./AdminDashboard.css";
+import "./admin_dashboard.css";
 import "./AdminLandlordVerification.css";
 import { getAdminListingState, getLowestRoomRent } from "@/admin/adminListingState";
 import { clearAdminNavigationMemory, getAdminModuleLocation, getAdminModulePath, rememberAdminModuleLocation } from "@/admin/adminNavigationMemory";
