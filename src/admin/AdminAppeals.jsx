@@ -1,4 +1,4 @@
-import "./AdminAppeals.css";
+import "./admin_pages.css";
 import { canArchiveAppealStatus, updateAppealStatus } from "@/services/dashboardSupabaseService";
 import { formatApartmentLocation } from "@/utils/apartmentLocation";
 import { AlertTriangle, Archive, Building2, ChevronLeft, Eye, Facebook, FileText, Flag, Globe, Image as ImageIcon, Mail, Pencil, Phone, RotateCcw, Search, ShieldAlert, Trash2 } from "lucide-react";

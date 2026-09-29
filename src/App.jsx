@@ -28,9 +28,12 @@ const ManageRooms = lazy(() => import("./landlord/ManageRooms").then((module) =>
 const EditRoom = lazy(() => import("./landlord/ManageRooms").then((module) => ({ default: module.EditRoom })));
 // Admin
 const AdminDashboard = lazy(() => import("@/admin/AdminDashboard").then((module) => ({ default: module.AdminDashboard })));
-const AdminApartmentDetail = lazy(() => import("./admin/AdminApartmentDetail").then((module) => ({ default: module.AdminApartmentDetail })));
-const AdminRoomsOverview = lazy(() => import("./admin/AdminRoomsOverview").then((module) => ({ default: module.AdminRoomsOverview })));
-const AdminDocumentReview = lazy(() => import("./admin/AdminDocumentReview").then((module) => ({ default: module.AdminDocumentReview })));
+// The Apartment Review module and its two sub-pages (rooms overview, document
+// review) ship as one chunk — they are one review flow, so they live in one file.
+const loadApartmentReviewModule = () => import("./admin/AdminApartmentDetail");
+const AdminApartmentDetail = lazy(() => loadApartmentReviewModule().then((module) => ({ default: module.AdminApartmentDetail })));
+const AdminRoomsOverview = lazy(() => loadApartmentReviewModule().then((module) => ({ default: module.AdminRoomsOverview })));
+const AdminDocumentReview = lazy(() => loadApartmentReviewModule().then((module) => ({ default: module.AdminDocumentReview })));
 const roleDashboard = <Dashboard tenant={<TenantDashboard />} landlord={<LandlordDashboard />} admin={<AdminDashboard />}/>;
 const APARTMENT_LOGIN_MESSAGE = "Please sign in or create an account to view apartment details.";
 function PublicLandingRoute() {

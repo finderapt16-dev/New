@@ -1,4 +1,4 @@
-import "./AdminApartments.css";
+import "./admin_pages.css";
 import { Building2, Check, Clock3, Eye, MapPin, Search } from "lucide-react";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { formatApartmentLocation } from "@/utils/apartmentLocation";
