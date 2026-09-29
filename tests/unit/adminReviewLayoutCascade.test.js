@@ -5,13 +5,15 @@ import { describe, expect, it } from "vitest";
 
 // The admin apartment review page froze on the first client-side navigation and its sidebar
 // scrolled away with the content after a refresh. Both came from the cascade, not from the
-// markup: AdminApartmentDetail.css and admin-theme.css declare the same shell with the same
-// specificity, and lazy chunks inject their CSS when they first load — so which file wins
-// depends on how the admin arrived at /admin/apartment/:id. These tests resolve the cascade
-// in both orders and require the same, scrollable, sticky-sidebar layout every time.
+// markup: the review page stylesheet and the admin theme used to be two separate files
+// declaring the same shell at the same specificity, and lazy chunks inject their CSS when
+// they first load — so which file won depended on how the admin arrived at
+// /admin/apartment/:id. Both now live in admin_pages.css, so the order is fixed and the
+// page renders the same layout on a hard refresh and on a client-side navigation. These
+// tests lock that contract in place: the shell must keep flowing, the content column must
+// stay on the document scroller, and the sidebar must stay pinned.
 const SRC = path.resolve(import.meta.dirname, "../../src");
-const PAGE_CSS = "admin/AdminApartmentDetail.css";
-const THEME_CSS = "admin/admin-theme.css";
+const PAGES_CSS = "admin/admin_pages.css";
 const GLOBAL_CSS = "components/components.css";
 
 const parse = (relative) => postcss.parse(readFileSync(path.join(SRC, relative), "utf8"), { from: relative });
@@ -67,14 +69,14 @@ const resolve = (fileOrder, selectors) => {
 
 const scrollable = (value) => ["auto", "scroll", "hidden"].includes(String(value ?? "").trim());
 
-// Dashboard first, then "Inspect": the theme is already in <head>, the page CSS lands last.
-const PAGE_LAST = [THEME_CSS, PAGE_CSS];
-// Hard refresh on the review URL: the page CSS is injected before the theme.
-const THEME_LAST = [PAGE_CSS, THEME_CSS];
+// There is only one admin page stylesheet now, so both navigations resolve the
+// same cascade. The suite still runs twice to make that invariant explicit.
+const PAGE_LAST = [PAGES_CSS];
+const THEME_LAST = [PAGES_CSS];
 
 describe.each([
-    ["the page stylesheet is injected last (first Inspect click)", PAGE_LAST],
-    ["the theme stylesheet is injected last (hard refresh)", THEME_LAST],
+    ["the admin pages stylesheet is injected last (first Inspect click)", PAGE_LAST],
+    ["the admin pages stylesheet is already in <head> (hard refresh)", THEME_LAST],
 ])("admin apartment review layout when %s", (_label, order) => {
     const shell = resolve(order, TARGETS.shell);
     const sidebar = resolve(order, TARGETS.sidebar);
@@ -102,7 +104,7 @@ describe.each([
     });
 });
 
-it("resolves the review shell identically no matter which admin stylesheet loads last", () => {
+it("resolves the review shell identically no matter how the admin arrived there", () => {
     for (const target of Object.values(TARGETS)) {
         expect(resolve(PAGE_LAST, target)).toEqual(resolve(THEME_LAST, target));
     }

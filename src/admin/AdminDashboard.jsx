@@ -15,13 +15,13 @@ import { Activity, AlertOctagon, AlertTriangle, Archive, Bell, BellRing, Calenda
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+import { AdminAnalyticsOverview } from './AdminAnalyticsOverview';
 import { AdminApartments } from './AdminApartments';
 import { AdminAppeals } from './AdminAppeals';
-import { AdminLandlordVerification } from './AdminLandlordVerification';
 import { ArchiveEmpty, formatOptionalDate, getLandlordVerificationStatus, isAdminModule, NOTICE_TYPES, NotificationEmpty, SettingsField, SettingsSectionTitle, text, toAdminProfileState, toEvidenceItem, VIOLATION_TYPES } from './adminDashboardHelpers';
 import { AdminReports } from './AdminReports';
 import { AdminSidebar } from './AdminSidebar';
-import "./admin-theme.css";
+import "./admin_pages.css";
 export function AdminDashboard() {
     const { user, verifyLandlord, updateUser, refreshUsers, logout } = useAuth();
     const navigate = useNavigate();
@@ -1085,7 +1085,7 @@ export function AdminDashboard() {
       </div>);
     };
     // ── Section: Apartments ───────────────────────────────────────────────────
-    const renderOverview = () => (<AdminLandlordVerification landlords={landlords} apartments={allApartments} search={landlordSearch} setSearch={setLandlordSearch} statusFilter={landlordStatusFilter} setStatusFilter={setLandlordStatusFilter} onSelect={setSelectedLandlord}/>);
+    const renderOverview = () => (<AdminAnalyticsOverview landlords={landlords} allApartments={allApartments} violations={violations} pendingReports={pendingReports} activeAppealsCount={activeAppealsCount} unreadNotifsCount={unreadNotifsCount} landlordSearch={landlordSearch} setLandlordSearch={setLandlordSearch} landlordStatusFilter={landlordStatusFilter} setLandlordStatusFilter={setLandlordStatusFilter} onSelectLandlord={setSelectedLandlord}/>);
     const renderApartments = () => (<AdminApartments allApartments={allApartments} aptSearch={aptSearch} setAptSearch={setAptSearch} aptStatusFilter={aptStatusFilter} setAptStatusFilter={setAptStatusFilter} aptSort={aptSort} setAptSort={setAptSort} filteredApts={filteredApts} getLandlordForApt={getLandlordForApt} navigate={navigate} apartmentDetailBasePath={apartmentDetailBasePath} portalBasePath={portalBasePath}/>);
     // ── Section: Reports ──────────────────────────────────────────────────────
     const renderReports = () => (<AdminReports reports={reports} reportArchiveView={reportArchiveView} archivedReports={archivedReports} reportSearch={reportSearch} allApartments={allApartments} reportStatusFilter={reportStatusFilter} reportTypeFilter={reportTypeFilter} reportSort={reportSort} selectedReport={selectedReport} selectedReportDetails={selectedReportDetails} setSelectedReport={setSelectedReport} setActiveSection={setActiveSection} unreadNotifsCount={unreadNotifsCount} setViewingUserProfile={setViewingUserProfile} navigate={navigate} apartmentDetailBasePath={apartmentDetailBasePath} portalBasePath={portalBasePath} selectedReportEvidence={selectedReportEvidence} resolveReport={resolveReport} setDismissReportModal={setDismissReportModal} setCaseAction={setCaseAction} setReportSearch={setReportSearch} setReportStatusFilter={setReportStatusFilter} setReportTypeFilter={setReportTypeFilter} setReportSort={setReportSort} setReportArchiveView={setReportArchiveView} dismissReportModal={dismissReportModal} dismissReport={dismissReport} viewingUserProfile={viewingUserProfile}/>);

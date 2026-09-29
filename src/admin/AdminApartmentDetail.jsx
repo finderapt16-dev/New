@@ -1,5 +1,5 @@
 import { MapView } from "@/components/MapView";
-import "./AdminApartmentDetail.css";
+import "./admin_pages.css";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,11 +15,10 @@ import { supabase } from "@/services/supabaseClient";
 import { clearAdminNavigationMemory, getAdminModulePath, rememberAdminModuleLocation } from "@/admin/adminNavigationMemory";
 import { AdminSidebar } from "@/admin/AdminSidebar";
 import { getAdminAvailabilityLabel, getAdminListingLabel, getAdminRoomState, getLowestRoomRent } from "@/admin/adminListingState";
-import { AlertTriangle, ArrowLeft, Building2, CalendarCheck, Check, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, ExternalLink, Eye, EyeOff, Expand, FileSearch, FileText, Flag, Home, Image as ImageIcon, Mail, Menu, MapPin, MessageSquare, Phone, Send, ShieldCheck, Star, Users, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { AlertTriangle, ArrowLeft, BedDouble, Building2, CalendarCheck, Check, CheckCircle2, ChevronLeft, ChevronRight, ClipboardList, ExternalLink, Eye, EyeOff, Expand, FileSearch, FileText, Flag, Home, Image as ImageIcon, Mail, Menu, MapPin, MessageSquare, Minus, Phone, Plus, Send, ShieldCheck, Star, Users, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
-import "./admin-theme.css";
 const toFiniteNumber = (value, fallback = 0) => {
     if (typeof value === "number" && Number.isFinite(value)) {
         return value;
@@ -1390,4 +1389,162 @@ export function AdminApartmentDetail() {
       </div>
       </main>
     </div>);
+}
+
+/* ============================================================================
+   Sub-pages of the Apartment Review module.
+   ----------------------------------------------------------------------------
+   /admin/apartment/:id/rooms and /admin/apartment/:id/document/:documentId are
+   drilled out of the same review flow, so they live here next to the parent
+   page instead of as standalone lazy chunks. They still keep their own routes
+   and their own CSS (see admin_pages.css) — only the module boundary moved.
+   ============================================================================ */
+const textValue = (value, fallback = "Not provided") => typeof value === "string" && value.trim() ? value : fallback;
+const asNumber = (value, fallback = 0) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+const roomName = (room, index) => room.name || room.room_name || room.room_type || `Room ${index + 1}`;
+const roomStatus = (room) => room.status === "occupied" || room.isOccupied || room.is_occupied ? "Occupied" : room.status === "maintenance" ? "Maintenance" : "Available";
+
+export function AdminDocumentReview() {
+  const { id: apartmentId, documentId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [document, setDocument] = useState(null);
+  const [apartment, setApartment] = useState(null);
+  const [landlord, setLandlord] = useState(null);
+  const [zoom, setZoom] = useState(100);
+  const [loading, setLoading] = useState(true);
+  const returnTo = location.state?.returnTo || `/admin/apartment/${apartmentId}`;
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      if (!apartmentId || !documentId) return;
+      setLoading(true);
+      try {
+        const [details, documents] = await Promise.all([
+          fetchApartmentInspectionDetails(apartmentId),
+          fetchApartmentVerificationDocuments(apartmentId),
+        ]);
+        const loadedApartment = details?.apartment ?? null;
+        const selectedDocument = documents.find((item) => item.id === documentId) ?? null;
+        const loadedLandlord = loadedApartment?.landlordId ? await fetchUserById(loadedApartment.landlordId) : null;
+        if (!active) return;
+        setApartment(loadedApartment);
+        setDocument(selectedDocument);
+        setLandlord(loadedLandlord);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    void load();
+    return () => { active = false; };
+  }, [apartmentId, documentId]);
+
+  const documentLabel = useMemo(() => VERIFICATION_DOCUMENT_TYPES.find((item) => item.key === document?.documentType)?.label || "Verification Document", [document?.documentType]);
+  const verification = apartment?.features?.verification && typeof apartment.features.verification === "object" ? apartment.features.verification : {};
+  const isPdf = document?.mimeType === "application/pdf";
+
+  if (!loading && !document) {
+    return <main className="admin-document-page admin-document-page-empty"><h1>Document not found</h1><Button onClick={() => navigate(returnTo)}>Back to Review</Button></main>;
+  }
+
+  return <main className="admin-document-page">
+    <header className="admin-document-header">
+      <button type="button" onClick={() => navigate(returnTo)}><ArrowLeft /> Back to Review</button>
+      <div><h1>{documentLabel}</h1><p>Submitted verification document</p></div>
+      <span aria-hidden="true" />
+    </header>
+
+    <div className="admin-document-layout">
+      <section className="admin-document-preview-card">
+        <div className="admin-document-toolbar"><span>{isPdf ? "Page 1 of 1" : "Image preview"}</span><div><button type="button" aria-label="Zoom out" onClick={() => setZoom((value) => Math.max(70, value - 10))}><Minus /></button><span>{zoom}%</span><button type="button" aria-label="Zoom in" onClick={() => setZoom((value) => Math.min(150, value + 10))}><Plus /></button></div></div>
+        <div className="admin-document-stage">
+          {loading ? <span>Loading document...</span> : isPdf ? <iframe title={documentLabel} src={document.previewUrl} style={{ transform: `scale(${zoom / 100})` }} /> : <img src={document.previewUrl} alt={documentLabel} style={{ transform: `scale(${zoom / 100})` }} />}
+        </div>
+      </section>
+
+      <aside className="admin-document-details">
+        <section><h2>Document Details</h2><p>Information submitted by the landlord.</p><dl><div><dt>Document Type</dt><dd>{documentLabel}</dd></div><div><dt>Permit Number</dt><dd>{textValue(verification.businessPermit)}</dd></div><div><dt>Date Submitted</dt><dd>{document?.createdAt ? new Date(document.createdAt).toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" }) : "Not provided"}</dd></div><div><dt>File Name</dt><dd>{document?.fileName}</dd></div></dl></section>
+        <section><h3>Submitted By</h3><div className="admin-document-person"><span>{landlord?.name?.[0]?.toUpperCase() || "L"}</span><div><strong>{landlord?.name || "Landlord"}</strong><small>{landlord?.email || "Property landlord"}</small></div></div></section>
+        <section><h3>Review Status</h3><span className="admin-document-status">Document Submitted</span><p>Confirm that this document matches the details of {apartment?.title || "the submitted property"}.</p></section>
+        <Button variant="outline" onClick={() => navigate(returnTo)}>Return to Landlord Review</Button>
+      </aside>
+    </div>
+  </main>;
+}
+
+export function AdminRoomsOverview() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [apartment, setApartment] = useState(null);
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const returnTo = location.state?.returnTo || `/admin/apartment/${id}`;
+
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        const details = await fetchApartmentInspectionDetails(id);
+        if (!active) return;
+        setApartment(details?.apartment ?? null);
+        setRooms(details?.rooms ?? details?.apartment?.rooms ?? []);
+      } finally { if (active) setLoading(false); }
+    };
+    void load();
+    return () => { active = false; };
+  }, [id]);
+
+  const available = useMemo(() => rooms.filter((room) => roomStatus(room) === "Available").length, [rooms]);
+  const rents = rooms.map((room) => asNumber(room.rent ?? room.price)).filter((rent) => rent > 0);
+  const priceRange = rents.length ? `P${Math.min(...rents).toLocaleString()} - P${Math.max(...rents).toLocaleString()} / month` : "No room pricing submitted";
+
+  return <main className="admin-rooms-overview-page">
+    <header className="admin-rooms-overview-header">
+      <div><button type="button" onClick={() => navigate(returnTo)}><ArrowLeft /> Back to Property Review</button><h1>Rooms Overview</h1><p>Review all submitted rooms for {apartment?.title || "this property"} before approving the property listing.</p></div>
+      <div className="admin-rooms-overview-property"><small>PROPERTY</small><strong>{apartment?.title || "Loading property"} · {rooms.length} Rooms</strong></div>
+    </header>
+
+    {loading ? <p className="admin-rooms-overview-loading">Loading submitted rooms...</p> : <>
+      <section className="admin-rooms-overview-summary">
+        <div><small>PROPERTY ADDRESS</small><strong>{apartment?.address || "Not provided"}, {apartment?.city || ""}</strong></div>
+        <div><small>TOTAL ROOMS</small><strong>{rooms.length}</strong></div>
+        <div><small>AVAILABLE</small><strong>{available}</strong></div>
+        <div><small>PRICE RANGE</small><strong>{priceRange}</strong></div>
+        <span>Pending Approval</span>
+      </section>
+
+      <section className="admin-rooms-overview-grid">
+        {rooms.map((room, index) => {
+          const image = Array.isArray(room.images) ? room.images[0] : room.image_url || room.imageUrl;
+          const capacity = asNumber(room.maxOccupants ?? room.max_occupants, 1);
+          const hasBath = room.hasPrivateBath ?? room.has_private_bath;
+          return <article key={room.id || index}>
+            {image ? <img src={image} alt={roomName(room, index)} /> : <div className="admin-rooms-overview-placeholder"><BedDouble /></div>}
+          <div className="admin-rooms-overview-card-content"><h2>{roomName(room, index)}</h2><p className="admin-rooms-overview-rent">P{asNumber(room.rent ?? room.price).toLocaleString()} <small>/ month</small></p><dl><div><dt>Capacity</dt><dd>{capacity} tenant{capacity === 1 ? "" : "s"}</dd></div><div><dt>Beds</dt><dd>{asNumber(room.beds ?? room.bedrooms, 1)} Bed</dd></div><div><dt>Bathroom</dt><dd>{hasBath ? "Private" : "Shared"}</dd></div><div><dt>Amenities</dt><dd>{room.hasAC || room.has_ac ? "WiFi, AC" : "WiFi"}</dd></div></dl><Button variant="outline" size="sm" onClick={() => { setSelectedRoom({ room, index }); setSelectedImageIndex(0); }}>View Room Details</Button></div>
+          </article>;
+        })}
+        {rooms.length === 0 && <p className="admin-rooms-overview-empty">No rooms have been submitted for this property.</p>}
+      </section>
+
+      <footer className="admin-rooms-overview-footer"><div><strong>Room Review</strong><p>Review individual room details, photos, capacity, rent, amenities, and availability before returning to the property review.</p></div><Button onClick={() => navigate(returnTo)}>Back to Property Review</Button></footer>
+    </>}
+    {selectedRoom && (() => {
+      const room = selectedRoom.room;
+      const roomImages = Array.isArray(room.images) ? room.images.filter(Boolean) : [room.image_url || room.imageUrl].filter(Boolean);
+      const selectedImage = roomImages[selectedImageIndex];
+      const capacity = asNumber(room.maxOccupants ?? room.max_occupants, 1);
+      const hasBath = room.hasPrivateBath ?? room.has_private_bath;
+      const hasAc = room.hasAC ?? room.has_ac;
+      return <div className="admin-room-detail-overlay" onClick={() => setSelectedRoom(null)}><section className="admin-room-detail-dialog" onClick={(event) => event.stopPropagation()} aria-modal="true" role="dialog" aria-label="Room details">
+        <button type="button" className="admin-room-detail-close" onClick={() => setSelectedRoom(null)} aria-label="Close room details"><X /></button>
+        <header><h1>{roomName(room, selectedRoom.index)}</h1><span className={roomStatus(room) === "Available" ? "is-available" : ""}>{roomStatus(room)}</span></header>
+        <div className="admin-room-detail-layout"><div><div className="admin-room-detail-image">{selectedImage ? <img src={selectedImage} alt={roomName(room, selectedRoom.index)} /> : <BedDouble />}{roomImages.length > 1 && <><button type="button" className="is-previous" onClick={() => setSelectedImageIndex((current) => (current - 1 + roomImages.length) % roomImages.length)}><ChevronLeft /></button><button type="button" className="is-next" onClick={() => setSelectedImageIndex((current) => (current + 1) % roomImages.length)}><ChevronRight /></button><span>{roomImages.map((image, index) => <i key={`${image}-${index}`} className={index === selectedImageIndex ? "is-active" : ""}/>)}</span></>}<Expand /></div>{roomImages.length > 1 && <div className="admin-room-detail-thumbnails">{roomImages.slice(0, 4).map((image, index) => <button type="button" key={`${image}-${index}`} onClick={() => setSelectedImageIndex(index)} className={index === selectedImageIndex ? "is-active" : ""}><img src={image} alt={`Room image ${index + 1}`} /></button>)}</div>}<section className="admin-room-detail-description"><h2>Description</h2><p>{room.description || "No room description was submitted."}</p></section></div>
+          <aside><p className="admin-room-detail-price">P {asNumber(room.rent ?? room.price).toLocaleString()} <small>/ month</small></p><dl className="admin-room-detail-facts"><div><dt>Capacity</dt><dd>{capacity} person{capacity === 1 ? "" : "s"}</dd></div><div><dt>Floor Area</dt><dd>{asNumber(room.sqft)} sq ft</dd></div><div><dt>Bathroom</dt><dd>{hasBath ? "Private" : "Shared"}</dd></div><div><dt>Air Conditioning</dt><dd>{hasAc ? "Yes" : "No"}</dd></div></dl><h2>Amenities</h2><div className="admin-room-detail-tags"><span>{hasBath ? "Private bathroom" : "Shared bathroom"}</span>{hasAc && <span>Air conditioning</span>}<span>WiFi</span></div><h2>Additional Information</h2><dl className="admin-room-detail-additional"><div><dt>Property Type</dt><dd>{apartment?.propertyType || "Apartment"}</dd></div><div><dt>Available Date</dt><dd>{apartment?.availableDate ? new Date(apartment.availableDate).toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" }) : "Not provided"}</dd></div><div><dt>Utilities</dt><dd>{Array.isArray(apartment?.utilities) && apartment.utilities.length ? apartment.utilities.join(", ") : "Not included"}</dd></div></dl></aside></div>
+      </section></div>;
+    })()}
+  </main>;
 }

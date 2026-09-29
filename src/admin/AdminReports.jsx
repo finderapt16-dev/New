@@ -1,5 +1,5 @@
 import { EvidenceViewer } from "@/admin/EvidenceViewer";
-import "./AdminReports.css";
+import "./admin_pages.css";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

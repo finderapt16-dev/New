@@ -1,6 +1,6 @@
 import { LogoutConfirmation } from "@/components/LogoutConfirmation";
 import { LogOut } from "lucide-react";
-import "./AdminSidebar.css";
+import "./admin_pages.css";
 import { NAV_ACCOUNT, NAV_MAIN, NAV_MANAGEMENT } from './adminDashboardHelpers';
 export function AdminSidebar({ activeSection, pendingReports, activeAppealsCount, unreadNotifsCount, navigateToAdminModule, handleLogout, }) {
     const navItemClass = (section) => `app-sidebar-nav-item ${activeSection === section
