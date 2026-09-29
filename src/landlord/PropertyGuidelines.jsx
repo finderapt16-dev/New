@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { X, FileText, FileCheck2, Bed, Image as ImageIcon, Tag, ShieldCheck } from "lucide-react";
-import "./ApartmentListingGuidelinesModal.css";
+import "./PropertyGuidelines.css";
 
 const GUIDELINES = [
   {
@@ -59,7 +59,7 @@ const GUIDELINES = [
   },
 ];
 
-export function ApartmentListingGuidelinesModal({ open, onClose, onProceed }) {
+export function PropertyGuidelines({ open, onClose, onProceed }) {
   const modalRef = useRef(null);
 
   useEffect(() => {

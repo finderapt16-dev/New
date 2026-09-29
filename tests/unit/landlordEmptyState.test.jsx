@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
-import { LandlordOverview } from "@/landlord/LandlordOverview";
-import { ApartmentListingGuidelinesModal } from "@/landlord/ApartmentListingGuidelinesModal";
+import { MyProperties } from "@/landlord/MyProperties";
+import { PropertyGuidelines } from "@/landlord/PropertyGuidelines";
 
 describe("Landlord Overview new landlord empty state", () => {
   const defaultProps = {
@@ -25,7 +25,7 @@ describe("Landlord Overview new landlord empty state", () => {
     let currentPath = "/dashboard";
     const router = createMemoryRouter(
       [
-        { path: "/dashboard", element: <LandlordOverview {...defaultProps} {...props} /> },
+        { path: "/dashboard", element: <MyProperties {...defaultProps} {...props} /> },
         { path: "/add-apartment", element: <div>Add Apartment Page</div> },
       ],
       { initialEntries: ["/dashboard"] }

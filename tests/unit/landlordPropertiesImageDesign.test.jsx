@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
-import { LandlordOverview } from "@/landlord/LandlordOverview";
+import { MyProperties } from "@/landlord/MyProperties";
 
 describe("Landlord Your Properties design matching image", () => {
   const sampleApartments = [
@@ -74,7 +74,7 @@ describe("Landlord Your Properties design matching image", () => {
       [
         {
           path: "/dashboard",
-          element: <LandlordOverview {...defaultProps} {...props} />,
+          element: <MyProperties {...defaultProps} {...props} />,
         },
         { path: "/apartment/:id", element: <div>Apartment Details</div> },
         { path: "/landlord/properties/:id/rooms", element: <div>Manage Rooms Page</div> },
